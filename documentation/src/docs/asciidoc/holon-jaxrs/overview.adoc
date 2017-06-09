@@ -3,6 +3,7 @@
 :apidir: ../../api/holon-jax-rs
 :linkattrs:
 :sectnums:
+:nofooter:
 :toc: left
 :toclevels: 3
 
@@ -13,3 +14,10 @@ _Copies of this document may be made for your own use and for distribution to ot
 == Introduction
 
 The introduction goes here.
+
+
+== System requirements
+
+=== Java
+
+The Holon Platform core module requires https://www.java.com[Java] *8* or higher.
