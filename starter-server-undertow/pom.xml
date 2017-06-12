@@ -59,7 +59,7 @@
 		<!-- Holon JSON Jackson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
-			<artifactId>holon-jackson</artifactId>
+			<artifactId>holon-jackson-spring</artifactId>
 			<version>${holon.json.version}</version>
 		</dependency>
 

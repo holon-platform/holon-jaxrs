@@ -28,7 +28,7 @@
 		<!-- Holon JSON Jackson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
-			<artifactId>holon-gson</artifactId>
+			<artifactId>holon-gson-spring</artifactId>
 			<version>${holon.json.version}</version>
 		</dependency>
 
