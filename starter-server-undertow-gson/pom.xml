@@ -50,7 +50,7 @@
 		<!-- Holon JSON Jackson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
-			<artifactId>holon-json-gson</artifactId>
+			<artifactId>holon-gson</artifactId>
 			<version>${holon.json.version}</version>
 		</dependency>
 
