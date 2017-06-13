@@ -25,7 +25,7 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
-		<!-- Holon JSON Jackson -->
+		<!-- Holon Gson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-gson-spring</artifactId>

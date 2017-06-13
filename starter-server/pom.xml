@@ -54,6 +54,12 @@
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jul-to-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Holon JSON Jackson -->
@@ -105,15 +111,15 @@
 					<artifactId>spring-web</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 			</exclusions>
@@ -126,15 +132,15 @@
 			<version>${jersey.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 				<exclusion>
@@ -153,15 +159,15 @@
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson</groupId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 			</exclusions>

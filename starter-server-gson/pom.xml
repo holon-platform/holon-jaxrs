@@ -45,9 +45,15 @@
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jul-to-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
-		<!-- Holon JSON Jackson -->
+		<!-- Holon Gson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-gson-spring</artifactId>
