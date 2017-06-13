@@ -8,7 +8,7 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-client-gson</artifactId>
+	<artifactId>holon-starter-jaxrs-client-gson</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>

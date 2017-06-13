@@ -36,37 +36,37 @@
 			<!-- Spring Boot starters -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-client</artifactId>
+				<artifactId>holon-starter-jaxrs-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-client-gson</artifactId>
+				<artifactId>holon-starter-jaxrs-client-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-server</artifactId>
+				<artifactId>holon-starter-jaxrs-server</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-server-gson</artifactId>
+				<artifactId>holon-starter-jaxrs-server-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-server-undertow</artifactId>
+				<artifactId>holon-starter-jaxrs-server-undertow</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-undertow-gson</artifactId>
+				<artifactId>holon-starter-jaxrs-undertow-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-swagger</artifactId>
+				<artifactId>holon-starter-jaxrs-swagger</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
