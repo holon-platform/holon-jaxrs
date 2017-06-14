@@ -60,7 +60,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 		}
 
 		if (property != null) {
-			if (isPropertyBoxType(type)) {
+			if (isPropertyBoxType(type) || PropertyBox[].class == type) {
 				property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
 						PropertyBox.class.getName());
 			}

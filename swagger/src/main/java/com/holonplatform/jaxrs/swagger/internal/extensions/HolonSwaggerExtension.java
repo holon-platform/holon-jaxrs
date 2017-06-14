@@ -104,7 +104,10 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			return Optional.ofNullable(
 					ApiPropertySetIntrospector.get().getPropertySet(rt.getAnnotation(ApiPropertySet.class)));
 		}
-
+		// check arrays
+		if (method.getReturnType() != null && method.getReturnType().isArray()) {
+			
+		}
 		return Optional.empty();
 	}
 
@@ -120,6 +123,9 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 
 	private static ArrayProperty isPropertyBoxArrayPropertyType(Property property) {
 		if (property != null && ArrayProperty.class.isAssignableFrom(property.getClass())) {
+			if (isPropertyBoxPropertyType(property)) {
+				return (ArrayProperty) property;
+			}
 			final Property items = ((ArrayProperty) property).getItems();
 			if (isPropertyBoxPropertyType(items)) {
 				return (ArrayProperty) property;
