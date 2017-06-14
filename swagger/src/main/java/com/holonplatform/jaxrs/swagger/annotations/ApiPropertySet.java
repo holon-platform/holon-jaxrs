@@ -26,7 +26,17 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * Annotation which can be used to declare the {@link PropertySet} boudn to a {@link PropertyBox} model type. TODO
+ * Annotation which can be used to declare the {@link PropertySet} bound to a {@link PropertyBox} model type.
+ * <p>
+ * The {@link #value()} class can be either:
+ * <ul>
+ * <li>A {@link PropertySet} type class: in this case, a new instance of such class will be used as property set;</li>
+ * <li>A class which contains the {@link PropertySet} instance as a <code>public static</code> field.</li>
+ * </ul>
+ * If the {@link #field()} attribute is specified, it will be used to locate the {@link PropertySet} type field in the
+ * {@link #value()} class. Otherwise, a single <code>public static</code> {@link PropertySet} type field is expected for
+ * the {@link #value()} class.
+ * </p>
  *
  * @since 5.0.0
  */
@@ -36,8 +46,17 @@ import com.holonplatform.core.property.PropertySet;
 @Documented
 public @interface ApiPropertySet {
 
+	/**
+	 * The {@link PropertySet} type class or the class in which the {@link PropertySet} is declared as a
+	 * <code>public static</code> field.
+	 * @return PropertySet class
+	 */
 	Class<?> value();
 
+	/**
+	 * The optional {@link PropertySet} field name in the class declared through {@link #value()}.
+	 * @return PropertySet field name
+	 */
 	String field() default "";
 
 }

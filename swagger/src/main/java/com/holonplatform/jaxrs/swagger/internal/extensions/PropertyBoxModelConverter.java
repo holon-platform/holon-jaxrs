@@ -30,7 +30,8 @@ import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
 
 /**
- * A Swagger {@link ModelConverter} to handle {@link PropertyBox} type model objects.
+ * A Swagger {@link ModelConverter} to handle {@link PropertyBox} type model objects and setting the
+ * {@link HolonSwaggerExtensions#MODEL_TYPE} extension property value.
  * <p>
  * This converter is automatically loaded and registered in Swagger using Java service extensions.
  * </p>

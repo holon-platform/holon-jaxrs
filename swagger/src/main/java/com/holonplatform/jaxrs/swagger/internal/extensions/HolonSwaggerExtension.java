@@ -39,7 +39,19 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 
 /**
- * TODO
+ * A {@link SwaggerExtension} to handle {@link PropertyBox} type model properties in operations parameters and response
+ * types.
+ * <p>
+ * The {@link ApiPropertySet} annotation can be used to declare the {@link PropertySet} of each operation
+ * {@link PropertyBox} to generate a detailed API documentation, including the property definitions of the
+ * {@link PropertyBox}.
+ * </p>
+ * 
+ * <p>
+ * This extension is automatically loaded and registered in Swagger using Java service extensions.
+ * </p>
+ * 
+ * @since 5.0.0
  */
 public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 
@@ -98,6 +110,12 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		return property;
 	}
 
+	/**
+	 * Check whether the given <code>method</code> return type is annotated with the {@link ApiPropertySet} annotation
+	 * and extract the corresonding {@link PropertySet}.
+	 * @param method Method to inspect
+	 * @return Optional {@link PropertySet} obtained form the {@link ApiPropertySet} annotation, if available
+	 */
 	private static Optional<PropertySet<?>> getResponsePropertySet(Method method) {
 		final AnnotatedType rt = method.getAnnotatedReturnType();
 		if (rt != null && rt.isAnnotationPresent(ApiPropertySet.class)) {
@@ -106,11 +124,17 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		}
 		// check arrays
 		if (method.getReturnType() != null && method.getReturnType().isArray()) {
-			
+
 		}
 		return Optional.empty();
 	}
 
+	/**
+	 * Check whether the given property is of {@link PropertyBox} type using the
+	 * {@link HolonSwaggerExtensions#MODEL_TYPE} extension name.
+	 * @param property Property to check
+	 * @return <code>true</code> if given property is of {@link PropertyBox} type
+	 */
 	private static boolean isPropertyBoxPropertyType(Property property) {
 		if (property != null && property.getVendorExtensions() != null
 				&& property.getVendorExtensions().containsKey(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName())
@@ -121,6 +145,13 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		return false;
 	}
 
+	/**
+	 * Check if the given property is and {@link ArrayProperty} of {@link PropertyBox} type using the
+	 * {@link HolonSwaggerExtensions#MODEL_TYPE} extension name.
+	 * @param property Property to check
+	 * @return if the property is of {@link PropertyBox} type, return such property casted to {@link ArrayProperty},
+	 *         <code>null</code> otherwise
+	 */
 	private static ArrayProperty isPropertyBoxArrayPropertyType(Property property) {
 		if (property != null && ArrayProperty.class.isAssignableFrom(property.getClass())) {
 			if (isPropertyBoxPropertyType(property)) {
