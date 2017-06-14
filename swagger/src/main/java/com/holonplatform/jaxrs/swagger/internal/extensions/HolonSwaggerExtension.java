@@ -15,55 +15,97 @@
  */
 package com.holonplatform.jaxrs.swagger.internal.extensions;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
-import io.swagger.annotations.ApiOperation;
+import com.holonplatform.core.Path;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
+
+import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.models.Operation;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.models.Response;
+import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.Property;
 
 /**
  * TODO
  */
-public class HolonSwaggerExtension implements SwaggerExtension {
+public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.jaxrs.ext.SwaggerExtension#extractOperationMethod(io.swagger.annotations.ApiOperation,
-	 * java.lang.reflect.Method, java.util.Iterator)
-	 */
-	@Override
-	public String extractOperationMethod(ApiOperation apiOperation, Method method, Iterator<SwaggerExtension> chain) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see io.swagger.jaxrs.ext.SwaggerExtension#extractParameters(java.util.List, java.lang.reflect.Type,
-	 * java.util.Set, java.util.Iterator)
-	 */
-	@Override
-	public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
-			Iterator<SwaggerExtension> chain) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see io.swagger.jaxrs.ext.SwaggerExtension#decorateOperation(io.swagger.models.Operation,
+	 * @see io.swagger.jaxrs.ext.AbstractSwaggerExtension#decorateOperation(io.swagger.models.Operation,
 	 * java.lang.reflect.Method, java.util.Iterator)
 	 */
 	@Override
 	public void decorateOperation(Operation operation, Method method, Iterator<SwaggerExtension> chain) {
-		// TODO Auto-generated method stub
+		super.decorateOperation(operation, method, chain);
 
+		AnnotatedType rt = method.getAnnotatedReturnType();
+		if (rt != null) {
+			System.err.println("Method " + method.getName() + ">>> has ApiPropertySet annotation ["
+					+ rt.isAnnotationPresent(ApiPropertySet.class) + "]");
+		}
+
+		// response property set
+		ApiPropertySet apiPropertySet = null;
+		if (method.getAnnotatedReturnType() != null) {
+			apiPropertySet = method.getAnnotatedReturnType().getAnnotation(ApiPropertySet.class);
+		}
+
+		// responses
+		Map<String, Response> responses = operation.getResponses();
+		if (responses != null) {
+			for (Response response : responses.values()) {
+				Property p = response.getSchema();
+				if (p != null && p.getVendorExtensions().containsKey("x-holon-type")
+						&& PropertyBox.class.getName().equals(p.getVendorExtensions().get("x-holon-type"))
+						&& apiPropertySet != null) {
+					operation.getVendorExtensions().put("x-holon-return-propertyset", apiPropertySet);
+				}
+			}
+		}
+
+		// temp
+		if (apiPropertySet != null) {
+			final PropertySet<?> responsePropertySet = ApiPropertySetIntrospector.get().getPropertySet(apiPropertySet);
+			operation.getResponses().get("200").schema(buildPropertyBoxProperty(responsePropertySet, true));
+		}
+
+	}
+
+	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly) {
+
+		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
+
+		final ObjectProperty property = new ObjectProperty();
+		property.title("PropertyBox");
+		// property.description("Holon Platform PropertyBox data container");
+		property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+				PropertyBox.class.getName());
+
+		if (propertySet != null) {
+			propertySet.forEach(p -> {
+				if (includeReadOnly || !p.isReadOnly()) {
+					if (Path.class.isAssignableFrom(p.getClass())) {
+						Property sp = factory.create(p);
+						if (sp != null) {
+							property.property(((Path<?>) p).relativeName(), sp);
+						}
+					}
+				}
+			});
+		}
+
+		return property;
 	}
 
 }

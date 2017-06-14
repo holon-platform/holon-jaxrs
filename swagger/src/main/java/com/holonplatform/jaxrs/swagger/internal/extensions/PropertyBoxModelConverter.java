@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
@@ -45,16 +46,20 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations,
 			Iterator<ModelConverter> chain) {
 
-		if (PropertyBox.class.equals(type)) {
-			System.err.println("### resolveProperty [" + type + "] is a PropertyBox type");
-			System.err.println("---> Annotations [" + annotations + "]");
-		}
+		// ignore PropertyBox
+		/*
+		 * if (PropertyBox.class.equals(type)) { return null; }
+		 */
 
+		Property property = null;
 		if (chain.hasNext()) {
-			return chain.next().resolveProperty(type, context, annotations, chain);
-		} else {
-			return null;
+			property = chain.next().resolveProperty(type, context, annotations, chain);
+			if (PropertyBox.class.equals(type)) {
+				property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+						PropertyBox.class.getName());
+			}
 		}
+		return property;
 	}
 
 	/*
@@ -64,18 +69,28 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	 */
 	@Override
 	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
-		
+
+		boolean propertyBox = false;
 		if (PropertyBox.class.equals(type)) {
-			System.err.println(">>> resolve [" + type + "] is a PropertyBox type");
-			Model model = context.resolve(type);
-			System.err.println(">>> Model [" + model + "]");
+			propertyBox = true;
 		}
-		
+
+		Model model = null;
 		if (chain.hasNext()) {
-			return chain.next().resolve(type, context, chain);
-		} else {
-			return null;
+			model = chain.next().resolve(type, context, chain);
 		}
+
+		if (model != null) {
+			if (propertyBox) {
+				model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+						PropertyBox.class.getName());
+				if (model.getProperties() != null) {
+					model.getProperties().remove("invalidAllowed");
+				}
+			}
+		}
+
+		return model;
 	}
 
 }

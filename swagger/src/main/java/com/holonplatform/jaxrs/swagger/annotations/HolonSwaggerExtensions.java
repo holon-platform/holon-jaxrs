@@ -15,29 +15,30 @@
  */
 package com.holonplatform.jaxrs.swagger.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.property.PropertySet;
-
 /**
- * Annotation which can be used to declare the {@link PropertySet} boudn to a {@link PropertyBox} model type. TODO
- *
+ * Enumeration of Swagger extension properties.
+ * 
  * @since 5.0.0
  */
-@Target({ ElementType.PARAMETER, ElementType.TYPE_USE })
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ApiPropertySet {
+public enum HolonSwaggerExtensions {
 
-	Class<?> value();
+	/**
+	 * Model object type
+	 */
+	MODEL_TYPE("x-holon-model-type");
 
-	String field() default "";
+	private final String extensionName;
+
+	private HolonSwaggerExtensions(String extensionName) {
+		this.extensionName = extensionName;
+	}
+
+	/**
+	 * Get the extension name.
+	 * @return the extension name
+	 */
+	public String getExtensionName() {
+		return extensionName;
+	}
 
 }
