@@ -18,7 +18,9 @@ package com.holonplatform.jaxrs.swagger.internal.extensions;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.property.PropertyBox;
@@ -49,35 +51,16 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	public void decorateOperation(Operation operation, Method method, Iterator<SwaggerExtension> chain) {
 		super.decorateOperation(operation, method, chain);
 
-		AnnotatedType rt = method.getAnnotatedReturnType();
-		if (rt != null) {
-			System.err.println("Method " + method.getName() + ">>> has ApiPropertySet annotation ["
-					+ rt.isAnnotationPresent(ApiPropertySet.class) + "]");
-		}
-
 		// response property set
-		ApiPropertySet apiPropertySet = null;
-		if (method.getAnnotatedReturnType() != null) {
-			apiPropertySet = method.getAnnotatedReturnType().getAnnotation(ApiPropertySet.class);
-		}
-
-		// responses
-		Map<String, Response> responses = operation.getResponses();
+		final Map<String, Response> responses = operation.getResponses();
 		if (responses != null) {
-			for (Response response : responses.values()) {
-				Property p = response.getSchema();
-				if (p != null && p.getVendorExtensions().containsKey("x-holon-type")
-						&& PropertyBox.class.getName().equals(p.getVendorExtensions().get("x-holon-type"))
-						&& apiPropertySet != null) {
-					operation.getVendorExtensions().put("x-holon-return-propertyset", apiPropertySet);
+			getResponsePropertySet(method).ifPresent(propertySet -> {
+				for (Response response : responses.values()) {
+					if (isPropertyBoxPropertyType(response.getSchema())) {
+						response.schema(buildPropertyBoxProperty(propertySet, true));
+					}
 				}
-			}
-		}
-
-		// temp
-		if (apiPropertySet != null) {
-			final PropertySet<?> responsePropertySet = ApiPropertySetIntrospector.get().getPropertySet(apiPropertySet);
-			operation.getResponses().get("200").schema(buildPropertyBoxProperty(responsePropertySet, true));
+			});
 		}
 
 	}
@@ -93,6 +76,9 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 				PropertyBox.class.getName());
 
 		if (propertySet != null) {
+			// to respect insertion order
+			property.properties(new LinkedHashMap<>());
+
 			propertySet.forEach(p -> {
 				if (includeReadOnly || !p.isReadOnly()) {
 					if (Path.class.isAssignableFrom(p.getClass())) {
@@ -106,6 +92,26 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		}
 
 		return property;
+	}
+
+	private static Optional<PropertySet<?>> getResponsePropertySet(Method method) {
+		final AnnotatedType rt = method.getAnnotatedReturnType();
+		if (rt != null && rt.isAnnotationPresent(ApiPropertySet.class)) {
+			return Optional.ofNullable(
+					ApiPropertySetIntrospector.get().getPropertySet(rt.getAnnotation(ApiPropertySet.class)));
+		}
+
+		return Optional.empty();
+	}
+
+	private static boolean isPropertyBoxPropertyType(Property property) {
+		if (property != null && property.getVendorExtensions() != null
+				&& property.getVendorExtensions().containsKey(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName())
+				&& PropertyBox.class.getName().equals(
+						property.getVendorExtensions().get(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName()))) {
+			return true;
+		}
+		return false;
 	}
 
 }

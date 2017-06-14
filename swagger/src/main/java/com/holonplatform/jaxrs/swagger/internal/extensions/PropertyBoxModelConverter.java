@@ -46,11 +46,6 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations,
 			Iterator<ModelConverter> chain) {
 
-		// ignore PropertyBox
-		/*
-		 * if (PropertyBox.class.equals(type)) { return null; }
-		 */
-
 		Property property = null;
 		if (chain.hasNext()) {
 			property = chain.next().resolveProperty(type, context, annotations, chain);
