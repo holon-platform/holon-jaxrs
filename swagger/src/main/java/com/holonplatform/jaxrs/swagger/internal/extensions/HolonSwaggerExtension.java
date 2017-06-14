@@ -34,6 +34,7 @@ import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 
@@ -56,7 +57,10 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		if (responses != null) {
 			getResponsePropertySet(method).ifPresent(propertySet -> {
 				for (Response response : responses.values()) {
-					if (isPropertyBoxPropertyType(response.getSchema())) {
+					ArrayProperty ap = isPropertyBoxArrayPropertyType(response.getSchema());
+					if (ap != null) {
+						ap.items(buildPropertyBoxProperty(propertySet, true));
+					} else if (isPropertyBoxPropertyType(response.getSchema())) {
 						response.schema(buildPropertyBoxProperty(propertySet, true));
 					}
 				}
@@ -112,6 +116,16 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			return true;
 		}
 		return false;
+	}
+
+	private static ArrayProperty isPropertyBoxArrayPropertyType(Property property) {
+		if (property != null && ArrayProperty.class.isAssignableFrom(property.getClass())) {
+			final Property items = ((ArrayProperty) property).getItems();
+			if (isPropertyBoxPropertyType(items)) {
+				return (ArrayProperty) property;
+			}
+		}
+		return null;
 	}
 
 }
