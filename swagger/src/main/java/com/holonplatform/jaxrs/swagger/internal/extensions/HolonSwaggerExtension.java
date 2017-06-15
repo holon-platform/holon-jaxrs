@@ -47,6 +47,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
+import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
@@ -111,7 +112,7 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			Iterator<SwaggerExtension> chain) {
 
 		// check PropertyBox type and body parameter case
-		if ((SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) && isBodyParameter(annotations)) {
+		if (SwaggerUtils.isPropertyBoxOrArrayType(type) && isBodyParameter(annotations)) {
 			// check property set
 			PropertySet<?> propertySet = hasApiPropertySet(annotations);
 			if (propertySet != null) {
@@ -133,7 +134,8 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 					}
 				}
 
-				final Model model = buildPropertyBoxModel(propertySet, false);
+				final Model model = buildPropertyBoxModel(propertySet, false,
+						SwaggerUtils.isPropertyBoxArrayType(type));
 				BodyParameter bp = new BodyParameter();
 				bp.setRequired(isParameterRequired(annotations));
 				bp.schema(model);
@@ -144,7 +146,7 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 					}
 					parameters.add(parameter);
 				}
-				
+
 				return parameters;
 			}
 		}
@@ -229,61 +231,18 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Build a {@link PropertyBox} type Swagger property using given <code>propertySet</code>.
+	 * Get a Swagger name-property map form given <code>propertySet</code>.
 	 * @param propertySet Property set
 	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
-	 * @return Swagger property
+	 * @return Swagger name-property map
 	 */
-	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly) {
+	private static Map<String, Property> getPropertySetProperties(PropertySet<?> propertySet, boolean includeReadOnly) {
 
 		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
 
-		final ObjectProperty property = new ObjectProperty();
-		property.title("PropertyBox");
-		property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
-				PropertyBox.class.getName());
+		Map<String, Property> properties = new LinkedHashMap<>();
 
 		if (propertySet != null) {
-			// to respect insertion order
-			property.properties(new LinkedHashMap<>());
-
-			propertySet.forEach(p -> {
-				if (includeReadOnly || !p.isReadOnly()) {
-					if (Path.class.isAssignableFrom(p.getClass())) {
-						Property sp = factory.create(p);
-						if (sp != null) {
-							property.property(((Path<?>) p).relativeName(), sp);
-						}
-					}
-				}
-			});
-		}
-
-		return property;
-	}
-
-	/**
-	 * Build a {@link PropertyBox} type Swagger model using given <code>propertySet</code>.
-	 * @param propertySet Property set
-	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
-	 * @return Swagger model
-	 */
-	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly) {
-
-		// TODO ArrayModel
-
-		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
-
-		final ModelImpl model = new ModelImpl();
-		model.type(ModelImpl.OBJECT);
-		model.name("PropertyBox");
-		model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
-				PropertyBox.class.getName());
-
-		if (propertySet != null) {
-			// to respect insertion order
-			Map<String, Property> properties = new LinkedHashMap<>();
-
 			propertySet.forEach(p -> {
 				if (includeReadOnly || !p.isReadOnly()) {
 					if (Path.class.isAssignableFrom(p.getClass())) {
@@ -294,10 +253,51 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 					}
 				}
 			});
-
-			model.setProperties(properties);
 		}
 
+		return properties;
+	}
+
+	/**
+	 * Build a {@link PropertyBox} type Swagger property using given <code>propertySet</code>.
+	 * @param propertySet Property set
+	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
+	 * @return Swagger property
+	 */
+	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly) {
+		ObjectProperty property = new ObjectProperty();
+		property.title("PropertyBox");
+		property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+				PropertyBox.class.getName());
+		property.properties(getPropertySetProperties(propertySet, includeReadOnly));
+		return property;
+	}
+
+	/**
+	 * Build a {@link PropertyBox} type Swagger model using given <code>propertySet</code>.
+	 * @param propertySet Property set
+	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
+	 * @param array <code>true</code> to create an array model type
+	 * @return Swagger model
+	 */
+	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly, boolean array) {
+
+		if (array) {
+			// Array model
+			ArrayModel model = new ArrayModel();
+			model.items(buildPropertyBoxProperty(propertySet, includeReadOnly));
+			model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+					PropertyBox.class.getName());
+			return model;
+		}
+
+		// Simple model
+		ModelImpl model = new ModelImpl();
+		model.type(ModelImpl.OBJECT);
+		model.name("PropertyBox");
+		model.setProperties(getPropertySetProperties(propertySet, includeReadOnly));
+		model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+				PropertyBox.class.getName());
 		return model;
 	}
 

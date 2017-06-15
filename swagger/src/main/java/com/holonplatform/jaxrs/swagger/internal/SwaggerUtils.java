@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.ArrayType;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.property.PropertyBox;
 
@@ -54,6 +55,35 @@ public final class SwaggerUtils implements Serializable {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether given <code>type</code> is a {@link PropertyBox} array type.
+	 * @param type Type to check
+	 * @return <code>true</code> if given <code>type</code> is a {@link PropertyBox} array type
+	 */
+	public static boolean isPropertyBoxArrayType(Type type) {
+		if (type != null) {
+			if (PropertyBox[].class.equals(type)) {
+				return true;
+			}
+			if (JACKSON_DATABIND_PRESENT && type instanceof JavaType) {
+				return ((JavaType) type).isTypeOrSubTypeOf(PropertyBox[].class);
+			}
+			if (JACKSON_DATABIND_PRESENT && type instanceof ArrayType) {
+				return ((ArrayType) type).getContentType().isTypeOrSubTypeOf(PropertyBox.class);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks whether given <code>type</code> is a simple or array {@link PropertyBox} type.
+	 * @param type Type to check
+	 * @return <code>true</code> if given <code>type</code> is a simple or array {@link PropertyBox} type
+	 */
+	public static boolean isPropertyBoxOrArrayType(Type type) {
+		return isPropertyBoxType(type) || isPropertyBoxArrayType(type);
 	}
 
 }
