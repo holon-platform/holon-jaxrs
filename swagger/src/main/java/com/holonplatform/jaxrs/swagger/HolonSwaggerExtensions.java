@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.annotations;
+package com.holonplatform.jaxrs.swagger;
 
 /**
  * Enumeration of Swagger extension properties.

@@ -76,6 +76,29 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Optional Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Optional Jersey -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey.version}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Servlets API -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>

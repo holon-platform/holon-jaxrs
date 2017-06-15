@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.HolonSwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 
 import io.swagger.converter.ModelConverter;
