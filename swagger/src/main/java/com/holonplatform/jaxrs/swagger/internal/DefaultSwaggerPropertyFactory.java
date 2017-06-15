@@ -54,8 +54,6 @@ public enum DefaultSwaggerPropertyFactory implements SwaggerPropertyFactory {
 	public io.swagger.models.properties.Property create(Property<?> property) throws PropertyConversionException {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
 
-		// TODO validators
-
 		// temporals
 		if (TypeUtils.isDate(property.getType()) || TypeUtils.isCalendar(property.getType())) {
 			TemporalType type = property.getConfiguration().getTemporalType().orElse(TemporalType.DATE);

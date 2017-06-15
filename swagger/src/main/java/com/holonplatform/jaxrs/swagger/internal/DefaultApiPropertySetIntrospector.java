@@ -92,7 +92,7 @@ public enum DefaultApiPropertySetIntrospector implements ApiPropertySetIntrospec
 								+ "]: please specify the field name to use in ApiPropertySet annotation. Detected PropertySet fields: ["
 								+ candidateFieldNames + "]");
 			}
-			
+
 			fieldName = candidateFieldNames.get(0);
 
 		}
