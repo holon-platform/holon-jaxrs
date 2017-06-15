@@ -37,6 +37,8 @@ import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerUtils;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.models.Model;
@@ -102,7 +104,7 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
 			Iterator<SwaggerExtension> chain) {
 
-		// Skip PropertyBox type 
+		// Skip PropertyBox type
 		Set<Type> skip = new HashSet<>();
 		if (typesToSkip != null) {
 			skip.addAll(typesToSkip);
@@ -125,11 +127,12 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			if (propertySet != null) {
 				final Model model = buildPropertyBoxModel(propertySet, false);
 				BodyParameter bp = new BodyParameter();
+				bp.setRequired(isParameterRequired(annotations));
 				bp.schema(model);
 				Parameter parameter = ParameterProcessor.applyAnnotations(new Swagger(), bp, type, annotations);
 				if (parameter != null) {
 					if (parameter instanceof BodyParameter) {
-						((BodyParameter)parameter).schema(model);
+						((BodyParameter) parameter).schema(model);
 					}
 					parameters.add(parameter);
 				}
@@ -140,6 +143,13 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		return parameters;
 	}
 
+	/**
+	 * Check whether the {@link ApiPropertySet} annotation is present in given annotations list and , if found, extract
+	 * the corresponding {@link PropertySet}.
+	 * @param annotations Annotations to scan
+	 * @return If the {@link ApiPropertySet} annotation is present in given annotations list, return the corresponding
+	 *         {@link PropertySet}, if available
+	 */
 	private static PropertySet<?> hasApiPropertySet(List<Annotation> annotations) {
 		if (annotations != null) {
 			for (Annotation annotation : annotations) {
@@ -149,6 +159,30 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Check whether a parameter is required using either the {@link ApiParam} or the {@link ApiImplicitParam}
+	 * annotation, if available from given annotations list.
+	 * @param annotations Annotations to scan
+	 * @return <code>true</code> if the parameter is declared as required
+	 */
+	private static boolean isParameterRequired(List<Annotation> annotations) {
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof ApiParam) {
+					if (((ApiParam) annotation).required()) {
+						return true;
+					}
+				}
+				if (annotation instanceof ApiImplicitParam) {
+					if (((ApiImplicitParam) annotation).required()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
