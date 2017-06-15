@@ -40,8 +40,8 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
 import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
+import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
-import com.holonplatform.jaxrs.swagger.internal.SwaggerUtils;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
@@ -112,42 +112,45 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 			Iterator<SwaggerExtension> chain) {
 
 		// check PropertyBox type and body parameter case
-		if (SwaggerUtils.isPropertyBoxOrArrayType(type) && isBodyParameter(annotations)) {
-			// check property set
-			PropertySet<?> propertySet = hasApiPropertySet(annotations);
-			if (propertySet != null) {
+		if (isBodyParameter(annotations)) {
+			final PropertyBoxTypeInfo pbType = PropertyBoxTypeInfo.check(type).orElse(null);
+			if (pbType != null) {
+				// check property set
+				PropertySet<?> propertySet = hasApiPropertySet(annotations);
+				if (propertySet != null) {
 
-				// Skip PropertyBox type
-				Set<Type> skip = new HashSet<>();
-				if (typesToSkip != null) {
-					skip.addAll(typesToSkip);
-				}
-				skip.add(PropertyBox.class);
-				skip.add(PropertyBox[].class);
-
-				// load other parameters, if any
-				List<Parameter> parameters = new LinkedList<>();
-				if (chain.hasNext()) {
-					List<Parameter> ps = chain.next().extractParameters(annotations, type, skip, chain);
-					if (ps != null) {
-						parameters.addAll(ps);
+					// Skip PropertyBox type
+					Set<Type> skip = new HashSet<>();
+					if (typesToSkip != null) {
+						skip.addAll(typesToSkip);
 					}
-				}
+					skip.add(PropertyBox.class);
+					skip.add(PropertyBox[].class);
 
-				final Model model = buildPropertyBoxModel(propertySet, false,
-						SwaggerUtils.isPropertyBoxArrayType(type));
-				BodyParameter bp = new BodyParameter();
-				bp.setRequired(isParameterRequired(annotations));
-				bp.schema(model);
-				Parameter parameter = ParameterProcessor.applyAnnotations(new Swagger(), bp, type, annotations);
-				if (parameter != null) {
-					if (parameter instanceof BodyParameter) {
-						((BodyParameter) parameter).schema(model);
+					// load other parameters, if any
+					List<Parameter> parameters = new LinkedList<>();
+					if (chain.hasNext()) {
+						List<Parameter> ps = chain.next().extractParameters(annotations, type, skip, chain);
+						if (ps != null) {
+							parameters.addAll(ps);
+						}
 					}
-					parameters.add(parameter);
-				}
 
-				return parameters;
+					final Model model = buildPropertyBoxModel(propertySet, false,
+							(pbType.isContainerType() && !pbType.isMap()));
+					BodyParameter bp = new BodyParameter();
+					bp.setRequired(isParameterRequired(annotations));
+					bp.schema(model);
+					Parameter parameter = ParameterProcessor.applyAnnotations(new Swagger(), bp, type, annotations);
+					if (parameter != null) {
+						if (parameter instanceof BodyParameter) {
+							((BodyParameter) parameter).schema(model);
+						}
+						parameters.add(parameter);
+					}
+
+					return parameters;
+				}
 			}
 		}
 
@@ -326,9 +329,6 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	 */
 	private static ArrayProperty isPropertyBoxArrayPropertyType(Property property) {
 		if (property != null && ArrayProperty.class.isAssignableFrom(property.getClass())) {
-			if (isPropertyBoxPropertyType(property)) {
-				return (ArrayProperty) property;
-			}
 			final Property items = ((ArrayProperty) property).getItems();
 			if (isPropertyBoxPropertyType(items)) {
 				return (ArrayProperty) property;

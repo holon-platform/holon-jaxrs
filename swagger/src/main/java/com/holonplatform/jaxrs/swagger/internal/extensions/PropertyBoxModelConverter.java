@@ -21,11 +21,14 @@ import java.util.Iterator;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
-import com.holonplatform.jaxrs.swagger.internal.SwaggerUtils;
+import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.MapProperty;
+import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 
 /**
@@ -48,19 +51,36 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations,
 			Iterator<ModelConverter> chain) {
 
-		Property property = null;
-		if (chain.hasNext()) {
-			property = chain.next().resolveProperty(type, context, annotations, chain);
-		}
+		final PropertyBoxTypeInfo pbType = PropertyBoxTypeInfo.check(type).orElse(null);
 
-		if (property != null) {
-			if (SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) {
-				property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
-						PropertyBox.class.getName());
+		// PropertyBox type
+		if (pbType != null) {
+			// container
+			if (pbType.isContainerType()) {
+				if (pbType.isMap()) {
+					MapProperty property = new MapProperty();
+					property.additionalProperties(context.resolveProperty(PropertyBox.class, new Annotation[] {}));
+					return property;
+				} else {
+					ArrayProperty property = new ArrayProperty();
+					property.items(context.resolveProperty(PropertyBox.class, new Annotation[] {}));
+					property.setUniqueItems(pbType.isUniqueItems());
+					return property;
+				}
 			}
+			// simple
+			ObjectProperty property = new ObjectProperty();
+			property.title("PropertyBox");
+			property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+					PropertyBox.class.getName());
+			return property;
 		}
 
-		return property;
+		// Default behaviour
+		if (chain.hasNext()) {
+			return chain.next().resolveProperty(type, context, annotations, chain);
+		}
+		return null;
 	}
 
 	/*
@@ -71,27 +91,15 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	@Override
 	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
 
-		boolean propertyBox = false;
-		if (SwaggerUtils.isPropertyBoxType(type)) {
-			propertyBox = true;
+		// skip PropertyBox types
+		if (PropertyBoxTypeInfo.check(type).isPresent()) {
+			return null;
 		}
 
-		Model model = null;
 		if (chain.hasNext()) {
-			model = chain.next().resolve(type, context, chain);
+			return chain.next().resolve(type, context, chain);
 		}
-
-		if (model != null) {
-			if (propertyBox) {
-				model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
-						PropertyBox.class.getName());
-				if (model.getProperties() != null) {
-					model.getProperties().remove("invalidAllowed");
-				}
-			}
-		}
-
-		return model;
+		return null;
 	}
 
 }
