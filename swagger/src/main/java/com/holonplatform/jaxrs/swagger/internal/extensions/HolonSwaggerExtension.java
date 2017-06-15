@@ -15,12 +15,18 @@
  */
 package com.holonplatform.jaxrs.swagger.internal.extensions;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.property.PropertyBox;
@@ -32,11 +38,17 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
 
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
+import io.swagger.models.Swagger;
+import io.swagger.models.parameters.BodyParameter;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.util.ParameterProcessor;
 
 /**
  * A {@link SwaggerExtension} to handle {@link PropertyBox} type model properties in operations parameters and response
@@ -64,7 +76,7 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	public void decorateOperation(Operation operation, Method method, Iterator<SwaggerExtension> chain) {
 		super.decorateOperation(operation, method, chain);
 
-		// response property set
+		// responses property set
 		final Map<String, Response> responses = operation.getResponses();
 		if (responses != null) {
 			getResponsePropertySet(method).ifPresent(propertySet -> {
@@ -78,16 +90,93 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 				}
 			});
 		}
-
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see io.swagger.jaxrs.ext.AbstractSwaggerExtension#extractParameters(java.util.List, java.lang.reflect.Type,
+	 * java.util.Set, java.util.Iterator)
+	 */
+	@Override
+	public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
+			Iterator<SwaggerExtension> chain) {
+
+		// Skip PropertyBox type 
+		Set<Type> skip = new HashSet<>();
+		if (typesToSkip != null) {
+			skip.addAll(typesToSkip);
+		}
+		skip.add(PropertyBox.class);
+		skip.add(PropertyBox[].class);
+
+		// load other parameters, if any
+		List<Parameter> parameters = new LinkedList<>();
+		if (chain.hasNext()) {
+			List<Parameter> ps = chain.next().extractParameters(annotations, type, skip, chain);
+			if (ps != null) {
+				parameters.addAll(ps);
+			}
+		}
+
+		// check PropertyBox type
+		if (PropertyBoxModelConverter.isPropertyBoxType(type) || PropertyBox[].class == type) {
+			PropertySet<?> propertySet = hasApiPropertySet(annotations);
+			if (propertySet != null) {
+				final Model model = buildPropertyBoxModel(propertySet, false);
+				BodyParameter bp = new BodyParameter();
+				bp.schema(model);
+				Parameter parameter = ParameterProcessor.applyAnnotations(new Swagger(), bp, type, annotations);
+				if (parameter != null) {
+					if (parameter instanceof BodyParameter) {
+						((BodyParameter)parameter).schema(model);
+					}
+					parameters.add(parameter);
+				}
+			}
+
+		}
+
+		return parameters;
+	}
+
+	private static PropertySet<?> hasApiPropertySet(List<Annotation> annotations) {
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof ApiPropertySet) {
+					return ApiPropertySetIntrospector.get().getPropertySet((ApiPropertySet) annotation);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Check whether the given <code>method</code> return type is annotated with the {@link ApiPropertySet} annotation
+	 * and extract the corresonding {@link PropertySet}.
+	 * @param method Method to inspect
+	 * @return Optional {@link PropertySet} obtained form the {@link ApiPropertySet} annotation, if available
+	 */
+	private static Optional<PropertySet<?>> getResponsePropertySet(Method method) {
+		final AnnotatedType rt = method.getAnnotatedReturnType();
+		if (rt != null && rt.isAnnotationPresent(ApiPropertySet.class)) {
+			return Optional.ofNullable(
+					ApiPropertySetIntrospector.get().getPropertySet(rt.getAnnotation(ApiPropertySet.class)));
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Build a {@link PropertyBox} type Swagger property using given <code>propertySet</code>.
+	 * @param propertySet Property set
+	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
+	 * @return Swagger property
+	 */
 	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly) {
 
 		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
 
 		final ObjectProperty property = new ObjectProperty();
 		property.title("PropertyBox");
-		// property.description("Holon Platform PropertyBox data container");
 		property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
 				PropertyBox.class.getName());
 
@@ -111,22 +200,42 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Check whether the given <code>method</code> return type is annotated with the {@link ApiPropertySet} annotation
-	 * and extract the corresonding {@link PropertySet}.
-	 * @param method Method to inspect
-	 * @return Optional {@link PropertySet} obtained form the {@link ApiPropertySet} annotation, if available
+	 * Build a {@link PropertyBox} type Swagger model using given <code>propertySet</code>.
+	 * @param propertySet Property set
+	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
+	 * @return Swagger model
 	 */
-	private static Optional<PropertySet<?>> getResponsePropertySet(Method method) {
-		final AnnotatedType rt = method.getAnnotatedReturnType();
-		if (rt != null && rt.isAnnotationPresent(ApiPropertySet.class)) {
-			return Optional.ofNullable(
-					ApiPropertySetIntrospector.get().getPropertySet(rt.getAnnotation(ApiPropertySet.class)));
-		}
-		// check arrays
-		if (method.getReturnType() != null && method.getReturnType().isArray()) {
+	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly) {
 
+		// TODO ArrayModel
+
+		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
+
+		final ModelImpl model = new ModelImpl();
+		model.type(ModelImpl.OBJECT);
+		model.name("PropertyBox");
+		model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+				PropertyBox.class.getName());
+
+		if (propertySet != null) {
+			// to respect insertion order
+			Map<String, Property> properties = new LinkedHashMap<>();
+
+			propertySet.forEach(p -> {
+				if (includeReadOnly || !p.isReadOnly()) {
+					if (Path.class.isAssignableFrom(p.getClass())) {
+						Property sp = factory.create(p);
+						if (sp != null) {
+							properties.put(((Path<?>) p).relativeName(), sp);
+						}
+					}
+				}
+			});
+
+			model.setProperties(properties);
 		}
-		return Optional.empty();
+
+		return model;
 	}
 
 	/**

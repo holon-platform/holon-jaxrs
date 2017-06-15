@@ -101,7 +101,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 		return model;
 	}
 
-	private static boolean isPropertyBoxType(Type type) {
+	public static boolean isPropertyBoxType(Type type) {
 		if (type != null) {
 			if (PropertyBox.class.equals(type)) {
 				return true;
