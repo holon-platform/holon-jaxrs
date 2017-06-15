@@ -15,11 +15,14 @@
  */
 package com.holonplatform.jaxrs.swagger.internal;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import com.holonplatform.core.i18n.LocalizationContext;
+import com.holonplatform.core.internal.BuiltinValidator;
+import com.holonplatform.core.internal.ValidatorDescriptor;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.property.Property;
@@ -27,8 +30,11 @@ import com.holonplatform.core.property.PropertyValueConverter.PropertyConversion
 import com.holonplatform.core.temporal.TemporalType;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.models.properties.AbstractNumericProperty;
+import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DateTimeProperty;
+import io.swagger.models.properties.StringProperty;
 
 /**
  * Default {@link SwaggerPropertyFactory} implementation.
@@ -94,6 +100,60 @@ public enum DefaultSwaggerPropertyFactory implements SwaggerPropertyFactory {
 		String message = LocalizationContext.translate(source, true);
 		if (message != null) {
 			property.setTitle(message);
+		}
+		// validators
+		source.getValidators().forEach(v -> {
+			if (v instanceof BuiltinValidator) {
+				((BuiltinValidator<?>) v).getDescriptor().ifPresent(d -> {
+					configurePropertyValidation(property, d);
+				});
+			}
+		});
+	}
+
+	private static void configurePropertyValidation(io.swagger.models.properties.Property property,
+			ValidatorDescriptor d) {
+		// required
+		if (d.isRequired()) {
+			property.setRequired(true);
+		}
+		// min
+		if (d.getMin() != null) {
+			if (property instanceof AbstractNumericProperty) {
+				(((AbstractNumericProperty) property)).setMinimum(new BigDecimal(d.getMin().doubleValue()));
+				(((AbstractNumericProperty) property)).setExclusiveMinimum(d.isExclusiveMin());
+			} else if (property instanceof StringProperty) {
+				((StringProperty) property)
+						.minLength(d.isExclusiveMin() ? d.getMin().intValue() + 1 : d.getMin().intValue());
+			} else if (property instanceof ArrayProperty) {
+				((ArrayProperty) property)
+						.setMinItems(d.isExclusiveMin() ? d.getMin().intValue() + 1 : d.getMin().intValue());
+			}
+		}
+		// max
+		if (d.getMax() != null) {
+			if (property instanceof AbstractNumericProperty) {
+				(((AbstractNumericProperty) property)).setMaximum(new BigDecimal(d.getMax().doubleValue()));
+				(((AbstractNumericProperty) property)).setExclusiveMaximum(d.isExclusiveMax());
+			} else if (property instanceof StringProperty) {
+				((StringProperty) property)
+						.maxLength(d.isExclusiveMax() ? d.getMax().intValue() - 1 : d.getMax().intValue());
+			} else if (property instanceof ArrayProperty) {
+				((ArrayProperty) property)
+						.setMaxItems(d.isExclusiveMax() ? d.getMax().intValue() - 1 : d.getMax().intValue());
+			}
+		}
+		// pattern
+		if (d.getPattern() != null) {
+			if (property instanceof StringProperty) {
+				((StringProperty) property).setPattern(d.getPattern());
+			}
+		}
+		// email
+		if (d.isEmail()) {
+			if (property instanceof StringProperty) {
+				((StringProperty) property).setFormat("email");
+			}
 		}
 	}
 
