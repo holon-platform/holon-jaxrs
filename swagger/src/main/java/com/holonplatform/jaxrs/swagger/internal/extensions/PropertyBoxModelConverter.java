@@ -19,10 +19,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerUtils;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
@@ -40,12 +39,6 @@ import io.swagger.models.properties.Property;
  */
 public class PropertyBoxModelConverter implements ModelConverter {
 
-	/**
-	 * Whether QueryDSL is available from classpath of current ClassLoader
-	 */
-	public static final boolean JACKSON_DATABIND_PRESENT = ClassUtils
-			.isPresent("com.fasterxml.jackson.databind.JavaType", ClassUtils.getDefaultClassLoader());
-
 	/*
 	 * (non-Javadoc)
 	 * @see io.swagger.converter.ModelConverter#resolveProperty(java.lang.reflect.Type,
@@ -61,7 +54,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 		}
 
 		if (property != null) {
-			if (isPropertyBoxType(type) || PropertyBox[].class == type) {
+			if (SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) {
 				property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
 						PropertyBox.class.getName());
 			}
@@ -79,7 +72,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
 
 		boolean propertyBox = false;
-		if (isPropertyBoxType(type)) {
+		if (SwaggerUtils.isPropertyBoxType(type)) {
 			propertyBox = true;
 		}
 
@@ -99,18 +92,6 @@ public class PropertyBoxModelConverter implements ModelConverter {
 		}
 
 		return model;
-	}
-
-	public static boolean isPropertyBoxType(Type type) {
-		if (type != null) {
-			if (PropertyBox.class.equals(type)) {
-				return true;
-			}
-			if (JACKSON_DATABIND_PRESENT && type instanceof JavaType) {
-				return ((JavaType) type).isTypeOrSubTypeOf(PropertyBox.class);
-			}
-		}
-		return false;
 	}
 
 }

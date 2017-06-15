@@ -35,6 +35,7 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
 import com.holonplatform.jaxrs.swagger.annotations.HolonSwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerUtils;
 
 import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
@@ -119,7 +120,7 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 		}
 
 		// check PropertyBox type
-		if (PropertyBoxModelConverter.isPropertyBoxType(type) || PropertyBox[].class == type) {
+		if (SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) {
 			PropertySet<?> propertySet = hasApiPropertySet(annotations);
 			if (propertySet != null) {
 				final Model model = buildPropertyBoxModel(propertySet, false);
