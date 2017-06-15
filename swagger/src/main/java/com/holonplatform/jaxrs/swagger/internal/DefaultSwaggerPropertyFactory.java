@@ -15,12 +15,20 @@
  */
 package com.holonplatform.jaxrs.swagger.internal;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
+import com.holonplatform.core.temporal.TemporalType;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.DateTimeProperty;
 
 /**
  * Default {@link SwaggerPropertyFactory} implementation.
@@ -31,15 +39,47 @@ public enum DefaultSwaggerPropertyFactory implements SwaggerPropertyFactory {
 
 	INSTANCE;
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory#create(com.holonplatform.core.property.Property)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory#create(com.holonplatform.core.property.Property)
 	 */
 	@Override
 	public io.swagger.models.properties.Property create(Property<?> property) throws PropertyConversionException {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
-		
+
 		// TODO validators
-		
+
+		// temporals
+		if (TypeUtils.isDate(property.getType()) || TypeUtils.isCalendar(property.getType())) {
+			TemporalType type = property.getConfiguration().getTemporalType().orElse(TemporalType.DATE);
+			io.swagger.models.properties.Property p;
+			if (type == TemporalType.DATE) {
+				p = new DateProperty();
+			} else {
+				p = new DateTimeProperty();
+			}
+			configureProperty(p, property);
+			return p;
+		}
+
+		if (LocalDate.class.isAssignableFrom(property.getType())) {
+			DateProperty p = new DateProperty();
+			configureProperty(p, property);
+			return p;
+		}
+		if (LocalDateTime.class.isAssignableFrom(property.getType())) {
+			DateTimeProperty p = new DateTimeProperty();
+			configureProperty(p, property);
+			return p;
+		}
+		if (OffsetDateTime.class.isAssignableFrom(property.getType())) {
+			DateTimeProperty p = new DateTimeProperty();
+			configureProperty(p, property);
+			return p;
+		}
+
+		// dft
 		io.swagger.models.properties.Property p = ModelConverters.getInstance().readAsProperty(property.getType());
 		configureProperty(p, property);
 		return p;
