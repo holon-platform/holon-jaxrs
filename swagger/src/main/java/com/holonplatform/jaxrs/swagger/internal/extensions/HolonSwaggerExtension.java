@@ -28,6 +28,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+
 import com.holonplatform.core.Path;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -104,27 +110,29 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 	public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
 			Iterator<SwaggerExtension> chain) {
 
-		// Skip PropertyBox type
-		Set<Type> skip = new HashSet<>();
-		if (typesToSkip != null) {
-			skip.addAll(typesToSkip);
-		}
-		skip.add(PropertyBox.class);
-		skip.add(PropertyBox[].class);
-
-		// load other parameters, if any
-		List<Parameter> parameters = new LinkedList<>();
-		if (chain.hasNext()) {
-			List<Parameter> ps = chain.next().extractParameters(annotations, type, skip, chain);
-			if (ps != null) {
-				parameters.addAll(ps);
-			}
-		}
-
-		// check PropertyBox type
-		if (SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) {
+		// check PropertyBox type and body parameter case
+		if ((SwaggerUtils.isPropertyBoxType(type) || PropertyBox[].class == type) && isBodyParameter(annotations)) {
+			// check property set
 			PropertySet<?> propertySet = hasApiPropertySet(annotations);
 			if (propertySet != null) {
+
+				// Skip PropertyBox type
+				Set<Type> skip = new HashSet<>();
+				if (typesToSkip != null) {
+					skip.addAll(typesToSkip);
+				}
+				skip.add(PropertyBox.class);
+				skip.add(PropertyBox[].class);
+
+				// load other parameters, if any
+				List<Parameter> parameters = new LinkedList<>();
+				if (chain.hasNext()) {
+					List<Parameter> ps = chain.next().extractParameters(annotations, type, skip, chain);
+					if (ps != null) {
+						parameters.addAll(ps);
+					}
+				}
+
 				final Model model = buildPropertyBoxModel(propertySet, false);
 				BodyParameter bp = new BodyParameter();
 				bp.setRequired(isParameterRequired(annotations));
@@ -136,11 +144,31 @@ public class HolonSwaggerExtension extends AbstractSwaggerExtension {
 					}
 					parameters.add(parameter);
 				}
+				
+				return parameters;
 			}
-
 		}
 
-		return parameters;
+		return super.extractParameters(annotations, type, typesToSkip, chain);
+	}
+
+	/**
+	 * Check whether a parameter is a <em>body</em> parameter, i.e. it is not annotated with standard JAX-RS parameters
+	 * annotations.
+	 * @param annotations Annotations to scan
+	 * @return <code>true</code> if the parameter is a <em>body</em> parameter
+	 */
+	private static boolean isBodyParameter(List<Annotation> annotations) {
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation instanceof PathParam || annotation instanceof QueryParam
+						|| annotation instanceof HeaderParam || annotation instanceof CookieParam
+						|| annotation instanceof FormParam) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
