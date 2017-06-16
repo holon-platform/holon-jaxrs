@@ -1,1 +1,1 @@
-com.holonplatform.jaxrs.swagger.internal.extensions.HolonSwaggerExtension
+com.holonplatform.jaxrs.swagger.internal.extensions.PropertyBoxSwaggerExtension
