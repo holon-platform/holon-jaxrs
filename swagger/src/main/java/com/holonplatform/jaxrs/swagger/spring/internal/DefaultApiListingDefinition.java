@@ -335,6 +335,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		}
 		swaggerCfg.setTitle(getTitle());
 		swaggerCfg.setVersion(getVersion());
+		swaggerCfg.setDescription(getDescription());
 		swaggerCfg.setTermsOfServiceUrl(getTermsOfServiceUrl());
 		swaggerCfg.setContact(getContact());
 		swaggerCfg.setLicense(getLicense());
