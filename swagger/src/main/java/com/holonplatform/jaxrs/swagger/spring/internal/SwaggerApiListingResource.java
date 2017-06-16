@@ -18,12 +18,8 @@ package com.holonplatform.jaxrs.swagger.spring.internal;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,8 +35,7 @@ public class SwaggerApiListingResource extends AbstractApiListingResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, "application/yaml" })
 	@ApiOperation(value = "Swagger API documentation in either JSON or YAML", hidden = true)
-	public Response getListing(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo,
-			@QueryParam("type") String type) {
+	public Response getListing(@QueryParam("type") String type) {
 		if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
 			return asYaml();
 		} else {
