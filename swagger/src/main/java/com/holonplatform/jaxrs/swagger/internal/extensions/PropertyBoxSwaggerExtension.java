@@ -75,7 +75,7 @@ import io.swagger.util.ParameterProcessor;
  * 
  * @since 5.0.0
  */
-public class HolonSwaggerExtension extends AbstractSwaggerExtension {
+public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 
 	/*
 	 * (non-Javadoc)
