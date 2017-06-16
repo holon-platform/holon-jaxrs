@@ -16,7 +16,7 @@
 package com.holonplatform.jaxrs.swagger.internal;
 
 import com.holonplatform.core.internal.Logger;
-import com.holonplatform.jaxrs.swagger.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 
 /**
  * Swagger integration {@link Logger}.
@@ -25,7 +25,7 @@ import com.holonplatform.jaxrs.swagger.HolonSwaggerExtensions;
  */
 public interface SwaggerLogger {
 
-	final static String NAME = HolonSwaggerExtensions.class.getPackage().getName();
+	final static String NAME = SwaggerExtensions.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

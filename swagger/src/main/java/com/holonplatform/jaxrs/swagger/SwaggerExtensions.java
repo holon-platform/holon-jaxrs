@@ -20,7 +20,7 @@ package com.holonplatform.jaxrs.swagger;
  * 
  * @since 5.0.0
  */
-public enum HolonSwaggerExtensions {
+public enum SwaggerExtensions {
 
 	/**
 	 * Model object type
@@ -29,7 +29,7 @@ public enum HolonSwaggerExtensions {
 
 	private final String extensionName;
 
-	private HolonSwaggerExtensions(String extensionName) {
+	private SwaggerExtensions(String extensionName) {
 		this.extensionName = extensionName;
 	}
 

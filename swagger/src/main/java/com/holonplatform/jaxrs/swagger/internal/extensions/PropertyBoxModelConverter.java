@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.jaxrs.swagger.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 
 import io.swagger.converter.ModelConverter;
@@ -33,7 +33,7 @@ import io.swagger.models.properties.Property;
 
 /**
  * A Swagger {@link ModelConverter} to handle {@link PropertyBox} type model objects and setting the
- * {@link HolonSwaggerExtensions#MODEL_TYPE} extension property value.
+ * {@link SwaggerExtensions#MODEL_TYPE} extension property value.
  * <p>
  * This converter is automatically loaded and registered in Swagger using Java service extensions.
  * </p>
@@ -71,7 +71,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 			// simple
 			ObjectProperty property = new ObjectProperty();
 			property.title("PropertyBox");
-			property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+			property.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
 					PropertyBox.class.getName());
 			return property;
 		}

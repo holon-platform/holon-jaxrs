@@ -37,7 +37,7 @@ import javax.ws.rs.QueryParam;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.jaxrs.swagger.HolonSwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
 import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
@@ -270,7 +270,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly) {
 		ObjectProperty property = new ObjectProperty();
 		property.title("PropertyBox");
-		property.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+		property.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
 				PropertyBox.class.getName());
 		property.properties(getPropertySetProperties(propertySet, includeReadOnly));
 		return property;
@@ -289,7 +289,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			// Array model
 			ArrayModel model = new ArrayModel();
 			model.items(buildPropertyBoxProperty(propertySet, includeReadOnly));
-			model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+			model.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
 					PropertyBox.class.getName());
 			return model;
 		}
@@ -299,22 +299,22 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 		model.type(ModelImpl.OBJECT);
 		model.name("PropertyBox");
 		model.setProperties(getPropertySetProperties(propertySet, includeReadOnly));
-		model.getVendorExtensions().put(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName(),
+		model.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
 				PropertyBox.class.getName());
 		return model;
 	}
 
 	/**
 	 * Check whether the given property is of {@link PropertyBox} type using the
-	 * {@link HolonSwaggerExtensions#MODEL_TYPE} extension name.
+	 * {@link SwaggerExtensions#MODEL_TYPE} extension name.
 	 * @param property Property to check
 	 * @return <code>true</code> if given property is of {@link PropertyBox} type
 	 */
 	private static boolean isPropertyBoxPropertyType(Property property) {
 		if (property != null && property.getVendorExtensions() != null
-				&& property.getVendorExtensions().containsKey(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName())
+				&& property.getVendorExtensions().containsKey(SwaggerExtensions.MODEL_TYPE.getExtensionName())
 				&& PropertyBox.class.getName().equals(
-						property.getVendorExtensions().get(HolonSwaggerExtensions.MODEL_TYPE.getExtensionName()))) {
+						property.getVendorExtensions().get(SwaggerExtensions.MODEL_TYPE.getExtensionName()))) {
 			return true;
 		}
 		return false;
@@ -322,7 +322,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 
 	/**
 	 * Check if the given property is and {@link ArrayProperty} of {@link PropertyBox} type using the
-	 * {@link HolonSwaggerExtensions#MODEL_TYPE} extension name.
+	 * {@link SwaggerExtensions#MODEL_TYPE} extension name.
 	 * @param property Property to check
 	 * @return if the property is of {@link PropertyBox} type, return such property casted to {@link ArrayProperty},
 	 *         <code>null</code> otherwise
