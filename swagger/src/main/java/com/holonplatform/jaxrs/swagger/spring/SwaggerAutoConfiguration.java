@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJerseyConfiguration;
 
 import io.swagger.models.Swagger;
 

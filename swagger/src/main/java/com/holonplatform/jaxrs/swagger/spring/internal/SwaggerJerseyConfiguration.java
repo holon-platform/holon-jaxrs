@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.spring;
+package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.model.Resource;
@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
