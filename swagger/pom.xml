@@ -68,6 +68,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<!-- ByteBuddy -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>${bytebuddy.version}</version>
+		</dependency>
 
 		<!-- Optional Jackson -->
 		<dependency>

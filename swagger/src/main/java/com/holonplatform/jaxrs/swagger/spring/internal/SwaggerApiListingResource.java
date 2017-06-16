@@ -15,10 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
@@ -30,31 +27,24 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.swagger.annotations.ApiOperation;
-import io.swagger.jaxrs.listing.BaseApiListingResource;
 
 /**
- * JAX-RS resource to provide Swagger api documentation.
+ * JAX-RS resource to provide Swagger API documentation.
  * 
  * @since 5.0.0
  */
-@Path("/api-docs")
-public class SwaggerApiListingResource extends BaseApiListingResource {
-
-	@Context
-	ServletContext context;
+public class SwaggerApiListingResource extends AbstractApiListingResource {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, "application/yaml" })
 	@ApiOperation(value = "Swagger API documentation in either JSON or YAML", hidden = true)
-	public Response getListing(@Context Application app, @Context ServletConfig sc, @Context HttpHeaders headers,
-			@Context UriInfo uriInfo, @QueryParam("type") String type) throws JsonProcessingException {
+	public Response getListing(@Context Application app, @Context HttpHeaders headers, @Context UriInfo uriInfo,
+			@QueryParam("type") String type) {
 		if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
-			return getListingYamlResponse(app, context, sc, headers, uriInfo);
+			return asYaml();
 		} else {
-			return getListingJsonResponse(app, context, sc, headers, uriInfo);
+			return asJson();
 		}
 	}
 

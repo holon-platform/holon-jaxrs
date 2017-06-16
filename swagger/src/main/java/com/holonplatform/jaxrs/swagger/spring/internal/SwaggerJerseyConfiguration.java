@@ -15,8 +15,10 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
+import java.util.List;
+
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.model.Resource;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 
@@ -24,7 +26,6 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 
-import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 /**
@@ -32,12 +33,14 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
  * 
  * @since 5.0.0
  */
-public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer {
+public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, BeanClassLoaderAware {
 
 	/**
 	 * Logger
 	 */
 	private final static Logger LOGGER = SwaggerLogger.create();
+
+	private ClassLoader classLoader;
 
 	@Value("${spring.jersey.application-path:/}")
 	private String apiPath;
@@ -54,6 +57,15 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.springframework.beans.factory.BeanClassLoaderAware#setBeanClassLoader(java.lang.ClassLoader)
+	 */
+	@Override
+	public void setBeanClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.
 	 * ResourceConfig)
@@ -62,55 +74,17 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer {
 	public void customize(ResourceConfig config) {
 		// Serializers
 		if (!config.isRegistered(SwaggerSerializers.class)) {
-			config.register(SwaggerSerializers.class);
+			config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
 		}
-
-		// Api listing
-		String path = configurationProperties.getPath();
-		if (path == null || path.trim().equals("")) {
-			path = SwaggerConfigurationProperties.DEFAULT_PATH;
+		// API listings
+		final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
+		for (ApiListingDefinition definition : definitions) {
+			definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
+				config.register(e.getResourceClass());
+				LOGGER.info("[" + e.getGroupId() + "] Swagger API listing configured - Path: "
+						+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
+			});
 		}
-		config.registerResources(Resource.builder(SwaggerApiListingResource.class).path(path).build());
-
-		// Config
-		BeanConfig swaggerCfg = new BeanConfig();
-		if (configurationProperties.getResourcePackage() != null
-				&& !configurationProperties.getResourcePackage().trim().equals("")) {
-			swaggerCfg.setResourcePackage(configurationProperties.getResourcePackage());
-		}
-		swaggerCfg.setTitle(configurationProperties.getTitle());
-		swaggerCfg.setVersion(configurationProperties.getVersion());
-		swaggerCfg.setTermsOfServiceUrl(configurationProperties.getTermsOfServiceUrl());
-		swaggerCfg.setContact(configurationProperties.getContact());
-		swaggerCfg.setLicense(configurationProperties.getLicense());
-		swaggerCfg.setLicenseUrl(configurationProperties.getLicenseUrl());
-
-		swaggerCfg.setBasePath(apiPath);
-		swaggerCfg.setHost(configurationProperties.getHost());
-
-		if (configurationProperties.getSchemes() != null && configurationProperties.getSchemes().length > 0) {
-			swaggerCfg.setSchemes(configurationProperties.getSchemes());
-		}
-		swaggerCfg.setPrettyPrint(configurationProperties.isPrettyPrint());
-
-		// scan
-		swaggerCfg.setScan(true);
-
-		StringBuilder ap = new StringBuilder();
-		if (apiPath != null) {
-			if (!apiPath.startsWith("/")) {
-				ap.append('/');
-			}
-			ap.append(apiPath);
-		}
-		if (path != null) {
-			if (!path.startsWith("/")) {
-				ap.append('/');
-			}
-			ap.append(path);
-		}
-
-		LOGGER.info("Swagger initialized - API listing path: " + ap.toString());
 
 	}
 
