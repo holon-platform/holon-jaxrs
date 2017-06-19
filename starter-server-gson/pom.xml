@@ -43,7 +43,7 @@
 		<!-- Holon JAX-RS server -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-jaxrs-server</artifactId>
+			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

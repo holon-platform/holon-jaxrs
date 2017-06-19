@@ -33,10 +33,10 @@
 
 	<dependencies>
 
-		<!-- Holon JAX-RS server starter -->
+		<!-- Holon JAX-RS server and Jersey auto-config -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-starter-server</artifactId>
+			<artifactId>holon-starter-jaxrs-server</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
