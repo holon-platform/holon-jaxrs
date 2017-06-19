@@ -29,29 +29,31 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@DirtiesContext
 public class TestJerseyAutoConfiguration {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@ComponentScan(basePackageClasses=TestEndpoint.class)
+	@ComponentScan(basePackageClasses = TestEndpoint.class)
 	static class Config {
 
 	}
-	
+
 	@Autowired
 	private ResourceConfig jerseyConfig;
-	
+
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(jerseyConfig);
 	}
-	
+
 	@Test
 	public void testEndpoint() {
 		Client client = ClientBuilder.newClient();

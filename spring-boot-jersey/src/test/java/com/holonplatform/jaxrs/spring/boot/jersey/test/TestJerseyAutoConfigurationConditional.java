@@ -30,17 +30,19 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@DirtiesContext
 public class TestJerseyAutoConfigurationConditional {
 
 	@Configuration
 	@EnableAutoConfiguration
-	@ComponentScan(basePackageClasses=TestEndpoint.class)
+	@ComponentScan(basePackageClasses = TestEndpoint.class)
 	static class Config {
 
 		@Bean
@@ -49,18 +51,18 @@ public class TestJerseyAutoConfigurationConditional {
 			cfg.property("test", "customConfig");
 			return cfg;
 		}
-		
+
 	}
-	
+
 	@Autowired
 	private ResourceConfig jerseyConfig;
-	
+
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(jerseyConfig);
 		Assert.assertEquals("customConfig", jerseyConfig.getProperty("test"));
 	}
-	
+
 	@Test
 	public void testEndpoint() {
 		Client client = ClientBuilder.newClient();

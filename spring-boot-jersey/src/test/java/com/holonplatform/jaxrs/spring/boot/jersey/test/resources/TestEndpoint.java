@@ -34,5 +34,5 @@ public class TestEndpoint {
 	public String ping() {
 		return "pong";
 	}
-	
+
 }
