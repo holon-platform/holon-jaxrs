@@ -23,17 +23,20 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContextListener;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.ext.Provider;
 
+import org.jboss.resteasy.core.ResourceMethodRegistry;
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
+import org.jboss.resteasy.plugins.spring.SpringBeanProcessor;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
@@ -47,7 +50,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyResourcesPostProcessor;
+import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapListener;
 
 /**
  * TODO
@@ -100,20 +103,28 @@ public class ResteasyAutoConfiguration {
 		}
 	}
 
-	@Configuration
-	@ConditionalOnProperty(name = "holon.resteasy.bean-scan", matchIfMissing = true)
-	static class ResourcesAutoConfiguration {
+	@Bean
+	public static SpringBeanProcessor resteasySpringBeanProcessor() {
+		final ResteasyProviderFactory resteasyProviderFactory = new ResteasyProviderFactory();
+		final ResourceMethodRegistry resourceMethodRegistry = new ResourceMethodRegistry(resteasyProviderFactory);
 
-		@Bean
-		public static ResteasyResourcesPostProcessor jerseyResourcesPostProcessor() {
-			return new ResteasyResourcesPostProcessor();
-		}
+		SpringBeanProcessor springBeanProcessor = new SpringBeanProcessor();
+		springBeanProcessor.setProviderFactory(resteasyProviderFactory);
+		springBeanProcessor.setRegistry(resourceMethodRegistry);
+
+		return springBeanProcessor;
+	}
+
+	@Bean
+	public ServletContextListener resteasyBootstrap(SpringBeanProcessor springBeanProcessor) {
+		return new ResteasyBootstrapListener(springBeanProcessor);
 
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(name = "resteasyServletRegistration")
 	public ServletRegistrationBean resteasyServletRegistration() {
+
 		final Servlet servlet = new HttpServlet30Dispatcher();
 
 		ServletRegistrationBean registration = new ServletRegistrationBean(servlet, this.path);
@@ -135,11 +146,11 @@ public class ResteasyAutoConfiguration {
 				}
 			}
 			if (!providers.isEmpty()) {
-				registration.addInitParameter(ResteasyContextParameters.RESTEASY_PROVIDERS,
+				registration.addInitParameter(ResteasyContextParameters.RESTEASY_SCANNED_PROVIDERS,
 						providers.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
 			}
 			if (!resources.isEmpty()) {
-				registration.addInitParameter(ResteasyContextParameters.RESTEASY_RESOURCES,
+				registration.addInitParameter(ResteasyContextParameters.RESTEASY_SCANNED_RESOURCES,
 						resources.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
 			}
 		}

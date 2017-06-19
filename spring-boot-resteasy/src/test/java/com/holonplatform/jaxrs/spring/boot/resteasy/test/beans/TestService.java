@@ -15,26 +15,10 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy.test.beans;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+public class TestService {
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-@Path("test2")
-@Component
-public class TestBeanEndpoint {
-
-	@Autowired
-	private TestService ts;
-	
-	@GET
-	@Path("ping")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String ping() {
-		return ts.getValue("pung");
+	public String getValue(String value) {
+		return value;
 	}
-
+	
 }
