@@ -87,7 +87,6 @@
 		<module>starter-server-gson</module>
 		<module>starter-server-undertow</module>
 		<module>starter-server-undertow-gson</module>
-		<module>starter-swagger</module>
 		<module>bom</module>
 		<module>documentation</module>
 	</modules>

@@ -33,6 +33,13 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<!-- Swagger integration -->
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-jaxrs-swagger</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Spring Boot starters -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
@@ -62,11 +69,6 @@
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
 				<artifactId>holon-starter-jaxrs-undertow-gson</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-swagger</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
