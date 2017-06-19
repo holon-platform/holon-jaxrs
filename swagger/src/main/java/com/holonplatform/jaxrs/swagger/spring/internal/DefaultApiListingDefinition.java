@@ -18,10 +18,10 @@ package com.holonplatform.jaxrs.swagger.spring.internal;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
-import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.config.SwaggerConfigLocator;
 
 /**
@@ -77,31 +77,31 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			if (cfg != null) {
 				setResourcePackage(cfg.getResourcePackage());
 				if (cfg.getPath() != null && !cfg.getPath().trim().equals("")) {
-					setPath(properties.getPath());
+					setPath(cfg.getPath());
 				}
 				if (cfg.getSchemes() != null && cfg.getSchemes().length > 0) {
-					setSchemes(properties.getSchemes());
+					setSchemes(cfg.getSchemes());
 				}
 				if (cfg.getTitle() != null) {
-					setTitle(properties.getTitle());
+					setTitle(cfg.getTitle());
 				}
 				if (cfg.getDescription() != null) {
-					setDescription(properties.getDescription());
+					setDescription(cfg.getDescription());
 				}
 				if (cfg.getVersion() != null) {
-					setVersion(properties.getVersion());
+					setVersion(cfg.getVersion());
 				}
 				if (cfg.getTermsOfServiceUrl() != null) {
-					setTermsOfServiceUrl(properties.getTermsOfServiceUrl());
+					setTermsOfServiceUrl(cfg.getTermsOfServiceUrl());
 				}
 				if (cfg.getContact() != null) {
-					setContact(properties.getContact());
+					setContact(cfg.getContact());
 				}
 				if (cfg.getLicense() != null) {
-					setLicense(properties.getLicense());
+					setLicense(cfg.getLicense());
 				}
 				if (cfg.getLicenseUrl() != null) {
-					setLicenseUrl(properties.getLicenseUrl());
+					setLicenseUrl(cfg.getLicenseUrl());
 				}
 			}
 		}
@@ -329,7 +329,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			}
 		}
 
-		BeanConfig swaggerCfg = new BeanConfig();
+		SwaggerConfiguration swaggerCfg = new SwaggerConfiguration();
 		if (getResourcePackage() != null) {
 			swaggerCfg.setResourcePackage(getResourcePackage());
 		}
@@ -354,7 +354,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		swaggerCfg.setContextId(getGroupId());
 
 		// scan
-		swaggerCfg.setScan(true); // TODO lazy mode
+		swaggerCfg.setScan(true);
 
 		SwaggerConfigLocator.getInstance().putSwagger(getGroupId(), swaggerCfg.getSwagger());
 
