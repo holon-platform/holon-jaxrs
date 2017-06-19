@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.Servlet;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
@@ -123,9 +125,23 @@ public class ResteasyAutoConfiguration {
 
 		Set<Class<?>> classes = this.config.getClasses();
 		if (classes != null) {
-			// TODO providers
-			String resources = classes.stream().map(c -> c.getName()).collect(Collectors.joining(","));
-			registration.addInitParameter(ResteasyContextParameters.RESTEASY_RESOURCES, resources);
+			final Set<Class<?>> resources = new HashSet<>();
+			final Set<Class<?>> providers = new HashSet<>();
+			for (Class<?> cls : classes) {
+				if (cls.isAnnotationPresent(Provider.class)) {
+					providers.add(cls);
+				} else {
+					resources.add(cls);
+				}
+			}
+			if (!providers.isEmpty()) {
+				registration.addInitParameter(ResteasyContextParameters.RESTEASY_PROVIDERS,
+						providers.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
+			}
+			if (!resources.isEmpty()) {
+				registration.addInitParameter(ResteasyContextParameters.RESTEASY_RESOURCES,
+						resources.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
+			}
 		}
 
 		return registration;
