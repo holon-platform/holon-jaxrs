@@ -75,10 +75,15 @@ public final class SwaggerJaxrsUtils implements Serializable {
 			ap.append(basePath);
 		}
 		if (path != null) {
-			if (!path.startsWith("/")) {
+			final String prefix = ap.toString();
+			if (prefix != null && !prefix.endsWith("/")) {
 				ap.append('/');
 			}
-			ap.append(path);
+			if (path.startsWith("/")) {
+				ap.append(path.substring(1));
+			} else {
+				ap.append(path);
+			}
 		}
 		return ap.toString();
 	}

@@ -198,12 +198,9 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	 * @return If the {@link ApiPropertySet} annotation is present in given annotations list, returns it
 	 */
 	private static ApiPropertySet hasApiPropertySet(List<Annotation> annotations) {
-		if (annotations != null) {
-			for (Annotation annotation : annotations) {
-				if (annotation instanceof ApiPropertySet) {
-					return (ApiPropertySet) annotation;
-				}
-			}
+		List<ApiPropertySet> as = AnnotationUtils.getAnnotations(annotations, ApiPropertySet.class);
+		if (!as.isEmpty()) {
+			return as.get(0);
 		}
 		return null;
 	}
@@ -239,8 +236,15 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	 */
 	private static Optional<ApiPropertySet> getResponsePropertySet(Method method) {
 		final AnnotatedType rt = method.getAnnotatedReturnType();
-		if (rt != null && rt.isAnnotationPresent(ApiPropertySet.class)) {
-			return Optional.of(rt.getAnnotation(ApiPropertySet.class));
+		if (rt != null) {
+			if (rt.isAnnotationPresent(ApiPropertySet.class)) {
+				return Optional.of(rt.getAnnotation(ApiPropertySet.class));
+			}
+			// check meta-annotations
+			List<ApiPropertySet> annotations = AnnotationUtils.getAnnotations(rt, ApiPropertySet.class);
+			if (!annotations.isEmpty()) {
+				return Optional.ofNullable(annotations.get(0));
+			}
 		}
 		return Optional.empty();
 	}
@@ -329,6 +333,13 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 		return model;
 	}
 
+	/**
+	 * Define a name {@link PropertySet} Model in given {@link Swagger} instance.
+	 * @param swagger Swagger instance (not null)
+	 * @param propertySet Property set
+	 * @param modelName Model name (not null)
+	 * @return Defined model name
+	 */
 	private static String defineModel(Swagger swagger, PropertySet<?> propertySet, String modelName) {
 		if (modelName != null) {
 			if (swagger == null) {
