@@ -34,6 +34,12 @@ public class SwaggerConfigurationProperties {
 	public static final String DEFAULT_PATH = "/api-docs";
 
 	/**
+	 * The package name to scan to detect API group endpoints. Ingored when at least {@link ApiGroupConfiguration} is
+	 * present.
+	 */
+	private String resourcePackage;
+
+	/**
 	 * API listing common base path. This path will be used as base API listing group path if no specific group path
 	 * specified.
 	 */
@@ -91,6 +97,14 @@ public class SwaggerConfigurationProperties {
 	private boolean prettyPrint;
 
 	private final List<ApiGroupConfiguration> apiGroups = new LinkedList<>();
+
+	public String getResourcePackage() {
+		return resourcePackage;
+	}
+
+	public void setResourcePackage(String resourcePackage) {
+		this.resourcePackage = resourcePackage;
+	}
 
 	public String getPath() {
 		return path;

@@ -98,7 +98,7 @@ public final class SwaggerJaxrsUtils implements Serializable {
 	public static ApiGroupConfiguration getApiGroup(SwaggerConfigurationProperties cfg, String groupId) {
 		if (groupId != null) {
 			List<ApiGroupConfiguration> groups = cfg.getApiGroups();
-			if (groups != null) {
+			if (groups != null && !groups.isEmpty()) {
 				for (ApiGroupConfiguration group : groups) {
 					if (groupId.equals(group.getGroupId())) {
 						return group;
@@ -126,7 +126,7 @@ public final class SwaggerJaxrsUtils implements Serializable {
 		List<ApiListingDefinition> definitions = new LinkedList<>();
 		if (cfg != null) {
 			List<ApiGroupConfiguration> groups = cfg.getApiGroups();
-			if (groups != null) {
+			if (groups != null && !groups.isEmpty()) {
 				for (ApiGroupConfiguration group : groups) {
 					ApiListingDefinition definition = ApiListingDefinition.create(group.getGroupId(), cfg);
 					ApiListingDefinition exists = getByGroupId(definitions, definition.getGroupId());
@@ -134,6 +134,11 @@ public final class SwaggerJaxrsUtils implements Serializable {
 						throw new SwaggerConfigurationException("Duplicate API group id: " + exists.getGroupId());
 					}
 					definitions.add(definition);
+				}
+			} else {
+				// default group
+				if (cfg.getResourcePackage() != null && !cfg.getResourcePackage().trim().equals("")) {
+					definitions.add(ApiListingDefinition.createDefault(cfg));
 				}
 			}
 		}

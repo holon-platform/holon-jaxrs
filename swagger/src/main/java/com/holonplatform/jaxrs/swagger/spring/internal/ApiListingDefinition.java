@@ -51,4 +51,26 @@ public interface ApiListingDefinition extends Serializable {
 		return new DefaultApiListingDefinition(groupId, properties);
 	}
 
+	/**
+	 * Create the default api group definition.
+	 * @param properties Swagger configuration properties
+	 * @return Default group {@link ApiListingDefinition} instance
+	 */
+	static ApiListingDefinition createDefault(SwaggerConfigurationProperties properties) {
+		DefaultApiListingDefinition definition = new DefaultApiListingDefinition(ApiGroupId.DEFAULT_GROUP_ID);
+		definition.setResourcePackage(properties.getResourcePackage());
+		definition.setPath(properties.getPath());
+		definition.setSchemes(properties.getSchemes());
+		definition.setTitle(properties.getTitle());
+		definition.setDescription(properties.getDescription());
+		definition.setVersion(properties.getVersion());
+		definition.setTermsOfServiceUrl(properties.getTermsOfServiceUrl());
+		definition.setContact(properties.getContact());
+		definition.setLicense(properties.getLicense());
+		definition.setLicenseUrl(properties.getLicenseUrl());
+		definition.setHost(properties.getHost());
+		definition.setPrettyPrint(properties.isPrettyPrint());
+		return definition;
+	}
+
 }
