@@ -32,7 +32,6 @@ import javax.ws.rs.ext.Provider;
 public class ResteasyConfig extends Application {
 
 	private final transient Set<Class<?>> classes = new HashSet<>();
-	private final transient Set<Object> singletons = new HashSet<>();
 	private final transient Map<String, Object> properties = new HashMap<>();
 	private final transient List<String> packages = new LinkedList<>();
 
@@ -95,15 +94,6 @@ public class ResteasyConfig extends Application {
 	@Override
 	public Set<Class<?>> getClasses() {
 		return classes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Application#getSingletons()
-	 */
-	@Override
-	public Set<Object> getSingletons() {
-		return singletons;
 	}
 
 	/*
