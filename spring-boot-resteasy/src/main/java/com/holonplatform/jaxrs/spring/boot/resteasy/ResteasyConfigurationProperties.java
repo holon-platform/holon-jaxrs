@@ -21,25 +21,31 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * TODO
+ * Resteasy Spring Boot configuration properties.
+ * 
+ * @since 5.0.0
  */
 @ConfigurationProperties(prefix = "holon.resteasy")
 public class ResteasyConfigurationProperties {
 
 	/**
-	 * JAX-RS Application path
+	 * Reasteasy integration type.
+	 */
+	private Type type = Type.SERVLET;
+
+	/**
+	 * JAX-RS Application path. Overrides the value of "@ApplicationPath" if specified.
 	 */
 	private String applicationPath;
 
 	/**
-	 * Init parameters to pass to Resteasy servlet.
+	 * Servlet context init parameters.
 	 */
 	private Map<String, String> init = new HashMap<>();
 
-	/**
-	 * Load on startup priority of the Resteasy servlet.
-	 */
-	private int loadOnStartup = 1;
+	private final Filter filter = new Filter();
+
+	private final Servlet servlet = new Servlet();
 
 	public String getApplicationPath() {
 		return applicationPath;
@@ -57,12 +63,60 @@ public class ResteasyConfigurationProperties {
 		this.init = init;
 	}
 
-	public int getLoadOnStartup() {
-		return loadOnStartup;
+	public Filter getFilter() {
+		return this.filter;
 	}
 
-	public void setLoadOnStartup(int loadOnStartup) {
-		this.loadOnStartup = loadOnStartup;
+	public Servlet getServlet() {
+		return this.servlet;
+	}
+
+	public Type getType() {
+		return this.type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public enum Type {
+
+		SERVLET, FILTER
+
+	}
+
+	public static class Filter {
+
+		/**
+		 * Reasteasy filter chain order.
+		 */
+		private int order;
+
+		public int getOrder() {
+			return this.order;
+		}
+
+		public void setOrder(int order) {
+			this.order = order;
+		}
+
+	}
+
+	public static class Servlet {
+
+		/**
+		 * Load on startup priority of the Resteasy servlet.
+		 */
+		private int loadOnStartup = -1;
+
+		public int getLoadOnStartup() {
+			return this.loadOnStartup;
+		}
+
+		public void setLoadOnStartup(int loadOnStartup) {
+			this.loadOnStartup = loadOnStartup;
+		}
+
 	}
 
 }

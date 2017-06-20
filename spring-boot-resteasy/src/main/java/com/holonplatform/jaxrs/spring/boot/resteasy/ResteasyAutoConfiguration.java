@@ -15,19 +15,23 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextListener;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.core.ResourceMethodRegistry;
+import org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.spring.SpringBeanProcessor;
@@ -37,11 +41,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.RegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,11 +54,34 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.ServletContextAware;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapListener;
 
 /**
- * TODO
+ * Spring boot auto configuration to setup Resteasy using a {@link ResteasyConfig} JAX-RS Application bean and
+ * automatically register any JAX-RS resource which is declared as a Spring bean, such as {@link Path} and
+ * {@link Provider} annotated beans.
+ * 
+ * <p>
+ * If a {@link ResteasyConfig} bean is not provided in Spring context, a default one will be created and registered
+ * automatically. You can use {@link ResteasyConfig} class to explicitly register JAX-RS endpoint/provider classes,
+ * singleton resources and configuration properties.
+ * </p>
+ * 
+ * <p>
+ * The {@link ResteasyConfigCustomizer} interface can be used to customize application resources registration. Any
+ * Spring bean which implements such interface is automatically detected and the
+ * {@link ResteasyConfigCustomizer#customize(ResteasyConfig)} method is invoked.
+ * </p>
+ * 
+ * <p>
+ * The Resteasy JAX-RS application path can be defined either using the {@link ApplicationPath} annotation on the
+ * {@link ResteasyConfig} bean class or through the <code>holon.resteasy.application-path</code> configuration property.
+ * See {@link ResteasyConfigurationProperties} for a list of available configuration properties.
+ * </p>
+ * 
+ * @since 5.0.0
  */
 @Configuration
 @ConditionalOnClass(name = { "org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap",
@@ -62,7 +90,7 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapLi
 @AutoConfigureBefore(DispatcherServletAutoConfiguration.class)
 @AutoConfigureAfter(JacksonAutoConfiguration.class)
 @EnableConfigurationProperties(ResteasyConfigurationProperties.class)
-public class ResteasyAutoConfiguration {
+public class ResteasyAutoConfiguration implements ServletContextAware {
 
 	private final ResteasyConfigurationProperties resteasy;
 
@@ -117,55 +145,50 @@ public class ResteasyAutoConfiguration {
 
 	@Bean
 	public ServletContextListener resteasyBootstrap(SpringBeanProcessor springBeanProcessor) {
-		return new ResteasyBootstrapListener(springBeanProcessor);
+		return new ResteasyBootstrapListener(springBeanProcessor, this.config);
 
 	}
 
 	@Bean
 	@ConditionalOnMissingBean(name = "resteasyServletRegistration")
+	@ConditionalOnProperty(prefix = "holon.resteasy", name = "type", havingValue = "servlet", matchIfMissing = true)
 	public ServletRegistrationBean resteasyServletRegistration() {
-
 		final Servlet servlet = new HttpServlet30Dispatcher();
-
-		ServletRegistrationBean registration = new ServletRegistrationBean(servlet, this.path);
-		addInitParameters(registration);
+		final ServletRegistrationBean registration = new ServletRegistrationBean(servlet, this.path);
 		registration.setName(getServletRegistrationName());
-		registration.setLoadOnStartup(this.resteasy.getLoadOnStartup());
+		registration.setLoadOnStartup(this.resteasy.getServlet().getLoadOnStartup());
 		registration.setAsyncSupported(true);
 		registration.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, this.path);
-
-		Set<Class<?>> classes = this.config.getClasses();
-		if (classes != null) {
-			final Set<Class<?>> resources = new HashSet<>();
-			final Set<Class<?>> providers = new HashSet<>();
-			for (Class<?> cls : classes) {
-				if (cls.isAnnotationPresent(Provider.class)) {
-					providers.add(cls);
-				} else {
-					resources.add(cls);
-				}
-			}
-			if (!providers.isEmpty()) {
-				registration.addInitParameter(ResteasyContextParameters.RESTEASY_SCANNED_PROVIDERS,
-						providers.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
-			}
-			if (!resources.isEmpty()) {
-				registration.addInitParameter(ResteasyContextParameters.RESTEASY_SCANNED_RESOURCES,
-						resources.stream().map(c -> c.getName()).collect(Collectors.joining(",")));
-			}
-		}
-
 		return registration;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(name = "jerseyFilterRegistration")
+	@ConditionalOnProperty(prefix = "holon.resteasy", name = "type", havingValue = "filter")
+	public FilterRegistrationBean resteasyFilterRegistration() {
+		final Filter filter = new Filter30Dispatcher();
+		FilterRegistrationBean registration = new FilterRegistrationBean();
+		registration.setFilter(filter);
+		registration.setUrlPatterns(Arrays.asList(this.path));
+		registration.setOrder(this.resteasy.getFilter().getOrder());
+		registration.setName("resteasyFilter");
+		registration.setDispatcherTypes(EnumSet.allOf(DispatcherType.class));
+		return registration;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
+	 */
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		for (Entry<String, String> entry : this.resteasy.getInit().entrySet()) {
+			servletContext.setInitParameter(entry.getKey(), entry.getValue());
+		}
 	}
 
 	private String getServletRegistrationName() {
 		return ClassUtils.getUserClass(this.config.getClass()).getName();
-	}
-
-	private void addInitParameters(RegistrationBean registration) {
-		for (Entry<String, String> entry : this.resteasy.getInit().entrySet()) {
-			registration.addInitParameter(entry.getKey(), entry.getValue());
-		}
 	}
 
 	private static String findApplicationPath(ApplicationPath annotation) {

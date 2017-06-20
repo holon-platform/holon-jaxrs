@@ -29,18 +29,24 @@ import org.jboss.resteasy.spi.Registry;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
+import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
+
 /**
- * TODO
+ * Reasteasy auto configuration bootstrap {@link ServletContextListener}.
+ * 
+ * @since 5.0.0
  */
 public class ResteasyBootstrapListener implements ServletContextListener {
 
 	private final SpringBeanProcessor processor;
+	private final ResteasyConfig application;
 
 	private ResteasyDeployment deployment;
 
-	public ResteasyBootstrapListener(SpringBeanProcessor processor) {
+	public ResteasyBootstrapListener(SpringBeanProcessor processor, ResteasyConfig application) {
 		super();
 		this.processor = processor;
+		this.application = application;
 	}
 
 	/*
@@ -50,29 +56,35 @@ public class ResteasyBootstrapListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		final ServletContext ctx = sce.getServletContext();
-		
+
 		ListenerBootstrap config = new ListenerBootstrap(ctx);
 
-        ResourceMethodRegistry resourceMethodRegistry = (ResourceMethodRegistry) processor.getRegistry();
+		ResourceMethodRegistry resourceMethodRegistry = (ResourceMethodRegistry) processor.getRegistry();
 
-        deployment = config.createDeployment();
+		deployment = config.createDeployment();
 
-        deployment.setProviderFactory(processor.getProviderFactory());
-        deployment.setRegistry(resourceMethodRegistry);
+		deployment.setProviderFactory(processor.getProviderFactory());
+		deployment.setRegistry(resourceMethodRegistry);
 
-        if (deployment.isAsyncJobServiceEnabled()) {
-            AsynchronousDispatcher dispatcher = new AsynchronousDispatcher(deployment.getProviderFactory(), resourceMethodRegistry);
-            deployment.setDispatcher(dispatcher);
-        } else {
-            SynchronousDispatcher dispatcher = new SynchronousDispatcher(deployment.getProviderFactory(), resourceMethodRegistry);
-            deployment.setDispatcher(dispatcher);
-        }
+		if (deployment.isAsyncJobServiceEnabled()) {
+			AsynchronousDispatcher dispatcher = new AsynchronousDispatcher(deployment.getProviderFactory(),
+					resourceMethodRegistry);
+			deployment.setDispatcher(dispatcher);
+		} else {
+			SynchronousDispatcher dispatcher = new SynchronousDispatcher(deployment.getProviderFactory(),
+					resourceMethodRegistry);
+			deployment.setDispatcher(dispatcher);
+		}
 
-        deployment.start();
+		if (application != null) {
+			deployment.setApplication(application);
+		}
 
-        ctx.setAttribute(ResteasyProviderFactory.class.getName(), deployment.getProviderFactory());
-        ctx.setAttribute(Dispatcher.class.getName(), deployment.getDispatcher());
-        ctx.setAttribute(Registry.class.getName(), deployment.getRegistry());
+		deployment.start();
+
+		ctx.setAttribute(ResteasyProviderFactory.class.getName(), deployment.getProviderFactory());
+		ctx.setAttribute(Dispatcher.class.getName(), deployment.getDispatcher());
+		ctx.setAttribute(Registry.class.getName(), deployment.getRegistry());
 	}
 
 	/*
@@ -82,8 +94,8 @@ public class ResteasyBootstrapListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		if (deployment != null) {
-            deployment.stop();
-        }
+			deployment.stop();
+		}
 	}
 
 }

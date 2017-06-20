@@ -22,7 +22,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * TODO
+ * Auto configuration class to provide a default {@link ResteasyConfig} bean instance when no other is declared as a
+ * Spring bean.
+ * 
+ * @since 5.0.0
  */
 @Configuration
 @ConditionalOnClass(ResteasyConfig.class)

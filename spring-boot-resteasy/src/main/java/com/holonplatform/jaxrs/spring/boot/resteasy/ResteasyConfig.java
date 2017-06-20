@@ -17,8 +17,6 @@ package com.holonplatform.jaxrs.spring.boot.resteasy;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,22 +25,45 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
 
 /**
- * TODO
+ * Resteasy JAX-RS {@link Application} configuration.
+ * <p>
+ * This class is used by the {@link ResteasyAutoConfiguration} class to auto configure Resteasy.
+ * </p>
+ * 
+ * @since 5.0.0
  */
 public class ResteasyConfig extends Application {
 
 	private final transient Set<Class<?>> classes = new HashSet<>();
+	private final transient Set<Object> singletons = new HashSet<>();
 	private final transient Map<String, Object> properties = new HashMap<>();
-	private final transient List<String> packages = new LinkedList<>();
 
 	/**
 	 * Register a class of a JAX-RS component (such as {@link Path} resource or a {@link Provider}).
+	 * <p>
+	 * {@link Path} resources registered this way will be treated by default as per-request resources.
+	 * </p>
 	 * @param componentClass JAX-RS component class to be registered
 	 * @return the updated configuration
 	 */
 	public ResteasyConfig register(Class<?> componentClass) {
 		if (componentClass != null) {
 			classes.add(componentClass);
+		}
+		return this;
+	}
+
+	/**
+	 * Register a class of a JAX-RS component (such as {@link Path} resource or a {@link Provider}).
+	 * <p>
+	 * {@link Path} resources registered this way will be treated by default as singleton resources.
+	 * </p>
+	 * @param component JAX-RS component to be registered
+	 * @return the updated configuration
+	 */
+	public ResteasyConfig register(Object component) {
+		if (component != null) {
+			singletons.add(component);
 		}
 		return this;
 	}
@@ -65,28 +86,6 @@ public class ResteasyConfig extends Application {
 		return this;
 	}
 
-	/**
-	 * Adds a set of package names which will be used to scan for components.
-	 * @param packages One or more package name
-	 * @return Updated configuration instance
-	 */
-	public final ResteasyConfig packages(final String... packages) {
-		if (packages != null) {
-			for (String pkg : packages) {
-				this.packages.add(pkg);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Get the packages to scan for JAX-RS components.
-	 * @return the packages to scan
-	 */
-	public List<String> getPackages() {
-		return packages;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see javax.ws.rs.core.Application#getClasses()
@@ -94,6 +93,15 @@ public class ResteasyConfig extends Application {
 	@Override
 	public Set<Class<?>> getClasses() {
 		return classes;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see javax.ws.rs.core.Application#getSingletons()
+	 */
+	@Override
+	public Set<Object> getSingletons() {
+		return singletons;
 	}
 
 	/*

@@ -69,14 +69,13 @@ public class TestResteasyAutoConfiguration {
 		Assert.assertNotNull(resteasyConfig);
 	}
 
-	// TODO
-	/*@Test
+	@Test
 	public void testEndpoint() {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8888/test").path("ping");
 		String response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
-	}*/
+	}
 	
 	@Test
 	public void testEndpoint2() {
