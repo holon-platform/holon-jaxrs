@@ -158,7 +158,17 @@ public class ResteasyAutoConfiguration implements ServletContextAware {
 		registration.setName(getServletRegistrationName());
 		registration.setLoadOnStartup(this.resteasy.getServlet().getLoadOnStartup());
 		registration.setAsyncSupported(true);
-		registration.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, this.path);
+
+		if (this.path != null && !"/*".equals(this.path)) {
+			String prefix = path;
+			if (prefix.endsWith("*")) {
+				prefix = prefix.substring(0, prefix.length() - 1);
+			}
+			if (prefix.endsWith("/")) {
+				prefix = prefix.substring(0, prefix.length() - 1);
+			}
+			registration.addInitParameter(ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, prefix);
+		}
 		return registration;
 	}
 
