@@ -1,0 +1,5 @@
+holon:
+  swagger:
+    resource-package: "com.holonplatform.jaxrs.swagger.test.resources"
+    path: "docs"
+    

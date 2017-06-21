@@ -86,6 +86,18 @@ public class ResteasyConfig extends Application {
 		return this;
 	}
 
+	/**
+	 * Checks whether given component class is registered in this configuration.
+	 * @param componentClass Component class to check
+	 * @return <code>true</code> if class is registered in this configuration, <code>false</code> otherwise
+	 */
+	public boolean isRegistered(Class<?> componentClass) {
+		if (componentClass != null) {
+			return getClasses().contains(componentClass);
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see javax.ws.rs.core.Application#getClasses()
