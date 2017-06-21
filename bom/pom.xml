@@ -51,6 +51,8 @@
 				<artifactId>holon-starter-jaxrs-client-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
+			<!-- Jersey server -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
 				<artifactId>holon-starter-jaxrs-server</artifactId>
@@ -69,6 +71,28 @@
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
 				<artifactId>holon-starter-jaxrs-undertow-gson</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Resteasy server -->
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jaxrs-resteasy</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jaxrs-resteasy-gson</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jaxrs-resteasy-undertow</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jaxrs-resteasy-undertow-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

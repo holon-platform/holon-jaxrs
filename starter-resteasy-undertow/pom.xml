@@ -8,11 +8,11 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-jaxrs-server-undertow-gson</artifactId>
+	<artifactId>holon-starter-jaxrs-resteasy-undertow</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon Spring Boot JAX-RS Server starter using Jersey, Undertow and Gson</description>
+	<description>Holon Spring Boot JAX-RS Server starter using Resteasy, Undertow and Jackson</description>
 
 	<url>https://holon-platform.com</url>
 
@@ -33,10 +33,10 @@
 
 	<dependencies>
 
-		<!-- Holon JAX-RS server starter -->
+		<!-- Holon JAX-RS server and Resteasy auto-config -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-starter-jaxrs-server-gson</artifactId>
+			<artifactId>holon-starter-jaxrs-resteasy</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
