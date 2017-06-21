@@ -76,6 +76,10 @@ public class SwaggerResteasyConfiguration implements ResteasyConfigCustomizer, B
 		if (!config.isRegistered(SwaggerSerializers.class)) {
 			config.register(SwaggerSerializers.class);
 		}
+		// check configuration
+		if (configurationProperties.isPrettyPrint()) {
+			SwaggerSerializers.setPrettyPrint(true);
+		}
 		// API listings
 		final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
 		for (ApiListingDefinition definition : definitions) {

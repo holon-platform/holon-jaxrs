@@ -76,6 +76,10 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, Bea
 		if (!config.isRegistered(SwaggerSerializers.class)) {
 			config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
 		}
+		// check configuration
+		if (configurationProperties.isPrettyPrint()) {
+			SwaggerSerializers.setPrettyPrint(true);
+		}
 		// API listings
 		final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
 		for (ApiListingDefinition definition : definitions) {
