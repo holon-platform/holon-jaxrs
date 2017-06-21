@@ -32,7 +32,7 @@ import com.holonplatform.core.property.PropertyBox;
 public interface PropertyBoxTypeInfo extends Serializable {
 
 	/**
-	 * Whether QueryDSL is available from classpath of current ClassLoader
+	 * Whether Jackson databind is available from classpath of current ClassLoader
 	 */
 	static final boolean JACKSON_DATABIND_PRESENT = ClassUtils.isPresent("com.fasterxml.jackson.databind.JavaType",
 			ClassUtils.getDefaultClassLoader());
