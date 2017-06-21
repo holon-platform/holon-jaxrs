@@ -43,9 +43,9 @@ public class TestSwaggerResteasyAutoConfiguration {
 
 	@LocalServerPort
 	private int port;
-	
+
 	@Configuration
-	@EnableAutoConfiguration(exclude=JerseyAutoConfiguration.class)
+	@EnableAutoConfiguration(exclude = JerseyAutoConfiguration.class)
 	static class Config {
 
 		@Bean
@@ -56,7 +56,7 @@ public class TestSwaggerResteasyAutoConfiguration {
 		}
 
 	}
-	
+
 	@Test
 	public void testEndpoint() {
 		Client client = new ResteasyClientBuilder().build();
@@ -71,18 +71,18 @@ public class TestSwaggerResteasyAutoConfiguration {
 		WebTarget target = client.target("http://localhost:" + port + "/docs");
 		Response response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
+		Assert.assertNotNull(response.readEntity(String.class));
 		Assert.assertEquals("application/json", response.getMediaType().toString());
 	}
-	
+
 	@Test
 	public void testSwaggerYaml() {
 		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
 		Response response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
+		Assert.assertNotNull(response.readEntity(String.class));
 		Assert.assertEquals("application/yaml", response.getMediaType().toString());
 	}
-	
+
 }
