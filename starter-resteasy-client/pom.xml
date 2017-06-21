@@ -8,11 +8,11 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-jaxrs-client</artifactId>
+	<artifactId>holon-starter-resteasy-client</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon Spring Boot JAX-RS Client starter using Jersey and Jackson as JSON provider</description>
+	<description>Holon Spring Boot JAX-RS Client starter using Resteasy and Jackson as JSON provider</description>
 
 	<url>https://holon-platform.com</url>
 
@@ -54,36 +54,22 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- Jersey client -->
+		<!-- Resteasy client -->
 		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey.version}</version>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+		<!-- Resteasy Jackson provider -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+			<version>${resteasy.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.annotation</groupId>
-					<artifactId>javax.annotation-api</artifactId>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-json-provider</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>javax.ws.rs</groupId>
-					<artifactId>javax.ws.rs-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Multipart -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>${jersey.version}</version>
-		</dependency>
-
-		<!-- Jackson -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>${jersey.version}</version>
-			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
@@ -96,17 +82,10 @@
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.jaxrs</groupId>
-					<artifactId>jackson-jaxrs-base</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.jaxrs</groupId>
-					<artifactId>jackson-jaxrs-json-provider</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 
+		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
 			<artifactId>jackson-jaxrs-json-provider</artifactId>

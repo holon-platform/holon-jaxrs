@@ -8,13 +8,28 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-jaxrs-client-gson</artifactId>
+	<artifactId>holon-starter-resteasy-client-gson</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon Spring Boot JAX-RS Client starter using Jersey and Gson as JSON provider</description>
+	<description>Holon Spring Boot JAX-RS Client starter using Resteasy and Gson as JSON provider</description>
 
 	<url>https://holon-platform.com</url>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Holon JSON platform -->
+			<dependency>
+				<groupId>com.holon-platform.json</groupId>
+				<artifactId>holon-json-bom-platform</artifactId>
+				<version>${holon.json.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 
@@ -25,7 +40,7 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
-		<!-- Holon Gson -->
+		<!-- Holon JSON Gson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-gson-spring</artifactId>
@@ -39,28 +54,11 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- Jersey client -->
+		<!-- Resteasy client -->
 		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>${jersey.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.annotation</groupId>
-					<artifactId>javax.annotation-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.ws.rs</groupId>
-					<artifactId>javax.ws.rs-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Multipart -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>${jersey.version}</version>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>${resteasy.version}</version>
 		</dependency>
 
 	</dependencies>

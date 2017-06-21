@@ -8,7 +8,7 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-jaxrs-resteasy-undertow</artifactId>
+	<artifactId>holon-starter-resteasy-undertow</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>

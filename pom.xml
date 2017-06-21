@@ -86,12 +86,12 @@
 		<module>swagger</module>
 		<module>spring-boot-jersey</module>
 		<module>spring-boot-resteasy</module>
-		<module>starter-client</module>
-		<module>starter-client-gson</module>
-		<module>starter-server</module>
-		<module>starter-server-gson</module>
-		<module>starter-server-undertow</module>
-		<module>starter-server-undertow-gson</module>
+		<module>starter-jersey-client</module>
+		<module>starter-jersey-client-gson</module>
+		<module>starter-jersey</module>
+		<module>starter-jersey-gson</module>
+		<module>starter-jersey-undertow</module>
+		<module>starter-jersey-undertow-gson</module>
 		<module>starter-resteasy</module>
 		<module>starter-resteasy-gson</module>
 		<module>starter-resteasy-undertow</module>

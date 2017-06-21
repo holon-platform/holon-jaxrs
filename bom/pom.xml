@@ -41,58 +41,72 @@
 			</dependency>
 
 			<!-- Spring Boot starters -->
-			<dependency>
-				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-client-gson</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 
 			<!-- Jersey server -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-server</artifactId>
+				<artifactId>holon-starter-jersey</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-server-gson</artifactId>
+				<artifactId>holon-starter-jersey-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-server-undertow</artifactId>
+				<artifactId>holon-starter-jersey-undertow</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-undertow-gson</artifactId>
+				<artifactId>holon-starter-jersey-gson</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Jersey client -->
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jersey-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-jersey-client-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<!-- Resteasy server -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-resteasy</artifactId>
+				<artifactId>holon-starter-resteasy</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-resteasy-gson</artifactId>
+				<artifactId>holon-starter-resteasy-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-resteasy-undertow</artifactId>
+				<artifactId>holon-starter-resteasy-undertow</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jaxrs-resteasy-undertow-gson</artifactId>
+				<artifactId>holon-starter-resteasy-undertow-gson</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Resteasy client -->
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-resteasy-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-starter-resteasy-client-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

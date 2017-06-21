@@ -8,11 +8,11 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-starter-jaxrs-server-gson</artifactId>
+	<artifactId>holon-starter-jersey</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon Spring Boot JAX-RS Server starter using Jersey, Tomcat and Gson</description>
+	<description>Holon Spring Boot JAX-RS Server starter using Jersey, Tomcat and Jackson</description>
 
 	<url>https://holon-platform.com</url>
 
@@ -24,6 +24,15 @@
 				<groupId>com.holon-platform.core</groupId>
 				<artifactId>holon-bom-platform</artifactId>
 				<version>${holon.core.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Holon JSON platform -->
+			<dependency>
+				<groupId>com.holon-platform.json</groupId>
+				<artifactId>holon-json-bom-platform</artifactId>
+				<version>${holon.json.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -40,7 +49,7 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
-		<!-- Holon JAX-RS server -->
+		<!-- Holon JAX-RS server and Jersey auto-config -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
@@ -53,10 +62,10 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Holon Gson -->
+		<!-- Holon JSON Jackson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
-			<artifactId>holon-gson-spring</artifactId>
+			<artifactId>holon-jackson-spring</artifactId>
 			<version>${holon.json.version}</version>
 		</dependency>
 
@@ -113,9 +122,53 @@
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Jackson -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey.version}</version>
+			<exclusions>
 				<exclusion>
-					<groupId>org.glassfish.jersey.media</groupId>
-					<artifactId>jersey-media-json-jackson</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-base</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-json-provider</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
