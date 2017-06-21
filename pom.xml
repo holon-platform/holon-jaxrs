@@ -96,6 +96,8 @@
 		<module>starter-resteasy-gson</module>
 		<module>starter-resteasy-undertow</module>
 		<module>starter-resteasy-undertow-gson</module>
+		<module>starter-resteasy-client</module>
+		<module>starter-resteasy-client-gson</module>
 		<module>bom</module>
 		<module>documentation</module>
 	</modules>

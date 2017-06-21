@@ -36,7 +36,7 @@
 		<!-- Holon JAX-RS server and Resteasy auto-config -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-starter-jaxrs-resteasy-gson</artifactId>
+			<artifactId>holon-starter-resteasy-gson</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

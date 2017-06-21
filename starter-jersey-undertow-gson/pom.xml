@@ -36,7 +36,7 @@
 		<!-- Holon JAX-RS server starter -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-starter-jaxrs-server-gson</artifactId>
+			<artifactId>holon-starter-jersey-gson</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
