@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.BuiltinValidator;
@@ -30,6 +32,8 @@ import com.holonplatform.core.property.PropertyValueConverter.PropertyConversion
 import com.holonplatform.core.temporal.TemporalType;
 
 import io.swagger.converter.ModelConverters;
+import io.swagger.models.Model;
+import io.swagger.models.Swagger;
 import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DateProperty;
@@ -47,11 +51,13 @@ public enum DefaultSwaggerPropertyFactory implements SwaggerPropertyFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory#create(com.holonplatform.core.property.Property)
+	 * @see com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory#create(io.swagger.models.Swagger,
+	 * com.holonplatform.core.property.Property)
 	 */
 	@Override
-	public io.swagger.models.properties.Property create(Property<?> property) throws PropertyConversionException {
+	public io.swagger.models.properties.Property create(Swagger swagger, Property<?> property)
+			throws PropertyConversionException {
+
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
 
 		// temporals
@@ -85,8 +91,24 @@ public enum DefaultSwaggerPropertyFactory implements SwaggerPropertyFactory {
 
 		// dft
 		io.swagger.models.properties.Property p = ModelConverters.getInstance().readAsProperty(property.getType());
-		configureProperty(p, property);
-		return p;
+		if (p != null) {
+			configureProperty(p, property);
+
+			// check model definitions
+			if (swagger != null) {
+				Map<String, Model> models = ModelConverters.getInstance().readAll(property.getType());
+				if (models != null) {
+					for (Entry<String, Model> entry : models.entrySet()) {
+						if (swagger.getDefinitions() != null && !swagger.getDefinitions().containsKey(entry.getKey())) {
+							swagger.addDefinition(entry.getKey(), entry.getValue());
+						}
+					}
+				}
+			}
+
+			return p;
+		}
+		return null;
 	}
 
 	private static void configureProperty(io.swagger.models.properties.Property property, Property<?> source) {

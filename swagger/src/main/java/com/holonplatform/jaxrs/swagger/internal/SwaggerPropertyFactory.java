@@ -20,6 +20,8 @@ import java.io.Serializable;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
 
+import io.swagger.models.Swagger;
+
 /**
  * Swagger {@link io.swagger.models.properties.Property} factory using Holon {@link Property}.
  * 
@@ -29,11 +31,13 @@ public interface SwaggerPropertyFactory extends Serializable {
 
 	/**
 	 * Create a Swagger model property using given <code>property</code>.
+	 * @param swagger Current Swagger instance, or <code>null</code> if not available
 	 * @param property Property to convert (not null)
 	 * @return Swagger property
 	 * @throws PropertyConversionException IF a property conversion error occurred
 	 */
-	io.swagger.models.properties.Property create(Property<?> property) throws PropertyConversionException;
+	io.swagger.models.properties.Property create(Swagger swagger, Property<?> property)
+			throws PropertyConversionException;
 
 	/**
 	 * Get the default SwaggerPropertyFactory.

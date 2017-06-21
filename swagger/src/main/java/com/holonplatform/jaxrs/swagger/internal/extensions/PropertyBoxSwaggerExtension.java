@@ -265,7 +265,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			propertySet.forEach(p -> {
 				if (includeReadOnly || !p.isReadOnly()) {
 					if (Path.class.isAssignableFrom(p.getClass())) {
-						Property sp = factory.create(p);
+						Property sp = factory.create(SwaggerContext.getSwagger(), p);
 						if (sp != null) {
 							properties.put(((Path<?>) p).relativeName(), sp);
 						}
