@@ -60,7 +60,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-starter-jersey-gson</artifactId>
+				<artifactId>holon-starter-jersey-undertow-gson</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
