@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.spring.internal;
+package com.holonplatform.jaxrs.swagger.internal;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;

@@ -92,7 +92,7 @@ public class DefaultPropertyBoxTypeInfo implements PropertyBoxTypeInfo {
 
 	/**
 	 * Set whether this type allows unique items only (set).
-	 * @param uniqueItems code>true</code> if allows unique items only
+	 * @param uniqueItems <code>true</code> if allows unique items only
 	 */
 	public void setUniqueItems(boolean uniqueItems) {
 		this.uniqueItems = uniqueItems;

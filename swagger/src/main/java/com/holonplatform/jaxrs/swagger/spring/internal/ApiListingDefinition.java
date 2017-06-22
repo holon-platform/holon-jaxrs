@@ -18,6 +18,7 @@ package com.holonplatform.jaxrs.swagger.spring.internal;
 import java.io.Serializable;
 import java.util.List;
 
+import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 
 /**

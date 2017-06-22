@@ -1,3 +1,7 @@
+spring:
+  main:
+    banner-mode: "off"
+
 holon:
   swagger:
     resource-package: "com.holonplatform.jaxrs.swagger.test.resources"

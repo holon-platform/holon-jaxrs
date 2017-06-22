@@ -22,6 +22,8 @@ import java.util.List;
 import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
+import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;

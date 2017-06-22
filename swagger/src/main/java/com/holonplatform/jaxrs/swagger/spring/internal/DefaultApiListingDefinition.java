@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
+import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 

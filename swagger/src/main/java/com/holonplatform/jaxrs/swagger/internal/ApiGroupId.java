@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.spring.internal;
+package com.holonplatform.jaxrs.swagger.internal;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation which can be used to specify the API group id.
  * 
- * @see AbstractApiListingResource
+ * @see SwaggerApiListingResource
  * 
  * @since 5.0.0
  */
