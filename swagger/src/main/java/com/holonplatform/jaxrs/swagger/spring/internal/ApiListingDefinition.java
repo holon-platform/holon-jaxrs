@@ -30,7 +30,7 @@ public interface ApiListingDefinition extends Serializable {
 
 	/**
 	 * Get the API group id
-	 * @return
+	 * @return Group id
 	 */
 	String getGroupId();
 
