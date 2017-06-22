@@ -1,6 +1,6 @@
 = Holon JAX-RS integration
 :revnumber: {project-version}
-:apidir: ../../api/holon-jax-rs
+:apidir: ../api/holon-jax-rs
 :linkattrs:
 :sectnums:
 :nofooter:
