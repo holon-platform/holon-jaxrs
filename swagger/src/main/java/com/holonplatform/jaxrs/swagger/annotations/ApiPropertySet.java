@@ -35,7 +35,6 @@ import com.holonplatform.core.property.PropertySet;
  * If the {@link #field()} attribute is specified, it will be used to locate the {@link PropertySet} type field in the
  * {@link #value()} class. Otherwise, a single <code>public static</code> {@link PropertySet} type field is expected for
  * the {@link #value()} class.
- * </p>
  *
  * @since 5.0.0
  */
