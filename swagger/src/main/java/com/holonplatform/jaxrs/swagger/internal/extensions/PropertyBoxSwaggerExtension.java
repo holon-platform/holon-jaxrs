@@ -40,6 +40,7 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerContext;
@@ -97,8 +98,12 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			getResponsePropertySet(method).ifPresent(aps -> {
 				PropertySet<?> propertySet = ApiPropertySetIntrospector.get().getPropertySet(aps);
 				if (propertySet != null) {
+					ApiPropertySetModel psm = getResponsePropertySetModel(method).orElse(null);
 					final Property propertyBoxProperty = buildPropertyBoxProperty(propertySet, true,
-							AnnotationUtils.getStringValue(aps.model()), SwaggerContext.getSwagger());
+							(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
+							(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
+							(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null,
+							SwaggerContext.getSwagger());
 
 					// responses
 					for (Response response : responses.values()) {
@@ -150,8 +155,13 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 							}
 						}
 
+						ApiPropertySetModel psm = hasApiPropertySetModel(annotations);
+
 						final Model model = buildPropertyBoxModel(propertySet, false,
-								(pbType.isContainerType() && !pbType.isMap()), aps.model(),
+								(pbType.isContainerType() && !pbType.isMap()),
+								(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
+								(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
+								(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null,
 								SwaggerContext.getSwagger());
 						BodyParameter bp = new BodyParameter();
 						bp.setRequired(isParameterRequired(annotations));
@@ -206,6 +216,19 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
+	 * Check whether the {@link ApiPropertySetModel} annotation is present in given annotations list.
+	 * @param annotations Annotations to scan
+	 * @return If the {@link ApiPropertySetModel} annotation is present in given annotations list, returns it
+	 */
+	private static ApiPropertySetModel hasApiPropertySetModel(List<Annotation> annotations) {
+		List<ApiPropertySetModel> as = AnnotationUtils.getAnnotations(annotations, ApiPropertySetModel.class);
+		if (!as.isEmpty()) {
+			return as.get(0);
+		}
+		return null;
+	}
+
+	/**
 	 * Check whether a parameter is required using either the {@link ApiParam} or the {@link ApiImplicitParam}
 	 * annotation, if available from given annotations list.
 	 * @param annotations Annotations to scan
@@ -250,6 +273,27 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
+	 * Check whether the given <code>method</code> return type is annotated with the {@link ApiPropertySetModel}
+	 * annotation.
+	 * @param method Method to inspect
+	 * @return Optional {@link ApiPropertySetModel} annotation, if available
+	 */
+	private static Optional<ApiPropertySetModel> getResponsePropertySetModel(Method method) {
+		final AnnotatedType rt = method.getAnnotatedReturnType();
+		if (rt != null) {
+			if (rt.isAnnotationPresent(ApiPropertySetModel.class)) {
+				return Optional.of(rt.getAnnotation(ApiPropertySetModel.class));
+			}
+			// check meta-annotations
+			List<ApiPropertySetModel> annotations = AnnotationUtils.getAnnotations(rt, ApiPropertySetModel.class);
+			if (!annotations.isEmpty()) {
+				return Optional.ofNullable(annotations.get(0));
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Get a Swagger name-property map form given <code>propertySet</code>.
 	 * @param propertySet Property set
 	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
@@ -282,14 +326,16 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	 * @param propertySet Property set
 	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
 	 * @param modelName If not null, define a Model with given name and use a {@link RefProperty} to reference it
+	 * @param modelDescription Model description
+	 * @param modelReference Model reference
 	 * @param swagger Current {@link Swagger} instance, required to define a Model by name
 	 * @return Swagger property
 	 */
 	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly,
-			String modelName, Swagger swagger) {
+			String modelName, String modelDescription, String modelReference, Swagger swagger) {
 		if (modelName != null && !modelName.trim().equals("")) {
 			// define model and use a ref
-			return new RefProperty(defineModel(swagger, propertySet, modelName));
+			return new RefProperty(defineModel(swagger, propertySet, modelName, modelDescription, modelReference));
 		}
 		// explicit object definition
 		ObjectProperty property = new ObjectProperty();
@@ -306,22 +352,25 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
 	 * @param array <code>true</code> to create an array model type
 	 * @param modelName If not null, define a Model with given name and use a {@link RefModel} to reference it
+	 * @param modelDescription Model description
+	 * @param modelReference Model reference
 	 * @param swagger Current {@link Swagger} instance, required to define a Model by name
 	 * @return Swagger model
 	 */
 	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly, boolean array,
-			String modelName, Swagger swagger) {
+			String modelName, String modelDescription, String modelReference, Swagger swagger) {
 
 		if (array) {
 			// Array model
 			ArrayModel model = new ArrayModel();
-			model.items(buildPropertyBoxProperty(propertySet, includeReadOnly, modelName, swagger));
+			model.items(buildPropertyBoxProperty(propertySet, includeReadOnly, modelName, modelDescription,
+					modelReference, swagger));
 			return model;
 		}
 
 		// Check ref model
 		if (modelName != null && !modelName.trim().equals("")) {
-			return new RefModel(defineModel(swagger, propertySet, modelName));
+			return new RefModel(defineModel(swagger, propertySet, modelName, modelDescription, modelReference));
 		}
 
 		// Simple model
@@ -338,9 +387,12 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	 * @param swagger Swagger instance (not null)
 	 * @param propertySet Property set
 	 * @param modelName Model name (not null)
+	 * @param modelDescription Model description
+	 * @param modelReference Model reference
 	 * @return Defined model name
 	 */
-	private static String defineModel(Swagger swagger, PropertySet<?> propertySet, String modelName) {
+	private static String defineModel(Swagger swagger, PropertySet<?> propertySet, String modelName,
+			String modelDescription, String modelReference) {
 		if (modelName != null) {
 			if (swagger == null) {
 				throw new SwaggerConfigurationException(
@@ -352,6 +404,14 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			model.setProperties(getPropertySetProperties(propertySet, true));
 			model.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
 					PropertyBox.class.getName());
+
+			if (modelDescription != null) {
+				model.description(modelDescription);
+			}
+			if (modelReference != null && !modelReference.trim().equals("")) {
+				model.setReference(modelReference);
+			}
+
 			// define
 			swagger.addDefinition(modelName, model);
 			return modelName;

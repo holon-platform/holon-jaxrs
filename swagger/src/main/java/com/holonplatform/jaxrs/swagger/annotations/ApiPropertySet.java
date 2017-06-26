@@ -56,10 +56,4 @@ public @interface ApiPropertySet {
 	 */
 	String field() default "";
 
-	/**
-	 * Optional Swagger model name to create using this {@link PropertySet} and add to swagger definitions.
-	 * @return Swagger model name
-	 */
-	String model() default "";
-
 }
