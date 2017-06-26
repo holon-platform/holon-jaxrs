@@ -41,7 +41,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
+import com.holonplatform.jaxrs.swagger.internal.PropertySetRefIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerContext;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
@@ -96,7 +96,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 		final Map<String, Response> responses = operation.getResponses();
 		if (responses != null) {
 			getResponsePropertySet(method).ifPresent(aps -> {
-				PropertySet<?> propertySet = ApiPropertySetIntrospector.get().getPropertySet(aps);
+				PropertySet<?> propertySet = PropertySetRefIntrospector.get().getPropertySet(aps);
 				if (propertySet != null) {
 					ApiPropertySetModel psm = getResponsePropertySetModel(method).orElse(null);
 					final Property propertyBoxProperty = buildPropertyBoxProperty(propertySet, true,
@@ -135,7 +135,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 				// check property set
 				final PropertySetRef aps = hasApiPropertySet(annotations);
 				if (aps != null) {
-					PropertySet<?> propertySet = ApiPropertySetIntrospector.get().getPropertySet(aps);
+					PropertySet<?> propertySet = PropertySetRefIntrospector.get().getPropertySet(aps);
 					if (propertySet != null) {
 
 						// Skip PropertyBox type

@@ -26,12 +26,12 @@ import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
  * 
  * @since 5.0.0
  */
-public interface ApiPropertySetIntrospector extends Serializable {
+public interface PropertySetRefIntrospector extends Serializable {
 
 	/**
 	 * Default {@link Context} resource key
 	 */
-	static final String CONTEXT_KEY = ApiPropertySetIntrospector.class.getName();
+	static final String CONTEXT_KEY = PropertySetRefIntrospector.class.getName();
 
 	/**
 	 * Obtain the {@link PropertySet} declared through given <code>annotation</code>.
@@ -44,19 +44,19 @@ public interface ApiPropertySetIntrospector extends Serializable {
 	// Accessors
 
 	/**
-	 * Gets the current {@link ApiPropertySetIntrospector} instance.
+	 * Gets the current {@link PropertySetRefIntrospector} instance.
 	 * @return The {@link Context}-bound ApiPropertySetIntrospector instance, if available using {@link #CONTEXT_KEY} as
 	 *         context key, or the default instance for the default ClassLoader obtained through {@link #getDefault()}.
 	 */
-	static ApiPropertySetIntrospector get() {
-		return Context.get().resource(CONTEXT_KEY, ApiPropertySetIntrospector.class).orElse(getDefault());
+	static PropertySetRefIntrospector get() {
+		return Context.get().resource(CONTEXT_KEY, PropertySetRefIntrospector.class).orElse(getDefault());
 	}
 
 	/**
-	 * Return the default {@link ApiPropertySetIntrospector}.
+	 * Return the default {@link PropertySetRefIntrospector}.
 	 * @return Default ApiPropertySetIntrospector
 	 */
-	static ApiPropertySetIntrospector getDefault() {
+	static PropertySetRefIntrospector getDefault() {
 		return DefaultApiPropertySetIntrospector.INSTANCE;
 	}
 

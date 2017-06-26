@@ -28,11 +28,11 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 
 /**
- * Default {@link ApiPropertySetIntrospector} implementation.
+ * Default {@link PropertySetRefIntrospector} implementation.
  *
  * @since 5.0.0
  */
-public enum DefaultApiPropertySetIntrospector implements ApiPropertySetIntrospector {
+public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospector {
 
 	INSTANCE;
 
