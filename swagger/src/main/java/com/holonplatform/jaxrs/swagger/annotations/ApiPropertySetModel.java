@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.property.PropertySetRef;
 
 /**
  * Annotation which can be used in conjuction with {@link PropertySetRef} to declare a Swagger Model name to create

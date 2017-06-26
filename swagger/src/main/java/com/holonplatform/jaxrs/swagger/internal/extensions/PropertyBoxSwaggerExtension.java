@@ -35,13 +35,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.internal.property.PropertySetRefIntrospector;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
-import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.internal.PropertySetRefIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerContext;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
