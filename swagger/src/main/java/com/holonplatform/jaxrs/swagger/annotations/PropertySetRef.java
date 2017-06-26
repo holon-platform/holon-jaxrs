@@ -21,11 +21,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * Annotation which can be used to declare the {@link PropertySet} bound to a {@link PropertyBox} model type.
+ * Annotation which can be used to declare the reference to a {@link PropertySet} instance.
  * <p>
  * The {@link #value()} class can be either:
  * <ul>
@@ -41,7 +40,7 @@ import com.holonplatform.core.property.PropertySet;
 @Target({ ElementType.PARAMETER, ElementType.TYPE, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ApiPropertySet {
+public @interface PropertySetRef {
 
 	/**
 	 * The {@link PropertySet} type class or the class in which the {@link PropertySet} is declared as a

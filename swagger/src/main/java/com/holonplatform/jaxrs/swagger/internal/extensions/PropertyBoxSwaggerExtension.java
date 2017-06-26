@@ -39,7 +39,7 @@ import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
-import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.internal.ApiPropertySetIntrospector;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
@@ -70,7 +70,7 @@ import io.swagger.util.ParameterProcessor;
  * A {@link SwaggerExtension} to handle {@link PropertyBox} type model properties in operations parameters and response
  * types.
  * <p>
- * The {@link ApiPropertySet} annotation can be used to declare the {@link PropertySet} of each operation
+ * The {@link PropertySetRef} annotation can be used to declare the {@link PropertySet} of each operation
  * {@link PropertyBox} to generate a detailed API documentation, including the property definitions of the
  * {@link PropertyBox}.
  * </p>
@@ -133,7 +133,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			final PropertyBoxTypeInfo pbType = PropertyBoxTypeInfo.check(type).orElse(null);
 			if (pbType != null) {
 				// check property set
-				final ApiPropertySet aps = hasApiPropertySet(annotations);
+				final PropertySetRef aps = hasApiPropertySet(annotations);
 				if (aps != null) {
 					PropertySet<?> propertySet = ApiPropertySetIntrospector.get().getPropertySet(aps);
 					if (propertySet != null) {
@@ -203,12 +203,12 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Check whether the {@link ApiPropertySet} annotation is present in given annotations list.
+	 * Check whether the {@link PropertySetRef} annotation is present in given annotations list.
 	 * @param annotations Annotations to scan
-	 * @return If the {@link ApiPropertySet} annotation is present in given annotations list, returns it
+	 * @return If the {@link PropertySetRef} annotation is present in given annotations list, returns it
 	 */
-	private static ApiPropertySet hasApiPropertySet(List<Annotation> annotations) {
-		List<ApiPropertySet> as = AnnotationUtils.getAnnotations(annotations, ApiPropertySet.class);
+	private static PropertySetRef hasApiPropertySet(List<Annotation> annotations) {
+		List<PropertySetRef> as = AnnotationUtils.getAnnotations(annotations, PropertySetRef.class);
 		if (!as.isEmpty()) {
 			return as.get(0);
 		}
@@ -253,18 +253,18 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Check whether the given <code>method</code> return type is annotated with the {@link ApiPropertySet} annotation.
+	 * Check whether the given <code>method</code> return type is annotated with the {@link PropertySetRef} annotation.
 	 * @param method Method to inspect
-	 * @return Optional {@link ApiPropertySet} annotation, if available
+	 * @return Optional {@link PropertySetRef} annotation, if available
 	 */
-	private static Optional<ApiPropertySet> getResponsePropertySet(Method method) {
+	private static Optional<PropertySetRef> getResponsePropertySet(Method method) {
 		final AnnotatedType rt = method.getAnnotatedReturnType();
 		if (rt != null) {
-			if (rt.isAnnotationPresent(ApiPropertySet.class)) {
-				return Optional.of(rt.getAnnotation(ApiPropertySet.class));
+			if (rt.isAnnotationPresent(PropertySetRef.class)) {
+				return Optional.of(rt.getAnnotation(PropertySetRef.class));
 			}
 			// check meta-annotations
-			List<ApiPropertySet> annotations = AnnotationUtils.getAnnotations(rt, ApiPropertySet.class);
+			List<PropertySetRef> annotations = AnnotationUtils.getAnnotations(rt, PropertySetRef.class);
 			if (!annotations.isEmpty()) {
 				return Optional.ofNullable(annotations.get(0));
 			}

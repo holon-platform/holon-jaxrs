@@ -25,7 +25,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 
 /**
  * Default {@link ApiPropertySetIntrospector} implementation.
@@ -42,7 +42,7 @@ public enum DefaultApiPropertySetIntrospector implements ApiPropertySetIntrospec
 	 * swagger.annotations.ApiPropertySet)
 	 */
 	@Override
-	public PropertySet<?> getPropertySet(ApiPropertySet annotation) throws ApiPropertySetIntrospectionException {
+	public PropertySet<?> getPropertySet(PropertySetRef annotation) throws ApiPropertySetIntrospectionException {
 		ObjectUtils.argumentNotNull(annotation, "ApiPropertySet annotation must be not null");
 
 		final Class<?> cls = annotation.value();

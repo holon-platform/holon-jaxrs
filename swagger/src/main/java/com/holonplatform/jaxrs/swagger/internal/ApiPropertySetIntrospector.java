@@ -19,10 +19,10 @@ import java.io.Serializable;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySet;
+import com.holonplatform.jaxrs.swagger.annotations.PropertySetRef;
 
 /**
- * Introspector to obtain a {@link PropertySet} from {@link ApiPropertySet} annotation.
+ * Introspector to obtain a {@link PropertySet} from {@link PropertySetRef} annotation.
  * 
  * @since 5.0.0
  */
@@ -35,11 +35,11 @@ public interface ApiPropertySetIntrospector extends Serializable {
 
 	/**
 	 * Obtain the {@link PropertySet} declared through given <code>annotation</code>.
-	 * @param annotation {@link ApiPropertySet} annotation from which to obtain the {@link PropertySet}
+	 * @param annotation {@link PropertySetRef} annotation from which to obtain the {@link PropertySet}
 	 * @return PropertySet which corresponds to given annotation attributes
 	 * @throws ApiPropertySetIntrospectionException In an error occurred
 	 */
-	PropertySet<?> getPropertySet(ApiPropertySet annotation) throws ApiPropertySetIntrospectionException;
+	PropertySet<?> getPropertySet(PropertySetRef annotation) throws ApiPropertySetIntrospectionException;
 
 	// Accessors
 

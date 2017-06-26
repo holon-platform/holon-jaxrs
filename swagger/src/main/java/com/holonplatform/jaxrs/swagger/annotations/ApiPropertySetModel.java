@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * Annotation which can be used in conjuction with {@link ApiPropertySet} to declare a Swagger Model name to create
+ * Annotation which can be used in conjuction with {@link PropertySetRef} to declare a Swagger Model name to create
  * using the {@link PropertySet} definition and to append to Swagger model definitions.
  *
  * @since 5.0.0
