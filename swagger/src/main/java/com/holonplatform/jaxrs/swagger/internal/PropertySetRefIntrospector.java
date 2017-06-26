@@ -37,9 +37,9 @@ public interface PropertySetRefIntrospector extends Serializable {
 	 * Obtain the {@link PropertySet} declared through given <code>annotation</code>.
 	 * @param annotation {@link PropertySetRef} annotation from which to obtain the {@link PropertySet}
 	 * @return PropertySet which corresponds to given annotation attributes
-	 * @throws ApiPropertySetIntrospectionException In an error occurred
+	 * @throws PropertySetIntrospectionException In an error occurred
 	 */
-	PropertySet<?> getPropertySet(PropertySetRef annotation) throws ApiPropertySetIntrospectionException;
+	PropertySet<?> getPropertySet(PropertySetRef annotation) throws PropertySetIntrospectionException;
 
 	// Accessors
 
@@ -64,13 +64,13 @@ public interface PropertySetRefIntrospector extends Serializable {
 	 * Exception thrown for PropertySet introspection errors.
 	 */
 	@SuppressWarnings("serial")
-	public class ApiPropertySetIntrospectionException extends RuntimeException {
+	public class PropertySetIntrospectionException extends RuntimeException {
 
 		/**
 		 * Constructor with error message
 		 * @param message Error message
 		 */
-		public ApiPropertySetIntrospectionException(String message) {
+		public PropertySetIntrospectionException(String message) {
 			super(message);
 		}
 
@@ -78,7 +78,7 @@ public interface PropertySetRefIntrospector extends Serializable {
 		 * Constructor with nested exception
 		 * @param cause Nested exception
 		 */
-		public ApiPropertySetIntrospectionException(Throwable cause) {
+		public PropertySetIntrospectionException(Throwable cause) {
 			super(cause);
 		}
 
@@ -87,7 +87,7 @@ public interface PropertySetRefIntrospector extends Serializable {
 		 * @param message Error message
 		 * @param cause Nested exception
 		 */
-		public ApiPropertySetIntrospectionException(String message, Throwable cause) {
+		public PropertySetIntrospectionException(String message, Throwable cause) {
 			super(message, cause);
 		}
 

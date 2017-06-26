@@ -42,19 +42,19 @@ public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospec
 	 * swagger.annotations.ApiPropertySet)
 	 */
 	@Override
-	public PropertySet<?> getPropertySet(PropertySetRef annotation) throws ApiPropertySetIntrospectionException {
+	public PropertySet<?> getPropertySet(PropertySetRef annotation) throws PropertySetIntrospectionException {
 		ObjectUtils.argumentNotNull(annotation, "ApiPropertySet annotation must be not null");
 
 		final Class<?> cls = annotation.value();
 		if (cls == null) {
-			throw new ApiPropertySetIntrospectionException("[ApiPropertySet] missing value");
+			throw new PropertySetIntrospectionException("[ApiPropertySet] missing value");
 		}
 
 		String fieldName = AnnotationUtils.getStringValue(annotation.field());
 
 		if (fieldName == null) {
 			if (PropertySet.class == cls) {
-				throw new ApiPropertySetIntrospectionException(
+				throw new PropertySetIntrospectionException(
 						"Invalid ApiPropertySet class value: [" + cls.getName() + "]");
 			}
 
@@ -63,7 +63,7 @@ public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospec
 				try {
 					return (PropertySet<?>) cls.newInstance();
 				} catch (InstantiationException | IllegalAccessException e) {
-					throw new ApiPropertySetIntrospectionException(
+					throw new PropertySetIntrospectionException(
 							"[ApiPropertySet] Failed to instantiate PropertySet class [" + cls.getName() + "]", e);
 				}
 			}
@@ -81,13 +81,13 @@ public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospec
 			}
 
 			if (candidateFieldNames.isEmpty()) {
-				throw new ApiPropertySetIntrospectionException(
+				throw new PropertySetIntrospectionException(
 						"[ApiPropertySet] Cannot find any valid public static PropertySet type field in class ["
 								+ cls.getName() + "]");
 			}
 
 			if (candidateFieldNames.size() > 1) {
-				throw new ApiPropertySetIntrospectionException(
+				throw new PropertySetIntrospectionException(
 						"[ApiPropertySet] More than one valid PropertySet type field found in class [" + cls.getName()
 								+ "]: please specify the field name to use in ApiPropertySet annotation. Detected PropertySet fields: ["
 								+ candidateFieldNames + "]");
@@ -102,12 +102,12 @@ public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospec
 			Object value = FieldUtils.readStaticField(cls, fieldName);
 
 			if (value == null) {
-				throw new ApiPropertySetIntrospectionException("[ApiPropertySet] The field [" + fieldName
+				throw new PropertySetIntrospectionException("[ApiPropertySet] The field [" + fieldName
 						+ "] in class [" + cls.getName() + "] has null value");
 			}
 
 			if (!PropertySet.class.isAssignableFrom(value.getClass())) {
-				throw new ApiPropertySetIntrospectionException(
+				throw new PropertySetIntrospectionException(
 						"[ApiPropertySet] The field [" + fieldName + "] in class [" + cls.getName()
 								+ "] is not of PropertySet type but [" + value.getClass().getName() + "]");
 			}
@@ -115,7 +115,7 @@ public enum DefaultApiPropertySetIntrospector implements PropertySetRefIntrospec
 			return (PropertySet<?>) value;
 
 		} catch (IllegalAccessException e) {
-			throw new ApiPropertySetIntrospectionException(
+			throw new PropertySetIntrospectionException(
 					"[ApiPropertySet] Failed to read field [" + fieldName + "] from class [" + cls.getName() + "]", e);
 		}
 	}
