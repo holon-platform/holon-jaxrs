@@ -32,9 +32,21 @@ import com.holonplatform.http.ResponseType;
  */
 public class JaxrsHttpResponse<T> implements HttpResponse<T> {
 
+	/**
+	 * Actual jax-rs response
+	 */
 	private final Response response;
+
+	/**
+	 * Response type
+	 */
 	private final ResponseType<T> type;
 
+	/**
+	 * Constructor
+	 * @param response Actual jax-rs response
+	 * @param type Response type
+	 */
 	public JaxrsHttpResponse(Response response, ResponseType<T> type) {
 		super();
 		this.response = response;
