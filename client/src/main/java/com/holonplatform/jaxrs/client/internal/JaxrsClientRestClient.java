@@ -53,6 +53,10 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 	 */
 	private final Client client;
 
+	/**
+	 * Constructor
+	 * @param client Jax-rs client
+	 */
 	public JaxrsClientRestClient(Client client) {
 		super();
 		ObjectUtils.argumentNotNull(client, "Client must be not null");
@@ -153,6 +157,11 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		return Optional.empty();
 	}
 
+	/**
+	 * Convert the given map into {@link MultivaluedMap}.
+	 * @param data Map to convert
+	 * @return Converted map
+	 */
 	private static MultivaluedMap<String, String> convert(Map<String, List<String>> data) {
 		if (data != null) {
 			MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
