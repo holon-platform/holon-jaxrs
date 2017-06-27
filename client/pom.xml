@@ -93,7 +93,7 @@
 
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
-			<artifactId>holon-jackson</artifactId>
+			<artifactId>holon-jackson-jaxrs</artifactId>
 			<version>${holon.json.version}</version>
 			<scope>test</scope>
 		</dependency>

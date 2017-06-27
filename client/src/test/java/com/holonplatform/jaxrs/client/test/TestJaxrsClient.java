@@ -141,18 +141,12 @@ public class TestJaxrsClient extends JerseyTest {
 
 	@Override
 	protected Application configure() {
-		return new ResourceConfig(TestResource.class).register(LoggingFeature.class)
-		// .property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_SERVER, LoggingFeature.Verbosity.PAYLOAD_ANY)
-		// .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_SERVER, "WARNING")
-		;
+		return new ResourceConfig(TestResource.class).register(LoggingFeature.class);
 	}
 
 	@Override
 	protected void configureClient(ClientConfig config) {
-		config.register(LoggingFeature.class)
-		// .property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY)
-		// .property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_CLIENT, "WARNING")
-		;
+		config.register(LoggingFeature.class);
 	}
 
 	@Test
@@ -229,14 +223,6 @@ public class TestJaxrsClient extends JerseyTest {
 				.post(RequestEntity.form(RequestEntity.formBuilder().set("one", "1").set("two", "1").build()));
 		assertNotNull(rsp);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
-
-		/*
-		 * PropertyBox box = PropertyBox.builder(PROPERTIES).set(CODE, 7).set(VALUE, "testPut").build(); rsp =
-		 * client.request().path("test").path("box/post").propertySet(PROPERTIES).post(RequestEntity.json(box));
-		 * assertNotNull(rsp); assertEquals(HttpStatus.ACCEPTED, rsp.getStatus()); rsp =
-		 * client.request().path("test").path("box/save").put(RequestEntity.json(box)); assertNotNull(rsp);
-		 * assertEquals(HttpStatus.ACCEPTED, rsp.getStatus());
-		 */
 
 	}
 
