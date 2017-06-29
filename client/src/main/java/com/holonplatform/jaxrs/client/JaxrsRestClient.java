@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.client;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 
 import com.holonplatform.http.RestClient;
 import com.holonplatform.jaxrs.client.internal.JaxrsClientRestClient;
@@ -40,6 +41,15 @@ public interface JaxrsRestClient extends RestClient {
 	 */
 	static RestClient create(Client client) {
 		return new JaxrsClientRestClient(client);
+	}
+
+	/**
+	 * Create a {@link RestClient} using the default client builder implementation class provided by the JAX-RS
+	 * implementation provider.
+	 * @return A new RestClient instance
+	 */
+	static RestClient create() {
+		return new JaxrsClientRestClient(ClientBuilder.newClient());
 	}
 
 }
