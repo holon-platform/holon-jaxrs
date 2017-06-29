@@ -77,6 +77,16 @@ Just ensure the suitable artifact is present in classpath to auto-configure the 
 
 See the link:holon-json[Holon Platform JSON module documentation] for details and configuration options.
 
+With the `PropertyBox` _JSON_ support enabled, you can write JAX-RS endpoints like this:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExamplePropertyBox.java[tag=json,indent=0]
+----
+<1> A `GET` endpoint method which returns a JSON-encoded `PropertyBox` instance
+<2> A `GET` endpoint method which returns a JSON-encoded `PropertyBox` instances `List`
+<3> A `PUT` endpoint method which accepts a JSON-encoded `PropertyBox` as body parameter. The `@PropertySetRef` annotation is used to specify the `PropertySet` to be used to decode the `PropertyBox` from JSON
+
 [[FormMediaTypePropertyBox]]
 === Form/URLencoded media type
 
@@ -85,6 +95,14 @@ The `application/x-www-form-urlencoded` media type for `PropertyBox` serializati
 You can explicitly configure the `application/x-www-form-urlencoded` media type support in a JAX-RS server or client registering the link:{apidir}/com/holonplatform/jaxrs/media/FormDataPropertyBoxFeature.html[FormDataPropertyBoxFeature^].
 
 CAUTION: Only *simple data types* (Strings, Numbers, Booleans, Enums and Dates) are supported for `PropertyBox` serialization and deserialization using the `application/x-www-form-urlencoded` media type, so you cannot use complex property values (such as JavaBeans) as `PropertyBox` property values. The *JSON* media type is strongly recommended as `PropertyBox` data interchange format in a JAX-RS environment.
+
+With the `PropertyBox` for the _form/urlencoded_ format support enabled, you can write JAX-RS endpoints like this:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExamplePropertyBox.java[tag=form,indent=0]
+----
+<1> A `POST` endpoint method which accepts a JSON-encoded `PropertyBox` as body parameter. The `@PropertySetRef` annotation is used to specify the `PropertySet` to be used to decode the `PropertyBox` from `application/x-www-form-urlencoded` data
 
 // Inclusions
 

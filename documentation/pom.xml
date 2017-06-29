@@ -69,6 +69,28 @@
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-swagger</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${jax-rs.api.version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>
