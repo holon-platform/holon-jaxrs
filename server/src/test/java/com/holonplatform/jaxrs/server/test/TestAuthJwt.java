@@ -62,7 +62,7 @@ import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.jaxrs.server.LogConfig;
+import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
 import com.holonplatform.jaxrs.server.utils.ResourceUtils;

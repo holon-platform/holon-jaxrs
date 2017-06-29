@@ -34,7 +34,7 @@ import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
-import com.holonplatform.jaxrs.server.internal.JaxrsServerLogger;
+import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 
 /**
@@ -49,7 +49,7 @@ public class JerseyResourcesPostProcessor
 	/**
 	 * Logger
 	 */
-	private static final Logger LOGGER = JaxrsServerLogger.create();
+	private static final Logger LOGGER = JaxrsLogger.create();
 
 	/**
 	 * Bean class laoder

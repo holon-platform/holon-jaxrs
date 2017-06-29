@@ -48,7 +48,7 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.jaxrs.server.LogConfig;
+import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
 

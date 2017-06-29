@@ -19,6 +19,13 @@
 	<dependencyManagement>
 		<dependencies>
 
+			<!-- Commons -->
+			<dependency>
+				<groupId>com.holon-platform.jaxrs</groupId>
+				<artifactId>holon-jaxrs-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
 			<!-- Client -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>

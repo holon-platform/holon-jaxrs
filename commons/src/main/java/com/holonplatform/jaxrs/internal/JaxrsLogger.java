@@ -13,19 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.server.internal;
+package com.holonplatform.jaxrs.internal;
 
 import com.holonplatform.core.internal.Logger;
-import com.holonplatform.jaxrs.server.JaxrsConfigurationPropertyResolver;
 
 /**
- * JAX-RS server {@link Logger}.
+ * JAX-RS {@link Logger}.
  *
  * @since 5.0.0
  */
-public interface JaxrsServerLogger {
+public interface JaxrsLogger {
 
-	final static String NAME = JaxrsConfigurationPropertyResolver.class.getPackage().getName();
+	final static String NAME = "com.holonplatform.jaxrs";
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

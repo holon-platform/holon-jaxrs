@@ -75,7 +75,7 @@ By default, the Holon platform uses the https://www.slf4j.org[SLF4J^] API for lo
 
 The logger names for the *JAX-RS* module are:
 
-* `com.holonplatform.jaxrs.server` for the _server_ side classes
+* `com.holonplatform.jaxrs` base JAX-RS module logger
 * `com.holonplatform.jaxrs.swagger` for the _Swagger_ integration classes
 
 == System requirements

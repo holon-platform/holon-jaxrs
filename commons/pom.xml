@@ -8,51 +8,24 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-jaxrs-server</artifactId>
+	<artifactId>holon-jaxrs-commons</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon JAX-RS Server</description>
+	<description>Holon JAX-RS commons</description>
 
 	<url>https://holon-platform.com</url>
 
-	<dependencyManagement>
-		<dependencies>
-
-			<!-- Holon core platform -->
-			<dependency>
-				<groupId>com.holon-platform.core</groupId>
-				<artifactId>holon-bom-platform</artifactId>
-				<version>${holon.core.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 
-		<!-- Holon -->
+		<!-- Holon core -->
 		<dependency>
 			<groupId>com.holon-platform.core</groupId>
-			<artifactId>holon-http</artifactId>
+			<artifactId>holon-core</artifactId>
 			<version>${holon.core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.holon-platform.core</groupId>
-			<artifactId>holon-auth</artifactId>
-			<version>${holon.core.version}</version>
-		</dependency>
-		
-		<!-- Holon JAX-RS commons -->
-		<dependency>
-			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-jaxrs-commons</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
-		<!-- JAX-RS -->
+		<!-- JAX-RS api -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
@@ -60,20 +33,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- JUL logger bridge -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-		</dependency>
-
 		<!-- Test -->
-		<dependency>
-			<groupId>com.holon-platform.core</groupId>
-			<artifactId>holon-auth-jwt</artifactId>
-			<version>${holon.core.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -84,7 +44,14 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>1.7.25</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
 			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
@@ -92,15 +59,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
 			<version>${jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>2.8.6</version>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
 

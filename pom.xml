@@ -81,6 +81,7 @@
 	</properties>
 
 	<modules>
+		<module>commons</module>
 		<module>client</module>
 		<module>server</module>
 		<module>swagger</module>

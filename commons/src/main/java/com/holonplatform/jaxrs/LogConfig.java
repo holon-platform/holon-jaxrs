@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.server;
+package com.holonplatform.jaxrs;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
