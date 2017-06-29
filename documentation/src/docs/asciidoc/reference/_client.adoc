@@ -12,7 +12,4 @@ This artifact makes available a *JAX-RS* standard implementation of the platform
 
 The `RestClient` interface provides a fluent _builder_ to compose and execute _RESTful web services_ invocations, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
 
-The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data container and the JAX-RS implementation supports the following data interchange formats for the `PropertyBox` data type:
-
-* JSON
-* application/x-www-form-urlencoded
+The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data container out-of-the-box.
