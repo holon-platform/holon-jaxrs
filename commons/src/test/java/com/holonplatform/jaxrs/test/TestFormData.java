@@ -44,7 +44,6 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.jaxrs.LogConfig;
-import com.holonplatform.jaxrs.media.FormDataPropertyBoxFeature;
 
 public class TestFormData extends JerseyTest {
 
@@ -89,13 +88,13 @@ public class TestFormData extends JerseyTest {
 
 	@Override
 	protected Application configure() {
-		return new ResourceConfig().register(LoggingFeature.class).register(TestResource.class)
-				.register(FormDataPropertyBoxFeature.class);
+		return new ResourceConfig().register(LoggingFeature.class).register(TestResource.class);
+				//.register(FormDataPropertyBoxFeature.class); // using auto-config
 	}
 
 	@Override
 	protected void configureClient(ClientConfig config) {
-		config.register(FormDataPropertyBoxFeature.class);
+		//config.register(FormDataPropertyBoxFeature.class); // using auto-config
 	}
 
 	@Test
