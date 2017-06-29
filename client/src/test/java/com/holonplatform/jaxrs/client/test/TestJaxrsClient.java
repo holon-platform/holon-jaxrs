@@ -48,6 +48,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.RequestEntity;
@@ -124,7 +125,7 @@ public class TestJaxrsClient extends JerseyTest {
 		@POST
 		@Path("box/post")
 		@Consumes(MediaType.APPLICATION_JSON)
-		public Response postBox(PropertyBox box) {
+		public Response postBox(@PropertySetRef(TestJaxrsClient.class) PropertyBox box) {
 			assertNotNull(box);
 			return Response.accepted().build();
 		}
@@ -132,7 +133,7 @@ public class TestJaxrsClient extends JerseyTest {
 		@PUT
 		@Path("box/save")
 		@Consumes(MediaType.APPLICATION_JSON)
-		public Response saveBox(PropertyBox box) {
+		public Response saveBox(@PropertySetRef(TestJaxrsClient.class) PropertyBox box) {
 			assertNotNull(box);
 			return Response.accepted().build();
 		}
@@ -207,6 +208,11 @@ public class TestJaxrsClient extends JerseyTest {
 				.postForResponse(RequestEntity.EMPTY, TestData.class);
 		assertEquals(HttpStatus.OK, prsp.getStatus());
 		assertTrue(prsp.getPayload().isPresent());
+
+		PropertyBox postBox = PropertyBox.builder(PROPERTIES).set(CODE, 100).set(VALUE, "post").build();
+		HttpResponse<Void> postResponse = client.request().path("test").path("box/post")
+				.post(RequestEntity.json(postBox));
+		assertEquals(HttpStatus.ACCEPTED, postResponse.getStatus());
 
 	}
 
