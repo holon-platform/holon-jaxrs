@@ -8,9 +8,9 @@ The module main features are:
 * A set of standard _JAX-RS_ components to implement server-side API __authentication and authorization__ using platform core APIs and services, such as `Realm` and `AuthContext`, in addition to standard `javax.annotation.security` standard annotations.
 * A complete integration with [Swagger](http://swagger.io) (_OpenAPI Specification_), including support for the `PropertyBox` core platform data container interface (to be exposed as a Swagger _Model_ definition) and for Swagger API listing endpoints (both in _JSON_ and _YAML_ formats) configuration.
 * __Spring Boot__ auto-configuration classes to automatically register suitable __Spring beans__ (for example beans annotated with `@Path` or `@Provider`) as resources in a _JAX-RS_ compliant server. 
-* __Spring Boot__ auto-configuration artifact to automatically enabled and configure a [Resteasy](resteasy.jboss.org) server with Spring integration.
+* __Spring Boot__ auto-configuration artifact to automatically enabled and configure a [Resteasy](http://resteasy.jboss.org) server with Spring integration.
 * A set of __Spring Boot starters__ to setup _JAX-RS_ compliant clients and servers:
-	* Using either [Jersey](https://github.com/jersey) or [Resteasy](resteasy.jboss.org) as _JAX-RS_ implementation.
+	* Using either [Jersey](https://github.com/jersey) or [Resteasy](http://resteasy.jboss.org) as _JAX-RS_ implementation.
 	* Using either [Jackson](http://wiki.fasterxml.com/JacksonHome) or [Gson](https://github.com/google/gson) as JSON provider
 	* Using either [Tomcat](tomcat.apache.org) or [Undertow](undertow.io) as embedded servlet container.
 
@@ -32,7 +32,7 @@ The Holon Platform is built using __Java 8__, so you need a JRE/JDK version 8 or
 
 The __JAX-RS__ specification version __2.0 or above__ is required.
 
-This module is tested against [Jersey](https://github.com/jersey) version __2.x__ and [Resteasy](resteasy.jboss.org) version __3.x__.
+This module is tested against [Jersey](https://github.com/jersey) version __2.x__ and [Resteasy](http://resteasy.jboss.org) version __3.x__.
 
 ### Releases
 
@@ -119,7 +119,7 @@ Artifact id | Description
 `holon-jaxrs-server` | JAX-RS server-side __authentication and authorization__ features using platform core APIs and services, such as `Realm` and `AuthContext`
 `holon-jaxrs-swagger` | [Swagger](http://swagger.io) configuration and JAX-RS API listing endpoints with `PropertyBox` support
 `holon-jaxrs-spring-boot-jersey` | [Jersey](https://github.com/jersey) auto-configuration with automatic registration of Spring beans as JAX-RS resources 
-`holon-jaxrs-spring-boot-resteasy` | [Resteasy](resteasy.jboss.org) auto-configuration with Spring integration
+`holon-jaxrs-spring-boot-resteasy` | [Resteasy](http://resteasy.jboss.org) auto-configuration with Spring integration
 `holon-starter-jersey` | Spring Boot JAX-RS _server_ starter using __Jersey__, __Tomcat__ and __Jackson__ as JSON provider
 `holon-starter-jersey-gson` | Spring Boot JAX-RS _server_ starter using __Jersey__, __Tomcat__ and __Gson__ as JSON provider
 `holon-starter-jersey-undertow` | Spring Boot JAX-RS _server_ starter using __Jersey__, __Undertow__ and __Jackson__ as JSON provider
