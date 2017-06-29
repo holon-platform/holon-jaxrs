@@ -13,11 +13,77 @@ _Copies of this document may be made for your own use and for distribution to ot
 
 == Introduction
 
-The introduction goes here.
+The Holon Platform *JAX-RS* module provides support, components and configuration helpers concerning the link:https://github.com/jax-rs/spec/blob/master/spec.pdf[JAX-RS^] - _Java API for RESTful Web Service_ standard.
 
+The module provides *JAX-RS* implementations and integrations for platform foundation components and structures, such as the link:holon-core.html#RestClient[RestClient] API, server-side authentication and authorization using a link:holon-core.html#Realm[Realm] and a complete link:http://swagger.io[Swagger^] _OpenAPI_ support for data containers such as link:holon-core.html#PropertyBox[PropertyBox].
+
+Furthermore, the module makes available a set of *auto-configuration* features, both for the _JAX-RS_ ecosystem and for the *Spring* and *Spring Boot* world.
+
+== Obtaining the artifacts
+
+The Holon Platform uses https://maven.apache.org[Maven^] for projects build and configuration. All the platform artifacts are published in the *Maven Central Repository*, so there is no need to explicitly declare additional repositories in your project `pom` file.
+
+At the top of each _section_ of this documentation you will find the Maven _coordinates_ (group id, artifact id and version) to obtain the artifact(s) as a dependency for your project.
+
+A *BOM (Bill Of Materials)* `pom` is provided to import the available dependencies for a specific version in your projects. The Maven coordinates for the core BOM are the following:
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-bom</artifactId>
+<version>{revnumber}</version>
+----
+
+The BOM can be imported in a Maven project in the following way:
+
+[source, xml, subs="verbatim,quotes,attributes+"]
+----
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-bom</artifactId>
+			<version>{revnumber}</version>
+			*<type>pom</type>*
+			*<scope>import</scope>*
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+----
+
+=== Using the Platform BOM
+
+The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily obtain all the available platform artifacts.
+
+See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
+
+
+// Inclusions
+
+include::_client.adoc[]
+
+include::_server.adoc[]
+
+include::_swagger.adoc[]
+
+include::_spring.adoc[]
+
+== Loggers
+
+By default, the Holon platform uses the https://www.slf4j.org[SLF4J^] API for logging. The use of SLF4J is optional: it is enabled when the presence of SLF4J is detected in the classpath. Otherwise, logging will fall back to JUL (`java.util.logging`).
+
+The logger names for the *JAX-RS* module are:
+
+* `com.holonplatform.jaxrs.server` for the _server_ side classes
+* `com.holonplatform.jaxrs.swagger` for the _Swagger_ integration classes
 
 == System requirements
 
 === Java
 
-The Holon Platform core module requires https://www.java.com[Java] *8* or higher.
+The Holon Platform JSON module requires https://www.java.com[Java] *8* or higher.
+
+The _JAX-RS_ specification version *2.0 or above* is required.
+
+This module is tested against link:https://github.com/jersey[Jersey^] version *2.x* and link:http://resteasy.jboss.org[Resteasy^] version *3.x*.
