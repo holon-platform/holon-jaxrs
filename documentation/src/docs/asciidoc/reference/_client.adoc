@@ -13,3 +13,22 @@ This artifact makes available a *JAX-RS* standard implementation of the platform
 The `RestClient` interface provides a fluent _builder_ to compose and execute _RESTful web services_ invocations, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
 
 The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data container out-of-the-box.
+
+=== Getting started
+
+To obtain a *JAX-RS* `RestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/JaxrsRestClient.html[JaxrsRestClient^] interface can be used, either specifying the *JAX-RS* `Client` instance or using the default client builder implementation class provided by the JAX-RS implementation provider.
+
+TIP: See link:holon-core.html#RestClient[RestClient documentation] for information about the `RestClient` configuration and API.
+
+.RestClient example
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleRestClient.java[tag=restclient,indent=0]
+----
+<1> Create a *JAX-RS* `RestClient` using default JAX-RS Client
+<2> Setup a _default target_, i.e. the base `URI` which will be used for all the invocations made with this `RestClient` instance
+<3> Get a generic JSON response using a _template_ variable and map it into a `TestData` bean
+<4> Get a `PropertyBox` type JSON response entity content using given `PROPERTY_SET`
+<5> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`
+<6> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`
+<7> Post a `PropertyBox` instance as JSON
