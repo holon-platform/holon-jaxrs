@@ -18,14 +18,12 @@ package com.holonplatform.jaxrs.server.auth;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.SecurityContext;
 
-import com.holonplatform.jaxrs.server.internal.auth.AuthorizationFilter;
+import com.holonplatform.jaxrs.server.internal.auth.AuthorizationDynamicFeature;
 
 /**
  * JAX-RS {@link Feature} to enable authorization control based on <code>javax.annotation.security</code> annotations
@@ -41,41 +39,22 @@ import com.holonplatform.jaxrs.server.internal.auth.AuthorizationFilter;
  * 
  * @since 5.0.0
  */
-public class AuthorizationFeature implements DynamicFeature {
+public class AuthorizationFeature implements Feature {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.container.DynamicFeature#configure(javax.ws.rs.container.ResourceInfo,
-	 * javax.ws.rs.core.FeatureContext)
+	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
 	 */
 	@Override
-	public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-
-		// DenyAll on method take precedence over RolesAllowed and PermitAll
-		if (resourceInfo.getResourceMethod().isAnnotationPresent(DenyAll.class)) {
-			context.register(new AuthorizationFilter(), Priorities.AUTHORIZATION);
-			return;
+	public boolean configure(FeatureContext context) {
+		// limit to SERVER runtime
+		if (RuntimeType.SERVER == context.getConfiguration().getRuntimeType()) {
+			if (!context.getConfiguration().isRegistered(AuthorizationDynamicFeature.class)) {
+				context.register(AuthorizationDynamicFeature.class);
+			}
+			return true;
 		}
-
-		// RolesAllowed on method takes precedence over PermitAll
-		RolesAllowed ra = resourceInfo.getResourceMethod().getAnnotation(RolesAllowed.class);
-		if (ra != null) {
-			context.register(new AuthorizationFilter(ra.value()), Priorities.AUTHORIZATION);
-			return;
-		}
-
-		// PermitAll takes precedence over RolesAllowed on the class
-		if (resourceInfo.getResourceMethod().isAnnotationPresent(PermitAll.class)) {
-			// do not apply filter
-			return;
-		}
-
-		// RolesAllowed on the class takes precedence over PermitAll. DenyAll can't be attached to classes.
-		ra = resourceInfo.getResourceClass().getAnnotation(RolesAllowed.class);
-		if (ra != null) {
-			context.register(new AuthorizationFilter(ra.value()), Priorities.AUTHORIZATION);
-		}
-
+		return false;
 	}
 
 }

@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.server.auth;
 
-import javax.ws.rs.Priorities;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.SecurityContext;
@@ -26,20 +26,19 @@ import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.jaxrs.server.internal.auth.AuthContextFilter;
 import com.holonplatform.jaxrs.server.internal.auth.AuthenticationDynamicFeature;
 
 /**
  * A JAX-RS {@link Feature} which can be registered in server application to enable authentication support using
  * {@link Authenticate} annotation.
  * <p>
- * Using this feature, the {@link SecurityContext} of every JAX-RS request will be replaced with an {@link AuthContext}
- * compatible implementation. This way, the application {@link SecurityContext} is always expected to be an
- * {@link AuthContext} instance and will be used to perform authentication when required.
- * </p>
- * <p>
  * JAX-RS resource classes and/or methods annotated with {@link Authenticate} will be protected from unauthorized
  * access, performing client authentication using the {@link AuthContext} security context {@link Realm}.
+ * </p>
+ * <p>
+ * Using this feature, the {@link SecurityContext} of the JAX-RS requests bound to {@link Authenticate} annotated
+ * resources will be replaced with an {@link AuthContext} compatible implementation and will be used to perform
+ * authentication when required.
  * </p>
  * <p>
  * Allowed authentication schemes can be specified using {@link Authenticate#schemes()} annotation attribute. If any
@@ -66,13 +65,14 @@ public class AuthenticationFeature implements Feature {
 	 */
 	@Override
 	public boolean configure(FeatureContext context) {
-		if (!context.getConfiguration().isRegistered(AuthContextFilter.class)) {
-			context.register(AuthContextFilter.class, Priorities.AUTHENTICATION - 10);
+		// limit to SERVER runtime
+		if (RuntimeType.SERVER == context.getConfiguration().getRuntimeType()) {
+			if (!context.getConfiguration().isRegistered(AuthenticationDynamicFeature.class)) {
+				context.register(AuthenticationDynamicFeature.class);
+			}
+			return true;
 		}
-		if (!context.getConfiguration().isRegistered(AuthenticationDynamicFeature.class)) {
-			context.register(AuthenticationDynamicFeature.class);
-		}
-		return true;
+		return false;
 	}
 
 }

@@ -15,6 +15,8 @@
  */
 package com.holonplatform.jaxrs.server.internal.auth;
 
+import java.lang.reflect.AnnotatedElement;
+
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
@@ -38,21 +40,30 @@ public class AuthenticationDynamicFeature implements DynamicFeature {
 	@Override
 	public void configure(ResourceInfo resourceInfo, FeatureContext context) {
 		// check method
-		if (resourceInfo.getResourceMethod().isAnnotationPresent(Authenticate.class)) {
-			context.register(
-					new AuthenticationFilter(
-							resourceInfo.getResourceMethod().getAnnotation(Authenticate.class).schemes()),
-					Priorities.AUTHENTICATION);
-			return;
+		if (!registerAuthenticationFilters(context, resourceInfo.getResourceMethod())) {
+			// check class
+			registerAuthenticationFilters(context, resourceInfo.getResourceClass());
 		}
-		// check class
-		if (resourceInfo.getResourceClass().isAnnotationPresent(Authenticate.class)) {
-			context.register(
-					new AuthenticationFilter(
-							resourceInfo.getResourceClass().getAnnotation(Authenticate.class).schemes()),
+	}
+
+	/**
+	 * Checks if given <code>element</code> has the {@link Authenticate} annotation and if so registers the required
+	 * authentication filters.
+	 * @param context Feature context
+	 * @param element Annotated element
+	 * @return <code>true</code> if the {@link Authenticate} annotation was found and the authentication filters were
+	 *         registered, <code>false</code> otherwise
+	 */
+	private static boolean registerAuthenticationFilters(FeatureContext context, AnnotatedElement element) {
+		if (element.isAnnotationPresent(Authenticate.class)) {
+			// AuthContext setup for SecurityContext
+			context.register(AuthContextFilter.class, Priorities.AUTHENTICATION - 10);
+			// Authenticator
+			context.register(new AuthenticationFilter(element.getAnnotation(Authenticate.class).schemes()),
 					Priorities.AUTHENTICATION);
-			return;
+			return true;
 		}
+		return false;
 	}
 
 }
