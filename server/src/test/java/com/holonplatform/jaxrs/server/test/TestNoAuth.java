@@ -24,13 +24,13 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
-import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
 
 public class TestNoAuth extends JerseyTest {
 
@@ -54,7 +54,7 @@ public class TestNoAuth extends JerseyTest {
 	@Override
 	protected Application configure() {
 		return new ResourceConfig().register(AResource.class).register(AuthenticationFeature.class)
-				.register(AuthorizationFeature.class);
+				.register(RolesAllowedDynamicFeature.class);
 	}
 
 	@Test

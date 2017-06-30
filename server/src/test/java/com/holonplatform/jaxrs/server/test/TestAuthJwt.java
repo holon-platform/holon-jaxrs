@@ -46,16 +46,17 @@ import javax.ws.rs.ext.Providers;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.holonplatform.auth.Account;
+import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Realm;
-import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
@@ -65,7 +66,6 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.ResourceUtils;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
-import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
@@ -202,7 +202,7 @@ public class TestAuthJwt extends JerseyTest {
 				.authenticator(JwtAuthenticator.builder().configuration(cfg).issuer("AuthIssuer").build())
 				.withDefaultAuthorizer().build();
 
-		return new ResourceConfig().register(AuthenticationFeature.class).register(AuthorizationFeature.class)
+		return new ResourceConfig().register(AuthenticationFeature.class).register(RolesAllowedDynamicFeature.class)
 				// context
 				.register(new ContextResolver<JwtConfiguration>() {
 
