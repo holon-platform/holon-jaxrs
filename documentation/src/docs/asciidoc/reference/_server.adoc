@@ -8,12 +8,14 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact makes available two *JAX-RS* server _features_ to implement JAX-RS server resources <<Authentication>> and <<Authorization>> using platform foundation APIs, such as link:holon-core.html#Realm[Realm].
+This artifact deals with JAX-RS server resources <<Authentication>> and <<Authorization>>, using platform foundation APIs, such as link:holon-core.html#Realm[Realm].
 
 [[Authentication]]
 === Authentication
 
-The link:{apidir}/com/holonplatform/jaxrs/server/auth/AuthenticationFeature.html[AuthenticationFeature^] can be registered in a JAX-RS server configuration context to enable authentication support using the core link:{coreapidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] annotation.
+The link:{apidir}/com/holonplatform/jaxrs/server/auth/AuthenticationFeature.html[AuthenticationFeature^] can be used in a JAX-RS server to enable authentication support using the core link:{coreapidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] annotation.
+
+The feature is automatically registered for *Jersey* and *Resteasy* server runtimes using Java Service extensions and auto-discoverable. To explicitly disable the feature, the `holon.jaxrs.server.disable-authentication` property name can be used, registering it as a the server configuration property name (with an arbitraty not null value).
 
 When this feature is enabled, the standard JAX-RS `SecurityContext` of every request will be replaced with an link:{coreapidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] compatible implementation, which will be used to perform authentication when required.
 
@@ -57,4 +59,11 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=aut
 [[Authorization]]
 === Authorization
 
-TODO
+When a `SecurityContext` is setted up, for example using the <<Authentication>> feature, it can used to check if an account is authenticated and perform role-based access control.
+
+For example, to use stardard `javax.annotation.security` annotations on resource classes for role-based access control, you can:
+
+* In *Jersey*, register the standard `RolesAllowedDynamicFeature` in server resources configuration.
+* In *Resteasy*, activate the role-based security access control setting a servlet the context parameter `resteasy.role.based.security` to `true`.
+
+
