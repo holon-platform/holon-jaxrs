@@ -25,7 +25,7 @@ import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
- * Utility class to handle generic resource within the JAX-RS server context.
+ * Utility class to handle generic resources within a JAX-RS server context.
  *
  * @since 5.0.0
  */
