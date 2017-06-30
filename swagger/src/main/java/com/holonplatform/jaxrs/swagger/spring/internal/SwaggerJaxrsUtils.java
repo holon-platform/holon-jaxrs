@@ -65,7 +65,7 @@ public final class SwaggerJaxrsUtils implements Serializable {
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
 				.annotateType(AnnotationDescription.Builder.ofType(ApiGroupId.class).define("value", configId).build());
 		if (rolesAllowed != null && rolesAllowed.length > 0) {
-			builder.annotateType(AnnotationDescription.Builder.ofType(RolesAllowed.class)
+			builder = builder.annotateType(AnnotationDescription.Builder.ofType(RolesAllowed.class)
 					.defineArray("value", rolesAllowed).build());
 		}
 		return builder.make().load(cl, ClassLoadingStrategy.Default.INJECTION).getLoaded();
