@@ -9,3 +9,26 @@ _Maven coordinates_:
 ----
 
 This artifact provides a complete integration with link:http://swagger.io[Swagger^] _OpenAPI Specification_, to configure API listing JAX-RS endpoints and to handle the `PropertyBox` data container type as a Swagger _Model_ definition.
+
+=== `PropertyBox` support
+
+When the `holon-jaxrs-swagger` artifact is in classpath, the Swagger JAX-RS engine is automatically configured to support the `PropertyBox` type as API parameter or return type, but to ensure a proper `PropertyBox` handling the internal _SwaggerContext_ must be settet up. This can be done either:
+
+* Using the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerConfiguration.html[SwaggerConfiguration^] Swagger `BeanConfig` extension class, instead of the standard `BeanConfig` class
+* Or providing the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerContextListener.html[SwaggerContextListener^] Swagger `ReaderListener` class as a Swagger scanned resource class
+
+=== `PropertyBox` model definition
+
+A `PropertyBox` type API parameter or return type is translated in a regular Swagger _object_ definition, listing all the the *properties* of the `PropertyBox` property-set which implement the `Path` interface, using the `Path` name as _object_ attribute name and the property type (adapted to a standard JSON type) as attribute type.
+
+The `x-holon-model-type` extension property is added to each Swagger `PropertyBox` type object definition, with the `com.holonplatform.core.property.PropertyBox` value.
+
+The link:{coreapidir}/com/holonplatform/core/property/PropertySetRef.html[PropertySetRef^] annotation has to be used in JAX-RS resource methods for `PropertyBox` type parameters or return types to declare the *property set* to use to serialize a `PropertyBox` declaration.
+
+To create a regular Swagger *Model definition*, listed in the _definitions_ section of the Swagger specification and referenced by name by API definitions, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiPropertySetModel.html[ApiPropertySetModel^] annotation can be used in conjuction with the `@PropertySetRef` annotation, using the annotation `value()` attribute to declare the model definition *name* to generate for a `PropertyBox` type object.
+
+CAUTION: Ensure to assign the same model name to `PropertyBox` type parameters and return types which are meant to be used with the same property set and to declare different model names for different property sets.
+
+=== Spring Boot integration
+
+TODO
