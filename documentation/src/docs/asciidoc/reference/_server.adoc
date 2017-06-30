@@ -29,11 +29,30 @@ When authentication informations provided by a client for an `@Authenticate` ann
 The feature relies on a `Realm` to perform authentication operations, which must be available either:
 
 * From a suitable JAX-RS `ContextResolver` which returns the `Realm` instance
-* Or as a platform standard holon-core.html#Context[Context] resource with default `Realm` context key (i.e. `com.holonplatform.auth.Realm`)
+* Or as a platform standard link:holon-core.html#Context[Context] resource with default `Realm` context key (i.e. `com.holonplatform.auth.Realm`)
 
 ==== Authentication schemes
 
 Allowed authentication *schemes* can be specified using the `schemes()` attribute of the `@Authenticate` annotation attribute. If any scheme is specified for a resource, a scheme-matching link:{coreapidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] must be registered in `Realm` to perform authentication with given scheme.
+
+See link:holon-core.html#MessageAuthenticator[MessageAuthenticator] for information about _message authenticators_ and builtin authenticators for HTTP schemes like `Basic` and `Bearer`.
+
+==== Example
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=auth,indent=0]
+----
+<1> JAX-RS endpoint resource protected using `@Authenticate` and `Basic` HTTP authentication scheme
+<2> JAX-RS endpoint resource with only one protected method
+<3> This method is not protected
+<4> Only this method of the resource is protected using `@Authenticate` and `Basic` HTTP authentication scheme
+<5> `AccountProvider` to provide available `Account` s to the Realm 
+<6> Build a `Realm` to be used for resource access authentication
+<7> Add a _resolver_ for HTTP `Basic` scheme authentication messages
+<8> Set the realm _authenticator_ using the previously defined `AccountProvider`
+<9> Create a JAX-RS `ContextResolver` to provide the `Realm` instance to use
+<10> Register the Realm `ContextResolver` and the `AuthenticationFeature` in JAX-RS application (for example, using a Jersey `ResourceConfig`)
 
 [[Authorization]]
 === Authorization
