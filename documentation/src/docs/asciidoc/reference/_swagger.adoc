@@ -65,6 +65,10 @@ The `my.api.endpoints` package is scanned to detect JAX-RS API resources and the
 
 Multiple API listing endpoints configuration is supported using the `holon.swagger.api-groups` configuration property, which accept a list of API _groups_, each bound to a specific API _package_ to scan and which can be independently configured using the <<SwaggerConfigurationProperties>>.
 
+For each API group, an API listing endpoint will be available at the base API listing path (`/api-docs` by default, or the one configured with the `holon.swagger.path` property at the root level) followed by the `group-id` property name. For example: `http(s):host/api-docs/one`.
+
+If a `group-id` is not specified, the `default` group id will be used and the API listing endpoint will be available at the base API listing path.
+
 For example, for a configuration like the following:
 
 .application.yml
@@ -76,10 +80,11 @@ holon:
     title: "Test Swagger API"
     
     api-groups:
-      - resource-package: "my.api.endpoints.one"
+      - group-id: "one" 
+        resource-package: "my.api.endpoints.one"
         description: "The API group 1"
         path: docs/one
-      - group-id: "additional"
+      - group-id: "two"
         resource-package: "my.api.endpoints.two"
         description: "The API group 2"
         path: docs/two
@@ -93,5 +98,90 @@ Two API groups are defined:
 [[SwaggerConfigurationProperties]]
 ==== Swagger configuration properties
 
+.Common configuration properties
+|===
+|Name |Meaning
 
+|_holon.swagger._ *resourcePackage*
+|The package name to scan to detect API endpoints
 
+|_holon.swagger._ *path*
+|API listing endpoint path. When at group level, is appended to the base API listing path.
+
+|_holon.swagger._ *schemes*
+|API supported protocol schemes list (`http`, `https`)
+
+|_holon.swagger._ *title*
+|API title
+
+|_holon.swagger._ *version*
+|API version
+
+|_holon.swagger._ *description*
+|API description
+
+|_holon.swagger._ *termsOfServiceUrl*
+|Terms of Service URL
+
+|_holon.swagger._ *contact*
+|Contact information
+
+|_holon.swagger._ *license*
+|License information
+
+|_holon.swagger._ *licenseUrl*
+|License URL
+
+|_holon.swagger._ *host*
+|API host name
+
+|_holon.swagger._ *pretty-print*
+|Whether to _pretty_ format API listing output (`true` or `false`)
+
+|_holon.swagger._ *security-roles*
+|A list of security roles for API listing access control using the JAX-RS `SecurityContext` and the `@RolesAllowed` annotation
+
+|_holon.swagger._ *api-groups*
+|Optional API groups. Each group can be configured using the properties listed below.
+|===
+
+.API group configuration properties
+|===
+|Name |Meaning
+
+|_holon.swagger.api-groups._ *group-id*
+|API group id, also used as API listing endpoint sub-path is group `path` is not specified
+
+|_holon.swagger.api-groups._ *resourcePackage*
+|The package name to scan to detect API group endpoints
+
+|_holon.swagger.api-groups._ *path*
+|API group listing endpoint path
+
+|_holon.swagger.api-groups._ *schemes*
+|API group supported protocol schemes list (`http`, `https`)
+
+|_holon.swagger.api-groups._ *title*
+|API group title
+
+|_holon.swagger.api-groups._ *version*
+|API group version
+
+|_holon.swagger.api-groups._ *description*
+|API group description
+
+|_holon.swagger.api-groups._ *termsOfServiceUrl*
+|Terms of Service URL
+
+|_holon.swagger.api-groups._ *contact*
+|Contact information
+
+|_holon.swagger.api-groups._ *license*
+|License information
+
+|_holon.swagger.api-groups._ *licenseUrl*
+|License URL
+
+|_holon.swagger.api-groups._ *security-roles*
+|A list of security roles for API group listing access control using the JAX-RS `SecurityContext` and the `@RolesAllowed` annotation
+|===

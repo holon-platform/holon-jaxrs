@@ -34,7 +34,7 @@ public class SwaggerConfigurationProperties {
 	public static final String DEFAULT_PATH = "/api-docs";
 
 	/**
-	 * The package name to scan to detect API group endpoints. Ingored when at least {@link ApiGroupConfiguration} is
+	 * The package name to scan to detect API endpoints. Ingored when at least {@link ApiGroupConfiguration} is
 	 * present.
 	 */
 	private String resourcePackage;
