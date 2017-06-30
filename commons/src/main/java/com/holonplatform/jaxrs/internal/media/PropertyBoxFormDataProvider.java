@@ -272,9 +272,10 @@ public class PropertyBoxFormDataProvider implements MessageBodyWriter<PropertyBo
 				if (t != null) {
 
 					// encode
-					@SuppressWarnings("unchecked")
-					String value = t.stream().filter(p -> p instanceof Path).filter(p -> t.getValue(p) != null)
-							.map(p -> encode(p, ((Path<?>) p).getName()) + "=" + encode(p, serialize(p, t.getValue(p))))
+					String value = t.stream().filter(p -> p instanceof Path)
+							.filter(p -> t.getValue((Property<?>) p) != null)
+							.map(p -> encode(p, ((Path<?>) p).getName()) + "="
+									+ encode(p, serialize(p, t.getValue((Property<?>) p))))
 							.collect(Collectors.joining("&"));
 					if (value != null) {
 						writer.write(value);
