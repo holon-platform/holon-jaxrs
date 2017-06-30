@@ -15,21 +15,17 @@
  */
 package com.holonplatform.jaxrs.server.auth;
 
-import java.io.IOException;
-
-import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.SecurityContext;
+
+import com.holonplatform.jaxrs.server.internal.auth.AuthorizationFilter;
 
 /**
  * JAX-RS {@link Feature} to enable authorization control based on <code>javax.annotation.security</code> annotations
@@ -78,77 +74,6 @@ public class AuthorizationFeature implements DynamicFeature {
 		ra = resourceInfo.getResourceClass().getAnnotation(RolesAllowed.class);
 		if (ra != null) {
 			context.register(new AuthorizationFilter(ra.value()), Priorities.AUTHORIZATION);
-		}
-
-	}
-
-	// ------- Filter
-
-	/**
-	 * Filter to perform authorization control relying on specified roles.
-	 */
-	@Priority(Priorities.AUTHORIZATION)
-	private static class AuthorizationFilter implements ContainerRequestFilter {
-
-		/**
-		 * Allowed roles
-		 */
-		private final String[] roles;
-
-		/**
-		 * Deny all
-		 */
-		private final boolean denyAll;
-
-		/**
-		 * Constructor for DenyAll
-		 */
-		public AuthorizationFilter() {
-			super();
-			this.denyAll = true;
-			this.roles = null;
-		}
-
-		/**
-		 * Constructor
-		 * @param roles Allowed roles
-		 */
-		public AuthorizationFilter(String[] roles) {
-			super();
-			this.denyAll = false;
-			this.roles = (roles != null) ? roles : new String[] {};
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see javax.ws.rs.container.ContainerRequestFilter#filter(javax.ws.rs.container.ContainerRequestContext)
-		 */
-		@Override
-		public void filter(ContainerRequestContext requestContext) throws IOException {
-			if (!denyAll) {
-				if (roles.length > 0 && !isAuthenticated(requestContext)) {
-					throw new ForbiddenException("Access denied to requested resource");
-				}
-
-				for (final String role : roles) {
-					if (requestContext.getSecurityContext().isUserInRole(role)) {
-						return;
-					}
-				}
-			}
-
-			throw new ForbiddenException("Access denied to requested resource");
-
-		}
-
-		/**
-		 * Checks whether the {@link SecurityContext} is authenticated, i.e. {@link SecurityContext#getUserPrincipal()}
-		 * is not null.
-		 * @param requestContext Request context
-		 * @return <code>true</code> if the {@link SecurityContext} is authenticated
-		 */
-		private static boolean isAuthenticated(final ContainerRequestContext requestContext) {
-			return requestContext.getSecurityContext().getUserPrincipal() != null;
 		}
 
 	}

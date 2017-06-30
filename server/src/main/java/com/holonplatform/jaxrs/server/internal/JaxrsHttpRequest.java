@@ -31,7 +31,6 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.HttpRequest;
 import com.holonplatform.http.internal.AbstractHttpRequest;
-import com.holonplatform.jaxrs.server.utils.RequestUtils;
 
 /**
  * {@link HttpRequest} using JAX-RS context informations.

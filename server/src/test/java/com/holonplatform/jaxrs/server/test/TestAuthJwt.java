@@ -63,9 +63,9 @@ import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
+import com.holonplatform.jaxrs.server.ResourceUtils;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
-import com.holonplatform.jaxrs.server.utils.ResourceUtils;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;

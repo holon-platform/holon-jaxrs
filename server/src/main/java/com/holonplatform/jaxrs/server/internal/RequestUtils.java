@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.server.utils;
+package com.holonplatform.jaxrs.server.internal;
 
 import java.io.Serializable;
 import java.util.List;
