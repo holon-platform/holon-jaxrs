@@ -71,6 +71,7 @@ public interface ApiListingDefinition extends Serializable {
 		definition.setLicenseUrl(properties.getLicenseUrl());
 		definition.setHost(properties.getHost());
 		definition.setPrettyPrint(properties.isPrettyPrint());
+		definition.setSecurityRoles(properties.getSecurityRoles());
 		return definition;
 	}
 
