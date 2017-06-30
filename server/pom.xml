@@ -59,6 +59,14 @@
 			<version>${jax-rs.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Provided Jersey for AutoDiscoverables -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>${jersey.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- JUL logger bridge -->
 		<dependency>

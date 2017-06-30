@@ -28,6 +28,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -35,28 +36,31 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.holonplatform.auth.Account;
+import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Realm;
-import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
-import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 import com.holonplatform.jaxrs.server.auth.AuthorizationFeature;
 
 public class TestAuth extends JerseyTest {
 
+	private static Client client;
+
 	@BeforeClass
 	public static void setup() {
 		LogConfig.setupLogging();
+		client = JerseyClientBuilder.createClient();
 	}
 
 	@Path("public")
@@ -173,8 +177,8 @@ public class TestAuth extends JerseyTest {
 		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBasicResolver())
 				.authenticator(Account.authenticator(provider)).withDefaultAuthorizer().build();
 
-		return new ResourceConfig().register(AuthenticationFeature.class).register(AuthorizationFeature.class)
-				.register(new ContextResolver<Realm>() {
+		return new ResourceConfig()// .register(AuthenticationFeature.class) // using auto-config
+				.register(AuthorizationFeature.class).register(new ContextResolver<Realm>() {
 
 					@Override
 					public Realm getContext(Class<?> type) {
@@ -184,7 +188,11 @@ public class TestAuth extends JerseyTest {
 				.register(PublicResource.class);
 	}
 
-	// Test
+	// Avoid conflict with Resteasy in classpath
+	@Override
+	protected Client getClient() {
+		return client;
+	}
 
 	@Test
 	public void testAuth() {
