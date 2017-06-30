@@ -91,7 +91,6 @@ public class ExampleAuth {
 		};
 
 		register(realmContextResolver); // <10>
-		register(AuthenticationFeature.class);
 	}
 	// end::auth[]
 

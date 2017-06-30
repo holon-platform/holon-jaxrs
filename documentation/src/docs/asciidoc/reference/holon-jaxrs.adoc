@@ -111,9 +111,9 @@ include::_client.adoc[]
 
 include::_server.adoc[]
 
-include::_swagger.adoc[]
-
 include::_spring.adoc[]
+
+include::_swagger.adoc[]
 
 == Loggers
 

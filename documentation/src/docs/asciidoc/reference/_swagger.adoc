@@ -1,0 +1,11 @@
+== Swagger integration
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-swagger</artifactId>
+<version>{revnumber}</version>
+----
+
+This artifact provides a complete integration with link:http://swagger.io[Swagger^] _OpenAPI Specification_, to configure API listing JAX-RS endpoints and to handle the `PropertyBox` data container type as a Swagger _Model_ definition.

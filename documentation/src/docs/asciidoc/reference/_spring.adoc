@@ -1,0 +1,145 @@
+== Spring Boot integration
+
+[[Jersey]]
+=== Jersey
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
+<version>{revnumber}</version>
+----
+
+This artifact provides a link:https://github.com/jersey[Jersey^] Spring Boot auto-configuration class to automatically register any Spring context *bean* annotated with `@Path` or `@Provider` JAX-RS annotations as a server resource, using the default `ResourceConfig` Jersey configuration bean.
+
+If custom `ResourceConfig` type bean is not available in Spring context, a *default one* will be automatically created.
+
+IMPORTANT: For `@Provider` annotated bean classes, only *singleton* scoped beans are allowed.
+
+The `holon.jersey.bean-scan` Spring boot application property can be used, setting it to `false`, to disable automatic bean resources scan and registration.
+
+To disable this auto-configuration feature the `JerseyServerAutoConfiguration` class can be excluded:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={JerseyServerAutoConfiguration.class})
+----
+
+=== Resteasy
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
+<version>{revnumber}</version>
+----
+
+This artifact provides a link:http://resteasy.jboss.org[Resteasy^] Spring Boot auto-configuration classes to *automatically setup a Resteasy JAX-RS server implementation* with Spring integration enabled, providing configuration through Spring Boot application properties.
+
+==== Configuration
+
+The link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfig.html[ResteasyConfig^] class, which extends default JAX-RS `Application` class, can be used to register the JAX-RS resources, similarly to the `ResourceConfig` Jersey configuration class.
+
+The `ResteasyConfig` must be declared as a singleton Spring bean to be used by the Resteasy auto-configuration classes. If a `ResteasyConfig` type bean is not available, a *default one* will be automatically created.
+
+Just like the <<Jersey>> auto-configuration artifact, this module automatically register any Spring context *bean* annotated with `@Path` or `@Provider` JAX-RS annotations as a server resource.
+
+IMPORTANT: For `@Provider` annotated bean classes, only *singleton* scoped beans are allowed.
+
+The Resteasy JAX-RS application path can be defined either using the `ApplicationPath` annotation on the
+`ResteasyConfig` bean class or through the `holon.resteasy.application-path` configuration property. See <<ConfigurationProperties>> for a list of available configuration properties.
+
+==== `ResteasyConfigCustomizer`
+
+Any Spring bean which implements the link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfigCustomizer.html[ResteasyConfigCustomizer^] interface, is automatically discovered and its `customize` method is called, allowing to customize the `ResteasyConfig` instance before it is used.
+
+[[ConfigurationProperties]]
+==== Configuration properties
+
+The link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfigurationProperties.html[ResteasyConfigurationProperties^] lists the configuration properties (with the `holon.resteasy` prefix) which can be used to setup the Resteasy auto-configuration.
+
+TIP: Just like any other Spring Boot configuration property, the `holon.resteasy.*` properties can be specified in your inside your `application.properties` / `application.yml` file or as command line switches.
+
+|===
+|Name |Default value |Meaning
+
+|_holon.resteasy._ *application-path*
+|_no default_
+|Path that serves as the base URI for the application. Overrides the value of `@ApplicationPath` if specified
+
+|_holon.resteasy._ *type*
+|`servlet`
+|Resteasy integration type: `servlet` or `filter`
+
+|_holon.resteasy._ *filter.order*
+|`0`
+|Resteasy filter chain order when integration type is `filter`
+
+|_holon.resteasy._ *servlet.load-on-startup*
+|`-1`
+|Load on startup priority of the Resteasy servlet when integration type is `servlet`
+
+|_holon.resteasy._ *init.*
+|_no default_
+|Init parameters to pass to Resteasy via the servlet or filter
+|===
+
+=== Spring Boot starters
+
+The following _starter_ artifacts are available to provide a quick JAX-RS server and/or client application setup using the Maven dependency system.
+
+All the available _starters_ include the default Holon _core_ Spring Boot starters (see the documentation for further information) and the base Spring Boot starter (`spring-boot-starter`).
+
+The *Jersey* _starters_ include the default Spring Boot Jersey starter (`spring-boot-starter-jersey`).
+
+The *Resteasy* _starters_ include the default Spring Boot Web starter (`spring-boot-starter-web`).
+
+The Maven *group id* for all the JAX-RS _starters_ is `com.holon-platform.jaxrs`. So you can declare a _starter_ in you `pom` dependencies section like this:
+
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-starter-xxx</artifactId>
+<version>{revnumber}</version>
+----
+
+==== JAX-RS client
+
+|===
+|Artifact id |Description
+
+|`holon-starter-jersey-client`
+|JAX-RS _client_ starter using *Jersey* and *Jackson* as JSON provider
+|`holon-starter-jersey-client-gson`
+|JAX-RS _client_ starter using *Jersey* and *Gson* as JSON provider
+|`holon-starter-resteasy-client`
+|JAX-RS _client_ starter using *Resteasy* and *Jackson* as JSON provider
+|`holon-starter-resteasy-client-gson`
+|JAX-RS _client_ starter using *Resteasy* and *Gson* as JSON provider
+|===
+
+==== JAX-RS server
+
+|===
+|Artifact id |Description
+
+|`holon-starter-jersey`
+|JAX-RS _server_ starter using *Jersey*, *Tomcat* as embedded servlet container and *Jackson* as JSON provider
+|`holon-starter-jersey-gson`
+|JAX-RS _server_ starter using *Jersey*, *Tomcat* as embedded servlet container and *Gson* as JSON provider
+|`holon-starter-jersey-undertow`
+|JAX-RS _server_ starter using *Jersey*, *Undertow* as embedded servlet container and *Jackson* as JSON provider
+|`holon-starter-jersey-undertow-gson`
+|JAX-RS _server_ starter using *Jersey*, *Undertow* as embedded servlet container and *Gson* as JSON provider
+
+|`holon-starter-resteasy`
+|JAX-RS _server_ starter using *Resteasy*, *Tomcat* as embedded servlet container and *Jackson* as JSON provider
+|`holon-starter-resteasy-gson`
+|JAX-RS _server_ starter using *Resteasy*, *Tomcat* as embedded servlet container and *Gson* as JSON provider
+|`holon-starter-resteasy-undertow`
+|JAX-RS _server_ starter using *Resteasy*, *Undertow* as embedded servlet container and *Jackson* as JSON provider
+|`holon-starter-resteasy-undertow-gson`
+|JAX-RS _server_ starter using *Resteasy*, *Undertow* as embedded servlet container and *Gson* as JSON provider
+|===

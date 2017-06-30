@@ -54,7 +54,7 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=aut
 <7> Add a _resolver_ for HTTP `Basic` scheme authentication messages
 <8> Set the realm _authenticator_ using the previously defined `AccountProvider`
 <9> Create a JAX-RS `ContextResolver` to provide the `Realm` instance to use
-<10> Register the Realm `ContextResolver` and the `AuthenticationFeature` in JAX-RS application (for example, using a Jersey `ResourceConfig`)
+<10> Register the Realm `ContextResolver` in JAX-RS application (for example, using a Jersey `ResourceConfig`)
 
 [[Authorization]]
 === Authorization
