@@ -25,7 +25,9 @@ import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.annotations.Authenticate;
+import com.holonplatform.core.internal.Logger;
 import com.holonplatform.http.HttpHeaders;
+import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.jaxrs.server.internal.auth.AuthenticationDynamicFeature;
 
 /**
@@ -59,6 +61,14 @@ import com.holonplatform.jaxrs.server.internal.auth.AuthenticationDynamicFeature
  */
 public class AuthenticationFeature implements Feature {
 
+	private final static Logger LOGGER = JaxrsLogger.create();
+
+	/**
+	 * JAX-RS configuration property name to put in the application configuration to disable the
+	 * {@link AuthenticationFeature} registration.
+	 */
+	public static final String DISABLE_AUTHENTICATION = "holon.jaxrs.server.disable-authentication";
+
 	/*
 	 * (non-Javadoc)
 	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
@@ -67,6 +77,14 @@ public class AuthenticationFeature implements Feature {
 	public boolean configure(FeatureContext context) {
 		// limit to SERVER runtime
 		if (RuntimeType.SERVER == context.getConfiguration().getRuntimeType()) {
+
+			// check disabled
+			if (context.getConfiguration().getProperties().containsKey(DISABLE_AUTHENTICATION)) {
+				LOGGER.debug(() -> "Skip AuthenticationFeature registration, [" + DISABLE_AUTHENTICATION
+						+ "] property detected");
+				return false;
+			}
+
 			if (!context.getConfiguration().isRegistered(AuthenticationDynamicFeature.class)) {
 				context.register(AuthenticationDynamicFeature.class);
 			}
