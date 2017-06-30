@@ -31,4 +31,67 @@ CAUTION: Ensure to assign the same model name to `PropertyBox` type parameters a
 
 === Spring Boot integration
 
-TODO
+The `holon-jaxrs-swagger` provides Spring Boot auto-configuration classes to automatically configure *Swagger API listing JAX-RS endpoints* in a Spring Boot application.
+
+The Swagger auto-configuration is triggered when either a `ResourceConfig` type _Jersey_ configuration bean or a `ResteasyConfig` type _Resteasy_ configuration bean is available in Spring context.
+
+The Swagger auto-configuration relies on the `holon.swagger.*` configuration properties listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationProperties.html[SwaggerConfigurationProperties^] class to configure the Swagger API endpoints.
+
+TIP: Just like any other Spring Boot configuration property, the `holon.swagger.*` properties can be specified in your inside your `application.properties` / `application.yml` file or as command line switches.
+
+At least the `holon.swagger.resource-package` property, which specifies the Java _package_ name to scan to detect the JAX-RS API endpoints, must be setted to auto-configure a Swagger API listing endpoint. See <<SwaggerConfigurationProperties>> for a list of all available configuration properties.
+
+By default, the `/api-docs` default path is used to expose the API listing endpoint, but can be changed using the `holon.swagger.path` property.
+
+The API listing endpoint supports the `type` query parameter name to obtain the Swagger API definitions either in *JSON*, using the `json` parameter value (the default format), or in *YAML*, using the `yaml` parameter value.
+
+For example, for a configuration like the following:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    version: "v1"
+    title: "Test Swagger API"
+    resource-package: "my.api.endpoints"
+    path: "docs"
+    pretty-print: true
+----
+
+The `my.api.endpoints` package is scanned to detect JAX-RS API resources and the API listing endpoint will be available at the `http(s):host/docs` URL.
+
+==== Configure multiple API listing endpoints
+
+Multiple API listing endpoints configuration is supported using the `holon.swagger.api-groups` configuration property, which accept a list of API _groups_, each bound to a specific API _package_ to scan and which can be independently configured using the <<SwaggerConfigurationProperties>>.
+
+For example, for a configuration like the following:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    version: "v1"
+    title: "Test Swagger API"
+    
+    api-groups:
+      - resource-package: "my.api.endpoints.one"
+        description: "The API group 1"
+        path: docs/one
+      - group-id: "additional"
+        resource-package: "my.api.endpoints.two"
+        description: "The API group 2"
+        path: docs/two
+----
+
+Two API groups are defined:
+
+* The group 1, bound to the `my.api.endpoints.one` package and for which the API listing endpoint will be available at the `http(s):host/docs/one` URL.
+* The group 2, bound to the `my.api.endpoints.two` package and for which the API listing endpoint will be available at the `http(s):host/docs/two` URL.
+
+[[SwaggerConfigurationProperties]]
+==== Swagger configuration properties
+
+
+
