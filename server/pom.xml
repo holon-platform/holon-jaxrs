@@ -44,7 +44,7 @@
 			<artifactId>holon-auth</artifactId>
 			<version>${holon.core.version}</version>
 		</dependency>
-		
+
 		<!-- Holon JAX-RS commons -->
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
@@ -59,19 +59,13 @@
 			<version>${jax-rs.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Provided Jersey for AutoDiscoverables -->
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-common</artifactId>
 			<version>${jersey.version}</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<!-- JUL logger bridge -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
 		</dependency>
 
 		<!-- Test -->
@@ -92,7 +86,12 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
 			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
