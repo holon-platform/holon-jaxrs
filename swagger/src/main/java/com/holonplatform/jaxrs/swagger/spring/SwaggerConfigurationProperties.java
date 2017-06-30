@@ -95,6 +95,11 @@ public class SwaggerConfigurationProperties {
 	 * Whether to <em>pretty</em> format API listing output.
 	 */
 	private boolean prettyPrint;
+	
+	/**
+	 * Set of security roles to use for API listing resource access control
+	 */
+	private String[] securityRoles;
 
 	private final List<ApiGroupConfiguration> apiGroups = new LinkedList<>();
 
@@ -194,9 +199,14 @@ public class SwaggerConfigurationProperties {
 		this.prettyPrint = prettyPrint;
 	}
 
-	/**
-	 * @return the apiGroups
-	 */
+	public String[] getSecurityRoles() {
+		return securityRoles;
+	}
+
+	public void setSecurityRoles(String[] securityRoles) {
+		this.securityRoles = securityRoles;
+	}
+
 	public List<ApiGroupConfiguration> getApiGroups() {
 		return apiGroups;
 	}
@@ -260,6 +270,11 @@ public class SwaggerConfigurationProperties {
 		 * API group license URL
 		 */
 		private String licenseUrl;
+		
+		/**
+		 * Set of security roles to use for API listing resource access control
+		 */
+		private String[] securityRoles;
 
 		public String getGroupId() {
 			return groupId;
@@ -347,6 +362,14 @@ public class SwaggerConfigurationProperties {
 
 		public void setLicenseUrl(String licenseUrl) {
 			this.licenseUrl = licenseUrl;
+		}
+
+		public String[] getSecurityRoles() {
+			return securityRoles;
+		}
+
+		public void setSecurityRoles(String[] securityRoles) {
+			this.securityRoles = securityRoles;
 		}
 
 	}

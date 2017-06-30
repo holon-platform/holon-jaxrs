@@ -47,6 +47,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	private String licenseUrl;
 	private String host;
 	private boolean prettyPrint;
+	private String[] securityRoles;
 
 	public DefaultApiListingDefinition(String groupId) {
 		this(groupId, null);
@@ -73,6 +74,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setLicenseUrl(properties.getLicenseUrl());
 			setHost(properties.getHost());
 			setPrettyPrint(properties.isPrettyPrint());
+			setSecurityRoles(properties.getSecurityRoles());
 
 			ApiGroupConfiguration cfg = SwaggerJaxrsUtils.getApiGroup(properties, this.groupId);
 			if (cfg != null) {
@@ -103,6 +105,9 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 				}
 				if (cfg.getLicenseUrl() != null) {
 					setLicenseUrl(cfg.getLicenseUrl());
+				}
+				if (cfg.getSecurityRoles() != null && cfg.getSecurityRoles().length > 0) {
+					setSecurityRoles(cfg.getSecurityRoles());
 				}
 			}
 		}
@@ -309,6 +314,22 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		this.prettyPrint = prettyPrint;
 	}
 
+	/**
+	 * Get the security roles to be used for endpoint access control
+	 * @return the security roles
+	 */
+	public String[] getSecurityRoles() {
+		return securityRoles;
+	}
+
+	/**
+	 * Set the security roles to be used for endpoint access control
+	 * @param securityRoles the security roles to set
+	 */
+	public void setSecurityRoles(String[] securityRoles) {
+		this.securityRoles = securityRoles;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -360,12 +381,12 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		SwaggerConfigLocator.getInstance().putSwagger(getGroupId(), swaggerCfg.getSwagger());
 
 		// API listing resource
-		endpoints.add(new DefaultApiListingEndpoint(getGroupId(), apiListingPath,
-				SwaggerJaxrsUtils.buildApiListingEndpoint(classLoader, getGroupId(), apiListingPath)));
+		endpoints.add(new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils
+				.buildApiListingEndpoint(classLoader, getGroupId(), apiListingPath, getSecurityRoles())));
 
 		if (defaultApiListingPath != null) {
-			endpoints.add(new DefaultApiListingEndpoint(getGroupId(), defaultApiListingPath,
-					SwaggerJaxrsUtils.buildApiListingEndpoint(classLoader, getGroupId(), defaultApiListingPath)));
+			endpoints.add(new DefaultApiListingEndpoint(getGroupId(), defaultApiListingPath, SwaggerJaxrsUtils
+					.buildApiListingEndpoint(classLoader, getGroupId(), defaultApiListingPath, getSecurityRoles())));
 		}
 
 		return endpoints;

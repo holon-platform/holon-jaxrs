@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
@@ -30,6 +31,7 @@ import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.Api
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 /**
@@ -50,16 +52,23 @@ public final class SwaggerJaxrsUtils implements Serializable {
 	 * @param classLoader ClassLoader to use to create the class proxy
 	 * @param apiGroupId API group id
 	 * @param path Endpoint path
+	 * @param rolesAllowed Optional security roles for endpoint authorization
 	 * @return The Swagger API listing JAX-RS endpoint class proxy
 	 */
-	public static Class<?> buildApiListingEndpoint(ClassLoader classLoader, String apiGroupId, String path) {
+	public static Class<?> buildApiListingEndpoint(ClassLoader classLoader, String apiGroupId, String path,
+			String[] rolesAllowed) {
 		String configId = (apiGroupId != null && !apiGroupId.trim().equals("")) ? apiGroupId
 				: ApiGroupId.DEFAULT_GROUP_ID;
 		final ClassLoader cl = (classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader();
-		return new ByteBuddy().subclass(SwaggerApiListingResource.class)
+		DynamicType.Builder<SwaggerApiListingResource> builder = new ByteBuddy()
+				.subclass(SwaggerApiListingResource.class)
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
-				.annotateType(AnnotationDescription.Builder.ofType(ApiGroupId.class).define("value", configId).build())
-				.make().load(cl, ClassLoadingStrategy.Default.INJECTION).getLoaded();
+				.annotateType(AnnotationDescription.Builder.ofType(ApiGroupId.class).define("value", configId).build());
+		if (rolesAllowed != null && rolesAllowed.length > 0) {
+			builder.annotateType(AnnotationDescription.Builder.ofType(RolesAllowed.class)
+					.defineArray("value", rolesAllowed).build());
+		}
+		return builder.make().load(cl, ClassLoadingStrategy.Default.INJECTION).getLoaded();
 	}
 
 	/**
