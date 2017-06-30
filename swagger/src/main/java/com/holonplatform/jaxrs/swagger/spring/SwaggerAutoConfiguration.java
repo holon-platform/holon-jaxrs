@@ -61,7 +61,7 @@ public class SwaggerAutoConfiguration {
 
 	@Configuration
 	@ConditionalOnBean(type = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig")
-	static class EnableResteasyJersey implements InitializingBean {
+	static class EnableSwaggerResteasy implements InitializingBean {
 
 		@Bean
 		public ResteasyConfigCustomizer swaggerConfiguration(SwaggerConfigurationProperties configurationProperties) {
@@ -70,7 +70,7 @@ public class SwaggerAutoConfiguration {
 
 		@Override
 		public void afterPropertiesSet() throws Exception {
-			LOGGER.debug(() -> "EnableResteasyJersey initialized");
+			LOGGER.debug(() -> "EnableSwaggerResteasy initialized");
 		}
 
 	}
