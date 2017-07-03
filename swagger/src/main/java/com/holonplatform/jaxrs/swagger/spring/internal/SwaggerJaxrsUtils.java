@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
 
+import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
@@ -52,11 +53,12 @@ public final class SwaggerJaxrsUtils implements Serializable {
 	 * @param classLoader ClassLoader to use to create the class proxy
 	 * @param apiGroupId API group id
 	 * @param path Endpoint path
+	 * @param authSchemes Authenticatiob schemes
 	 * @param rolesAllowed Optional security roles for endpoint authorization
 	 * @return The Swagger API listing JAX-RS endpoint class proxy
 	 */
 	public static Class<?> buildApiListingEndpoint(ClassLoader classLoader, String apiGroupId, String path,
-			String[] rolesAllowed) {
+			String[] authSchemes, String[] rolesAllowed) {
 		String configId = (apiGroupId != null && !apiGroupId.trim().equals("")) ? apiGroupId
 				: ApiGroupId.DEFAULT_GROUP_ID;
 		final ClassLoader cl = (classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader();
@@ -64,6 +66,14 @@ public final class SwaggerJaxrsUtils implements Serializable {
 				.subclass(SwaggerApiListingResource.class)
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
 				.annotateType(AnnotationDescription.Builder.ofType(ApiGroupId.class).define("value", configId).build());
+		if (authSchemes != null && authSchemes.length > 0) {
+			if (authSchemes.length == 1 && authSchemes[0] != null && authSchemes[0].trim().equals("*")) {
+				builder = builder.annotateType(AnnotationDescription.Builder.ofType(Authenticate.class).build());
+			} else {
+				builder = builder.annotateType(AnnotationDescription.Builder.ofType(Authenticate.class)
+						.defineArray("schemes", authSchemes).build());
+			}
+		}
 		if (rolesAllowed != null && rolesAllowed.length > 0) {
 			builder = builder.annotateType(AnnotationDescription.Builder.ofType(RolesAllowed.class)
 					.defineArray("value", rolesAllowed).build());

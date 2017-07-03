@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.holonplatform.auth.annotations.Authenticate;
+
 /**
  * Configuration properties for Swagger auto configuration.
  *
@@ -34,8 +36,7 @@ public class SwaggerConfigurationProperties {
 	public static final String DEFAULT_PATH = "/api-docs";
 
 	/**
-	 * The package name to scan to detect API endpoints. Ingored when at least {@link ApiGroupConfiguration} is
-	 * present.
+	 * The package name to scan to detect API endpoints. Ingored when at least {@link ApiGroupConfiguration} is present.
 	 */
 	private String resourcePackage;
 
@@ -95,7 +96,17 @@ public class SwaggerConfigurationProperties {
 	 * Whether to <em>pretty</em> format API listing output.
 	 */
 	private boolean prettyPrint;
-	
+
+	/**
+	 * Enable authentication for the API listing endpoints using the {@link Authenticate} annotation behaviour,
+	 * specifying the allowed authentication schemes.
+	 * <p>
+	 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
+	 * allowed.
+	 * </p>
+	 */
+	private String[] authSchemes;
+
 	/**
 	 * Set of security roles to use for API listing resource access control
 	 */
@@ -199,6 +210,14 @@ public class SwaggerConfigurationProperties {
 		this.prettyPrint = prettyPrint;
 	}
 
+	public String[] getAuthSchemes() {
+		return authSchemes;
+	}
+
+	public void setAuthSchemes(String[] authSchemes) {
+		this.authSchemes = authSchemes;
+	}
+
 	public String[] getSecurityRoles() {
 		return securityRoles;
 	}
@@ -270,7 +289,17 @@ public class SwaggerConfigurationProperties {
 		 * API group license URL
 		 */
 		private String licenseUrl;
-		
+
+		/**
+		 * Enable authentication for this API listing endpoint using the {@link Authenticate} annotation behaviour,
+		 * specifying the allowed authentication schemes.
+		 * <p>
+		 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
+		 * allowed.
+		 * </p>
+		 */
+		private String[] authSchemes;
+
 		/**
 		 * Set of security roles to use for API listing resource access control
 		 */
@@ -370,6 +399,14 @@ public class SwaggerConfigurationProperties {
 
 		public void setSecurityRoles(String[] securityRoles) {
 			this.securityRoles = securityRoles;
+		}
+
+		public String[] getAuthSchemes() {
+			return authSchemes;
+		}
+
+		public void setAuthSchemes(String[] authSchemes) {
+			this.authSchemes = authSchemes;
 		}
 
 	}

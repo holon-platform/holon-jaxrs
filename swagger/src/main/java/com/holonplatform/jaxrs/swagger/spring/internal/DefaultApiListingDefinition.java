@@ -47,6 +47,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	private String licenseUrl;
 	private String host;
 	private boolean prettyPrint;
+	private String[] authSchemes;
 	private String[] securityRoles;
 
 	public DefaultApiListingDefinition(String groupId) {
@@ -74,6 +75,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setLicenseUrl(properties.getLicenseUrl());
 			setHost(properties.getHost());
 			setPrettyPrint(properties.isPrettyPrint());
+			setAuthSchemes(properties.getAuthSchemes());
 			setSecurityRoles(properties.getSecurityRoles());
 
 			ApiGroupConfiguration cfg = SwaggerJaxrsUtils.getApiGroup(properties, this.groupId);
@@ -105,6 +107,9 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 				}
 				if (cfg.getLicenseUrl() != null) {
 					setLicenseUrl(cfg.getLicenseUrl());
+				}
+				if (cfg.getAuthSchemes() != null && cfg.getAuthSchemes().length > 0) {
+					setAuthSchemes(cfg.getAuthSchemes());
 				}
 				if (cfg.getSecurityRoles() != null && cfg.getSecurityRoles().length > 0) {
 					setSecurityRoles(cfg.getSecurityRoles());
@@ -315,6 +320,24 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	}
 
 	/**
+	 * Get the authentication schemes to use for API listing endpoint protection.
+	 * @return the authentication scheme names, if only one <code>*</code> scheme is provided, any supported
+	 *         authentication scheme is allowed
+	 */
+	public String[] getAuthSchemes() {
+		return authSchemes;
+	}
+
+	/**
+	 * Set the authentication schemes to use for API listing endpoint protection.
+	 * @param authSchemes the authentication scheme names to set, if only one <code>*</code> scheme is provided, any
+	 *        supported authentication scheme is allowed
+	 */
+	public void setAuthSchemes(String[] authSchemes) {
+		this.authSchemes = authSchemes;
+	}
+
+	/**
 	 * Get the security roles to be used for endpoint access control
 	 * @return the security roles
 	 */
@@ -381,12 +404,14 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		SwaggerConfigLocator.getInstance().putSwagger(getGroupId(), swaggerCfg.getSwagger());
 
 		// API listing resource
-		endpoints.add(new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils
-				.buildApiListingEndpoint(classLoader, getGroupId(), apiListingPath, getSecurityRoles())));
+		endpoints.add(
+				new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils.buildApiListingEndpoint(
+						classLoader, getGroupId(), apiListingPath, getAuthSchemes(), getSecurityRoles())));
 
 		if (defaultApiListingPath != null) {
-			endpoints.add(new DefaultApiListingEndpoint(getGroupId(), defaultApiListingPath, SwaggerJaxrsUtils
-					.buildApiListingEndpoint(classLoader, getGroupId(), defaultApiListingPath, getSecurityRoles())));
+			endpoints.add(new DefaultApiListingEndpoint(getGroupId(), defaultApiListingPath,
+					SwaggerJaxrsUtils.buildApiListingEndpoint(classLoader, getGroupId(), defaultApiListingPath,
+							getAuthSchemes(), getSecurityRoles())));
 		}
 
 		return endpoints;
