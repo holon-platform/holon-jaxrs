@@ -111,9 +111,9 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 			throw new RestClientException("Invocation returned a null Response");
 		}
 
-		// check successful status code
-		if (!HttpStatus.isSuccessStatusCode(response.getStatus())) {
-			throw new UnsuccessfulInvocationException(response.getStatus());
+		// check error status code
+		if (HttpStatus.isErrorStatusCode(response.getStatus())) {
+			throw new UnsuccessfulInvocationException(new JaxrsHttpResponse<>(response, responseType));
 		}
 
 		return new JaxrsHttpResponse<>(response, responseType);
