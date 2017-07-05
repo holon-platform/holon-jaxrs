@@ -26,8 +26,8 @@ import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.http.HttpResponse;
-import com.holonplatform.http.RequestEntity;
 import com.holonplatform.http.RestClient;
+import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 
 @SuppressWarnings("unused")
@@ -49,13 +49,13 @@ public class ExampleRestClient {
 				.defaultTarget(new URI("https://host/api")); // <2>
 
 		Optional<TestData> testData = client.request().path("data/{id}").resolve("id", 1) // <3>
-				.accept(MediaType.APPLICATION_JSON).get(TestData.class);
+				.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
 
 		Optional<PropertyBox> box = client.request().path("getbox") // <4>
-				.propertySet(PROPERTY_SET).get(PropertyBox.class);
+				.propertySet(PROPERTY_SET).getForEntity(PropertyBox.class);
 
 		HttpResponse<PropertyBox> response = client.request().path("getbox") // <5>
-				.propertySet(PROPERTY_SET).getResponse(PropertyBox.class);
+				.propertySet(PROPERTY_SET).get(PropertyBox.class);
 
 		List<PropertyBox> boxes = client.request().path("getboxes") // <6>
 				.propertySet(PROPERTY_SET).getAsList(PropertyBox.class);

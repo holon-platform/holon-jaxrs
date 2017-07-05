@@ -30,15 +30,17 @@ import javax.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpMethod;
-import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RequestEntity;
-import com.holonplatform.http.ResponseType;
 import com.holonplatform.http.RestClient;
+import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.internal.AbstractRestClient;
 import com.holonplatform.http.internal.DefaultRequestDefinition;
 import com.holonplatform.http.internal.HttpUtils;
+import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.ResponseType;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 
 /**
@@ -81,14 +83,9 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		return new DefaultRequestDefinition(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.http.RestClient.Invoker#invoke(com.holonplatform.http.RestClient.RequestDefinition,
-	 * com.holonplatform.http.HttpMethod, com.holonplatform.http.RequestEntity, com.holonplatform.http.ResponseType)
-	 */
 	@Override
-	public <T, R> HttpResponse<T> invoke(RequestDefinition requestDefinition, HttpMethod method,
-			RequestEntity<R> requestEntity, ResponseType<T> responseType) {
+	public <T, R> ResponseEntity<T> invoke(RequestDefinition requestDefinition, HttpMethod method,
+			RequestEntity<R> requestEntity, ResponseType<T> responseType, boolean onlySuccessfulStatusCode) {
 
 		// invocation builder
 		final Builder builder = configure(requestDefinition).request();
@@ -104,19 +101,19 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		try {
 			response = invocation.invoke();
 		} catch (Exception e) {
-			throw new RestClientException(e);
+			throw new HttpClientInvocationException(e);
 		}
 
 		if (response == null) {
-			throw new RestClientException("Invocation returned a null Response");
+			throw new HttpClientInvocationException("Invocation returned a null Response");
 		}
 
 		// check error status code
-		if (HttpStatus.isErrorStatusCode(response.getStatus())) {
-			throw new UnsuccessfulInvocationException(new JaxrsHttpResponse<>(response, responseType));
+		if (onlySuccessfulStatusCode && !HttpStatus.isSuccessStatusCode(response.getStatus())) {
+			throw new UnsuccessfulResponseException(new JaxrsRawResponseEntity(response));
 		}
 
-		return new JaxrsHttpResponse<>(response, responseType);
+		return new JaxrsResponseEntity<>(response, responseType);
 	}
 
 	/**

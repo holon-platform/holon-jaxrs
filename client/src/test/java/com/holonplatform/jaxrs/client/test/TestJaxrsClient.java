@@ -45,14 +45,17 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
-import com.holonplatform.http.RequestEntity;
 import com.holonplatform.http.RestClient;
+import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
+import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 
 public class TestJaxrsClient extends JerseyTest {
@@ -76,6 +79,17 @@ public class TestJaxrsClient extends JerseyTest {
 		@Produces(MediaType.APPLICATION_JSON)
 		public TestData getData(@PathParam("id") int id) {
 			return new TestData(id, "value" + id);
+		}
+
+		@GET
+		@Path("data2/{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response getData2(@PathParam("id") int id) {
+			if (id < 0) {
+				return Response.status(Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE)
+						.entity(new ApiError("ERR000", "Invalid data")).build();
+			}
+			return Response.ok().type(MediaType.APPLICATION_JSON).entity(new TestData(id, "value" + id)).build();
 		}
 
 		@GET
@@ -118,7 +132,10 @@ public class TestJaxrsClient extends JerseyTest {
 		@Path("data/save")
 		@Consumes(MediaType.APPLICATION_JSON)
 		public Response saveData(TestData data) {
-			assertNotNull(data);
+			if (data == null || data.getCode() < 0) {
+				return Response.status(Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE)
+						.entity(new ApiError("ERR000", "Invalid data")).build();
+			}
 			return Response.accepted().build();
 		}
 
@@ -156,23 +173,23 @@ public class TestJaxrsClient extends JerseyTest {
 		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
 
 		TestData td = client.request().path("test").path("data/{id}").resolve("id", 1)
-				.accept(MediaType.APPLICATION_JSON).get(TestData.class).orElse(null);
+				.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class).orElse(null);
 
 		assertEquals(1, td.getCode());
 
 		HttpResponse<TestData> rsp = client.request().path("test").path("data/{id}").resolve("id", 1)
-				.getResponse(TestData.class);
+				.get(TestData.class);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
 		assertEquals(Integer.valueOf(1), rsp.getPayload().map(p -> p.getCode()).orElse(null));
 
 		PropertyBox box = client.request().path("test").path("box/{id}").resolve("id", 1).propertySet(PROPERTIES)
-				.get(PropertyBox.class).orElse(null);
+				.getForEntity(PropertyBox.class).orElse(null);
 		assertNotNull(box);
 		assertEquals(new Integer(1), box.getValue(CODE));
 		assertEquals("value1", box.getValue(VALUE));
 
 		HttpResponse<PropertyBox> rsp2 = client.request().path("test").path("box/{id}").resolve("id", 1)
-				.propertySet(PROPERTIES).getResponse(PropertyBox.class);
+				.propertySet(PROPERTIES).get(PropertyBox.class);
 		assertEquals(HttpStatus.OK, rsp2.getStatus());
 		box = rsp2.getPayload().orElse(null);
 		assertNotNull(box);
@@ -205,7 +222,7 @@ public class TestJaxrsClient extends JerseyTest {
 		assertEquals(2, values.size());
 
 		HttpResponse<TestData> prsp = client.request().path("test").path("postdata").queryParameter("id", 1)
-				.postForResponse(RequestEntity.EMPTY, TestData.class);
+				.post(RequestEntity.EMPTY, TestData.class);
 		assertEquals(HttpStatus.OK, prsp.getStatus());
 		assertTrue(prsp.getPayload().isPresent());
 
@@ -230,6 +247,45 @@ public class TestJaxrsClient extends JerseyTest {
 		assertNotNull(rsp);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
 
+	}
+
+	@Test
+	public void testErrors() {
+		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
+
+		ResponseEntity<?> rsp = client.request().path("test").path("data/save")
+				.put(RequestEntity.json(new TestData(-1, "testErr")));
+
+		assertNotNull(rsp);
+		assertEquals(HttpStatus.BAD_REQUEST, rsp.getStatus());
+
+		ApiError error = rsp.as(ApiError.class).orElse(null);
+		assertNotNull(error);
+		assertEquals("ERR000", error.getCode());
+
+		ResponseEntity<TestData> r2 = client.request().path("test").path("data2/{id}").resolve("id", -1)
+				.get(TestData.class);
+		assertNotNull(r2);
+		assertEquals(HttpStatus.BAD_REQUEST, r2.getStatus());
+
+		error = r2.as(ApiError.class).orElse(null);
+		assertNotNull(error);
+		assertEquals("ERR000", error.getCode());
+
+		TestUtils.expectedException(UnsuccessfulResponseException.class, () -> {
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+		});
+
+		try {
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+		} catch (UnsuccessfulResponseException e) {
+			assertEquals(HttpStatus.BAD_REQUEST, e.getStatus().orElse(null));
+			assertNotNull(e.getResponse());
+
+			ApiError err = e.getResponse().as(ApiError.class).orElse(null);
+			assertNotNull(err);
+			assertEquals("ERR000", err.getCode());
+		}
 	}
 
 	public static class TestData {
@@ -291,6 +347,39 @@ public class TestJaxrsClient extends JerseyTest {
 			if (code != other.code)
 				return false;
 			return true;
+		}
+
+	}
+
+	public static class ApiError {
+
+		private String code;
+		private String message;
+
+		public ApiError() {
+			super();
+		}
+
+		public ApiError(String code, String message) {
+			super();
+			this.code = code;
+			this.message = message;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
 		}
 
 	}
