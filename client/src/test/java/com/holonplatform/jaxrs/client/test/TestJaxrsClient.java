@@ -52,10 +52,10 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
-import com.holonplatform.http.RestClient;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 
 public class TestJaxrsClient extends JerseyTest {

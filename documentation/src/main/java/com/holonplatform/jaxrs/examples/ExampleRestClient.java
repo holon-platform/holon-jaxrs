@@ -26,8 +26,8 @@ import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.http.HttpResponse;
-import com.holonplatform.http.RestClient;
 import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 
 @SuppressWarnings("unused")
