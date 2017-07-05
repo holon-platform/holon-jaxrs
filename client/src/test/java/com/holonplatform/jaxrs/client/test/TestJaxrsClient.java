@@ -20,6 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,18 +37,22 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
@@ -107,6 +115,18 @@ public class TestJaxrsClient extends JerseyTest {
 			boxes.add(PropertyBox.builder(PROPERTIES).set(CODE, 1).set(VALUE, "value" + 1).build());
 			boxes.add(PropertyBox.builder(PROPERTIES).set(CODE, 2).set(VALUE, "value" + 2).build());
 			return boxes;
+		}
+		
+		@GET
+		@Path("stream")
+		@Produces(MediaType.APPLICATION_OCTET_STREAM)
+		public StreamingOutput getStream() {
+			return new StreamingOutput() {
+				@Override
+				public void write(OutputStream output) throws IOException, WebApplicationException {
+					output.write(new byte[] { 1, 2, 3 });
+				}
+			};
 		}
 
 		@POST
@@ -247,6 +267,20 @@ public class TestJaxrsClient extends JerseyTest {
 		assertNotNull(rsp);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
 
+	}
+	
+	@Test
+	public void testStream() throws IOException {
+		
+		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
+		
+		@SuppressWarnings("resource")
+		InputStream s = client.request().path("test").path("stream").getForStream();
+		assertNotNull(s);
+		
+		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
+		assertNotNull(s);
+		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 } , bytes));
 	}
 
 	@Test

@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.client.internal;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -136,18 +137,29 @@ public class JaxrsResponseEntity<T> implements ResponseEntity<T> {
 	@SuppressWarnings("unchecked")
 	protected <E> Optional<E> readAs(ResponseType<E> type) {
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
-		if (response.hasEntity() && Void.class != type.getType()) {
-			try {
-				return Optional.ofNullable(type.isSimpleType() ? response.readEntity((Class<E>) type.getType())
-						: response.readEntity(new GenericType<E>(type.getType())));
-			} catch (Exception e) {
-				// check zero-lenght response content
-				if (isNoContentException(e)) {
-					return Optional.empty();
+
+		try {
+			if (response.hasEntity()) {
+
+				// check InputStream
+				if (InputStream.class == type.getType()) {
+					return (Optional<E>) Optional.ofNullable(response.readEntity(InputStream.class));
 				}
-				throw new HttpEntityProcessingException("Failed to read HTTP entity as [" + type + "]", e);
+
+				if (Void.class != type.getType()) {
+					return Optional.ofNullable(type.isSimpleType() ? response.readEntity((Class<E>) type.getType())
+							: response.readEntity(new GenericType<E>(type.getType())));
+				}
+
 			}
+		} catch (Exception e) {
+			// check zero-lenght response content
+			if (isNoContentException(e)) {
+				return Optional.empty();
+			}
+			throw new HttpEntityProcessingException("Failed to read HTTP entity as [" + type + "]", e);
 		}
+
 		return Optional.empty();
 	}
 
