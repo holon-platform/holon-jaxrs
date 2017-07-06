@@ -45,24 +45,30 @@ public class ExampleRestClient {
 
 		final PropertySet<?> PROPERTY_SET = PropertySet.of(ID, NAME);
 
-		final RestClient client = JaxrsRestClient.create() // <1>
+		RestClient client = JaxrsRestClient.create() // <1>
 				.defaultTarget(new URI("https://host/api")); // <2>
-
-		Optional<TestData> testData = client.request().path("data/{id}").resolve("id", 1) // <3>
+		
+		client = RestClient.create(JaxrsRestClient.class.getName()); // <3>
+		
+		client = RestClient.create(); // <4>
+		
+		client = RestClient.forTarget("https://host/api"); // <5>
+		
+		Optional<TestData> testData = client.request().path("data/{id}").resolve("id", 1) // <6>
 				.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
 
-		Optional<PropertyBox> box = client.request().path("getbox") // <4>
+		Optional<PropertyBox> box = client.request().path("getbox") // <7>
 				.propertySet(PROPERTY_SET).getForEntity(PropertyBox.class);
 
-		HttpResponse<PropertyBox> response = client.request().path("getbox") // <5>
+		HttpResponse<PropertyBox> response = client.request().path("getbox") // <8>
 				.propertySet(PROPERTY_SET).get(PropertyBox.class);
 
-		List<PropertyBox> boxes = client.request().path("getboxes") // <6>
+		List<PropertyBox> boxes = client.request().path("getboxes") // <9>
 				.propertySet(PROPERTY_SET).getAsList(PropertyBox.class);
 
 		PropertyBox postBox = PropertyBox.builder(PROPERTY_SET).set(ID, 1).set(NAME, "Test").build();
 
-		HttpResponse<Void> postResponse = client.request().path("postbox") // <7>
+		HttpResponse<Void> postResponse = client.request().path("postbox") // <10>
 				.post(RequestEntity.json(postBox));
 		// end::restclient[]
 	}

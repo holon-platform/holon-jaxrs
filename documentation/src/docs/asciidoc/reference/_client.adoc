@@ -14,11 +14,13 @@ The `RestClient` interface provides a fluent _builder_ to compose and execute _R
 
 The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data container out-of-the-box.
 
+TIP: See link:holon-core.html#RestClient[RestClient documentation] for information about the `RestClient` configuration and API.
+
 === Getting started
 
 To obtain a *JAX-RS* `RestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/JaxrsRestClient.html[JaxrsRestClient^] interface can be used, either specifying the *JAX-RS* `Client` instance or using the default client builder implementation class provided by the JAX-RS implementation provider.
 
-TIP: See link:holon-core.html#RestClient[RestClient documentation] for information about the `RestClient` configuration and API.
+Furthermore, a `RestClientFactory` is automatically registered to provide a `JaxrsRestClient` implementation using default `RestClient` creation methods.
 
 .RestClient example
 [source, java]
@@ -27,8 +29,11 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleRestClient.java[t
 ----
 <1> Create a *JAX-RS* `RestClient` using default JAX-RS Client
 <2> Setup a _default target_, i.e. the base `URI` which will be used for all the invocations made with this `RestClient` instance
-<3> Get a generic JSON response using a _template_ variable and map it into a `TestData` bean
-<4> Get a `PropertyBox` type JSON response entity content using given `PROPERTY_SET`
-<5> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`
-<6> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`
-<7> Post a `PropertyBox` instance as JSON
+<3> Create a `RestClient` specying the `JaxrsRestClient` type
+<4> Create a `RestClient` using default factories
+<5> Create a `RestClient` using default factories and set a default base URI
+<6> Get a generic JSON response using a _template_ variable and map it into a `TestData` bean
+<7> Get a `PropertyBox` type JSON response entity content using given `PROPERTY_SET`
+<8> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`
+<9> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`
+<10> Post a `PropertyBox` instance as JSON
