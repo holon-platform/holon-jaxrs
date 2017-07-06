@@ -116,7 +116,7 @@ public class TestJaxrsClient extends JerseyTest {
 			boxes.add(PropertyBox.builder(PROPERTIES).set(CODE, 2).set(VALUE, "value" + 2).build());
 			return boxes;
 		}
-		
+
 		@GET
 		@Path("stream")
 		@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -255,7 +255,7 @@ public class TestJaxrsClient extends JerseyTest {
 
 	@Test
 	public void testMethods() {
-		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
+		final RestClient client = RestClient.forTarget(getBaseUri());
 
 		HttpResponse<?> rsp = client.request().path("test").path("data/save")
 				.put(RequestEntity.json(new TestData(7, "testPost")));
@@ -268,19 +268,19 @@ public class TestJaxrsClient extends JerseyTest {
 		assertEquals(HttpStatus.OK, rsp.getStatus());
 
 	}
-	
+
 	@Test
 	public void testStream() throws IOException {
-		
-		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
-		
+
+		final RestClient client = RestClient.create(JaxrsRestClient.class.getName()).defaultTarget(getBaseUri());
+
 		@SuppressWarnings("resource")
 		InputStream s = client.request().path("test").path("stream").getForStream();
 		assertNotNull(s);
-		
+
 		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
 		assertNotNull(s);
-		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 } , bytes));
+		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
 	}
 
 	@Test
@@ -307,11 +307,13 @@ public class TestJaxrsClient extends JerseyTest {
 		assertEquals("ERR000", error.getCode());
 
 		TestUtils.expectedException(UnsuccessfulResponseException.class, () -> {
-			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
+					.orElse(null);
 		});
 
 		try {
-			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
+					.orElse(null);
 		} catch (UnsuccessfulResponseException e) {
 			assertEquals(HttpStatus.BAD_REQUEST, e.getStatus().orElse(null));
 			assertNotNull(e.getResponse());
