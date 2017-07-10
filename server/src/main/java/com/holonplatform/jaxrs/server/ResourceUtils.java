@@ -22,6 +22,7 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
@@ -60,7 +61,10 @@ public final class ResourceUtils implements Serializable {
 
 		if (resource == null) {
 			// lookup in context
-			resource = Context.get().resource(resourceType).orElse(null);
+			resource = Context.get()
+					.resource(resourceType,
+							(caller != null) ? caller.getClassLoader() : ClassUtils.getDefaultClassLoader())
+					.orElse(null);
 		}
 
 		return Optional.ofNullable(resource);
