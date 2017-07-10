@@ -126,6 +126,19 @@ public class JaxrsResponseEntity<T> implements ResponseEntity<T> {
 		return readAs(entityType);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.http.rest.ResponseEntity#close()
+	 */
+	@Override
+	public void close() {
+		try {
+			response.close();
+		} catch (Exception e) {
+			throw new HttpEntityProcessingException("Failed to close the JAX-RS Response", e);
+		}
+	}
+
 	/**
 	 * Read the message entity as an instance of the type represented by given <code>type</code> {@link ResponseType}.
 	 * @param <E> Response entity type
