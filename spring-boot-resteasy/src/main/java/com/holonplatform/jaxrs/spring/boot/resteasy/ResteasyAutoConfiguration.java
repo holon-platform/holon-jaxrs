@@ -26,6 +26,7 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -47,6 +48,7 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +56,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.ServletContextAware;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapListener;
 
@@ -90,7 +91,7 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapLi
 @AutoConfigureBefore(DispatcherServletAutoConfiguration.class)
 @AutoConfigureAfter(JacksonAutoConfiguration.class)
 @EnableConfigurationProperties(ResteasyConfigurationProperties.class)
-public class ResteasyAutoConfiguration implements ServletContextAware {
+public class ResteasyAutoConfiguration {
 
 	private final ResteasyConfigurationProperties resteasy;
 
@@ -146,7 +147,6 @@ public class ResteasyAutoConfiguration implements ServletContextAware {
 	@Bean
 	public ServletContextListener resteasyBootstrap(SpringBeanProcessor springBeanProcessor) {
 		return new ResteasyBootstrapListener(springBeanProcessor, this.config);
-
 	}
 
 	@Bean
@@ -186,15 +186,17 @@ public class ResteasyAutoConfiguration implements ServletContextAware {
 		return registration;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
-	 */
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		for (Entry<String, String> entry : this.resteasy.getInit().entrySet()) {
-			servletContext.setInitParameter(entry.getKey(), entry.getValue());
-		}
+	@Bean
+	public ServletContextInitializer contextInitParamsInitializer(final ResteasyConfigurationProperties resteasy) {
+		return new ServletContextInitializer() {
+
+			@Override
+			public void onStartup(ServletContext servletContext) throws ServletException {
+				for (Entry<String, String> entry : resteasy.getInit().entrySet()) {
+					servletContext.setInitParameter(entry.getKey(), entry.getValue());
+				}
+			}
+		};
 	}
 
 	private String getServletRegistrationName() {

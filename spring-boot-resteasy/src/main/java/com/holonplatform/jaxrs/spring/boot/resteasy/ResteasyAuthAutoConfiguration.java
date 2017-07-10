@@ -15,10 +15,14 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.ws.rs.ext.ContextResolver;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.auth.Realm;
@@ -45,17 +49,20 @@ public class ResteasyAuthAutoConfiguration {
 	@ConditionalOnBean(Realm.class)
 	static class AuthConfiguration {
 
-		public AuthConfiguration(ResteasyConfig config, final Realm realm) {
-			// Realm ContextResolver
-			config.register(new ContextResolver<Realm>() {
-
-				@Override
-				public Realm getContext(Class<?> type) {
-					return realm;
-				}
-			});
+		public AuthConfiguration(ResteasyConfig config) {
 			// Authentication
 			config.register(AuthenticationFeature.class);
+		}
+
+		@Bean
+		public ServletContextInitializer initializer() {
+			return new ServletContextInitializer() {
+
+				@Override
+				public void onStartup(ServletContext servletContext) throws ServletException {
+					servletContext.setInitParameter("resteasy.role.based.security", "true");
+				}
+			};
 		}
 
 	}
