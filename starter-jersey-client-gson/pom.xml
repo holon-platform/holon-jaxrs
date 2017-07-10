@@ -28,6 +28,11 @@
 		<!-- Holon Gson -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
+			<artifactId>holon-gson-jaxrs</artifactId>
+			<version>${holon.json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-gson-spring</artifactId>
 			<version>${holon.json.version}</version>
 		</dependency>
