@@ -111,6 +111,7 @@ The auto configuration class perfoms the following operations:
 
 * Registers a `ContextResolver` providing the `Realm` bean instance
 * Registers the `AuthenticationFeature`
+* Set the `resteasy.role.based.security` context init parameter to `true`
 
 To disable this auto-configuration feature the `ResteasyAuthAutoConfiguration` class can be excluded:
 
