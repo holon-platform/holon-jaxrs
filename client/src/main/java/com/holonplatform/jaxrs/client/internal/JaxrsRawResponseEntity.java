@@ -47,19 +47,18 @@ public class JaxrsRawResponseEntity extends JaxrsResponseEntity<byte[]> {
 	@SuppressWarnings("resource")
 	@Override
 	public Optional<byte[]> getPayload() throws UnsupportedOperationException {
-		if (getResponse().hasEntity()) {
-			try {
-				InputStream is = getResponse().readEntity(InputStream.class);
-				if (is != null) {
-					return Optional.ofNullable(ConversionUtils.convertInputStreamToBytes(is));
-				}
-			} catch (Exception e) {
-				// check zero-lenght response content
-				if (isNoContentException(e)) {
-					return Optional.empty();
-				}
-				throw new HttpEntityProcessingException("Failed to read HTTP entity input stream", e);
+		try {
+			getResponse().bufferEntity();
+			InputStream is = getResponse().readEntity(InputStream.class);
+			if (is != null) {
+				return Optional.ofNullable(ConversionUtils.convertInputStreamToBytes(is));
 			}
+		} catch (Exception e) {
+			// check zero-lenght response content
+			if (isNoContentException(e)) {
+				return Optional.empty();
+			}
+			throw new HttpEntityProcessingException("Failed to read HTTP entity input stream", e);
 		}
 		return Optional.empty();
 	}

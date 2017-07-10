@@ -284,6 +284,25 @@ public class TestJaxrsClient extends JerseyTest {
 	}
 
 	@Test
+	public void testMultipleReads() {
+		final RestClient client = RestClient.create(JaxrsRestClient.class.getName()).defaultTarget(getBaseUri());
+
+		ResponseEntity<TestData> res = client.request().path("test").path("data2/{id}").resolve("id", 1)
+				.get(TestData.class);
+		assertNotNull(res);
+
+		TestData td = res.getPayload().orElse(null);
+		assertNotNull(td);
+
+		String asString = res.as(String.class).orElse(null);
+		assertNotNull(asString);
+
+		td = res.as(TestData.class).orElse(null);
+		assertNotNull(td);
+
+	}
+
+	@Test
 	public void testErrors() {
 		final RestClient client = JaxrsRestClient.create(getClient()).defaultTarget(getBaseUri());
 

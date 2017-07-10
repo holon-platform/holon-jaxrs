@@ -139,18 +139,18 @@ public class JaxrsResponseEntity<T> implements ResponseEntity<T> {
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
 
 		try {
-			if (response.hasEntity()) {
+			// check InputStream
+			if (InputStream.class == type.getType()) {
+				return (Optional<E>) Optional.ofNullable(response.readEntity(InputStream.class));
+			}
 
-				// check InputStream
-				if (InputStream.class == type.getType()) {
-					return (Optional<E>) Optional.ofNullable(response.readEntity(InputStream.class));
-				}
+			if (Void.class != type.getType()) {
 
-				if (Void.class != type.getType()) {
-					return Optional.ofNullable(type.isSimpleType() ? response.readEntity((Class<E>) type.getType())
-							: response.readEntity(new GenericType<E>(type.getType())));
-				}
+				// buffer entity to allow multiple reads
+				response.bufferEntity();
 
+				return Optional.ofNullable(type.isSimpleType() ? response.readEntity((Class<E>) type.getType())
+						: response.readEntity(new GenericType<E>(type.getType())));
 			}
 		} catch (Exception e) {
 			// check zero-lenght response content
