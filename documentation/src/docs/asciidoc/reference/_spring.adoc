@@ -26,6 +26,23 @@ To disable this auto-configuration feature the `JerseyServerAutoConfiguration` c
 @EnableAutoConfiguration(exclude={JerseyServerAutoConfiguration.class})
 ----
 
+==== Authentication and authorization
+
+When a `Realm` type bean is detected in Spring context, the JAX-RS server is automtically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
+
+The auto configuration class perfoms the following operations:
+
+* Registers a `ContextResolver` providing the `Realm` bean instance
+* Registers the `AuthenticationFeature`
+* Registers the Jersey `RolesAllowedDynamicFeature`
+
+To disable this auto-configuration feature the `JerseyServerAutoConfiguration` class can be excluded:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={JerseyAuthAutoConfiguration.class})
+----
+
 === Resteasy
 
 _Maven coordinates_:
@@ -85,6 +102,22 @@ TIP: Just like any other Spring Boot configuration property, the `holon.resteasy
 |_no default_
 |Init parameters to pass to Resteasy via the servlet or filter
 |===
+
+==== Authentication and authorization
+
+When a `Realm` type bean is detected in Spring context, the JAX-RS server is automtically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
+
+The auto configuration class perfoms the following operations:
+
+* Registers a `ContextResolver` providing the `Realm` bean instance
+* Registers the `AuthenticationFeature`
+
+To disable this auto-configuration feature the `ResteasyAuthAutoConfiguration` class can be excluded:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={ResteasyAuthAutoConfiguration.class})
+----
 
 === Spring Boot starters
 
