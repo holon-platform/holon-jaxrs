@@ -118,6 +118,7 @@ Artifact id | Description
 `holon-jaxrs-client` | JAX-RS implementation of the core platform `RestClient` API
 `holon-jaxrs-server` | JAX-RS server-side __authentication and authorization__ features using platform core APIs and services, such as `Realm` and `AuthContext`
 `holon-jaxrs-swagger` | [Swagger](http://swagger.io) configuration and JAX-RS API listing endpoints with `PropertyBox` support
+`holon-jaxrs-spring-boot-client` | `JaxrsClientBuilder` __Spring Boot__ auto-configuration
 `holon-jaxrs-spring-boot-jersey` | [Jersey](https://github.com/jersey) auto-configuration with automatic registration of Spring beans as JAX-RS resources 
 `holon-jaxrs-spring-boot-resteasy` | [Resteasy](http://resteasy.jboss.org) auto-configuration with Spring integration
 `holon-starter-jersey` | Spring Boot JAX-RS _server_ starter using __Jersey__, __Tomcat__ and __Jackson__ as JSON provider
