@@ -8,11 +8,11 @@
 		<version>5.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-jaxrs-spring-boot</artifactId>
+	<artifactId>holon-jaxrs-spring-boot-client</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon JAX-RS Spring Boot integration</description>
+	<description>Holon JAX-RS Client Spring Boot integration</description>
 
 	<url>https://holon-platform.com</url>
 

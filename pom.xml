@@ -85,7 +85,7 @@
 		<module>client</module>
 		<module>server</module>
 		<module>swagger</module>
-		<module>spring-boot</module>
+		<module>spring-boot-client</module>
 		<module>spring-boot-jersey</module>
 		<module>spring-boot-resteasy</module>
 		<module>starter-jersey-client</module>
