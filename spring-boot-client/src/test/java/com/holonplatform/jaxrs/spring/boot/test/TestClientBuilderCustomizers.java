@@ -44,6 +44,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.jaxrs.client.JaxrsRestClient;
 import com.holonplatform.jaxrs.spring.boot.JaxrsClientBuilder;
 import com.holonplatform.jaxrs.spring.boot.JaxrsClientCustomizer;
 
@@ -113,11 +115,24 @@ public class TestClientBuilderCustomizers {
 	@Test
 	public void testSslEndpoint() {
 		Client client = clientBuilder.build();
-		
+
 		Assert.assertEquals("test", client.getConfiguration().getProperty("test.customizers"));
-		
+
 		WebTarget target = client.target("https://localhost:8443/test").path("ping");
 		String response = target.request().get(String.class);
+		Assert.assertEquals("pong", response);
+	}
+
+	@Test
+	public void testClientFactory() {
+		RestClient client = RestClient.create();
+		Assert.assertTrue(client instanceof JaxrsRestClient);
+
+		Assert.assertEquals("test",
+				((JaxrsRestClient) client).getClient().getConfiguration().getProperty("test.customizers"));
+
+		String response = client.request().target("https://localhost:8443/test").path("ping").getForEntity(String.class)
+				.orElse(null);
 		Assert.assertEquals("pong", response);
 	}
 

@@ -40,6 +40,13 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 		
+		<!-- JAX-RS client -->
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<!-- JAX-RS -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
