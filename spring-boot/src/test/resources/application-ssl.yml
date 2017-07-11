@@ -1,0 +1,10 @@
+spring:
+  main:
+    banner-mode: "off"
+    
+server:
+  port: 8443
+  ssl:
+    key-store: "classpath:keystore.jks"
+    key-store-password: "secret"
+    key-password: "secret"
