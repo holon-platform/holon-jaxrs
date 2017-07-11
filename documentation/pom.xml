@@ -76,6 +76,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-spring-boot-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
 			<version>${project.version}</version>
 		</dependency>

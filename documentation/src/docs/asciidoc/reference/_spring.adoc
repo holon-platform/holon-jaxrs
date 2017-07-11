@@ -1,5 +1,42 @@
 == Spring Boot integration
 
+[[Client]]
+=== JAX-RS Client
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-spring-boot-client</artifactId>
+<version>{revnumber}</version>
+----
+
+This artifact provides a Spring Boot auto-configuration class to automatically register a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilder.html[JaxrsClientBuilder^] bean, which can be used to obtain a configured JAX-RS `Client` instance.
+
+To customize the JAX-RS `ClientBuilder` used to obtain the client instances, the link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientCustomizer.html[JaxrsClientCustomizer^] interface can be used: any Spring bean which implement the `JaxrsClientCustomizer` interface will be auto-detected and the `customize(ClientBuilder clientBuilder)` method will be invoked when a `ClientBuilder` is created.
+
+To replace the default `ClientBuilder` instance lookup/creation strategy, a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilderFactory.html[JaxrsClientBuilderFactory^] bean type can be declared in Spring context, which will be used by the `JaxrsClientBuilder` to create a new `ClientBuilder` instance.
+
+Furthermore, a `RestClient` factory is automatically registered to use the `JaxrsClientBuilder` (if available) to obtain the JAX-RS `Client` instance to be used by a JAX-RS `RestClient` created through the `RestClient.create()` method.
+
+For example, given a Spring Boot application with the following configuration:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleClientBuilder.java[tag=clientbuilder1,indent=0]
+----
+<1> Add a `JaxrsClientCustomizer` which registers a property in JAX-RS `ClientBuilder`
+<2> Add a `JaxrsClientCustomizer` which setup the `ClientBuilder` to use a *SSLContext* with a _trust all_ manager and dummy host name verifier
+
+A JAX-RS Client, configured according to the declared customizers, can be obtained as follows:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleClientBuilder.java[tag=clientbuilder2,indent=0]
+----
+<1> Use the `JaxrsClientBuilder` to obtain a new JAX-RS `Client` instance
+<2> Use the `RestClient.create()` static method to obtain a `RestClient` which uses a JAX-RS `Client` obtained from the `JaxrsClientBuilder`
+
 [[Jersey]]
 === Jersey
 
