@@ -48,7 +48,7 @@ _Maven BOM:_
 ```xml
 <dependencyManagement>
     <dependency>
-        <groupId>com.holon-platform.json</groupId>
+        <groupId>com.holon-platform.jaxrs</groupId>
         <artifactId>holon-jaxrs-bom</artifactId>
         <version>5.0.0</version>
         <type>pom</type>
