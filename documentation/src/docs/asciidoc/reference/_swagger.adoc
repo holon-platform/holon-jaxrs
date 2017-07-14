@@ -1,3 +1,4 @@
+[[Swagger]]
 == Swagger integration
 
 _Maven coordinates_:
