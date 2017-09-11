@@ -8,11 +8,11 @@ The module main features are:
 * A set of standard _JAX-RS_ components to implement server-side API __authentication and authorization__ using platform core APIs and services, such as `Realm` and `AuthContext`, in addition to standard `javax.annotation.security` standard annotations.
 * A complete integration with [Swagger](http://swagger.io) (_OpenAPI Specification_), including support for the `PropertyBox` core platform data container interface (to be exposed as a Swagger _Model_ definition) and for Swagger API listing endpoints (both in _JSON_ and _YAML_ formats) configuration.
 * __Spring Boot__ auto-configuration classes to automatically register suitable __Spring beans__ (for example beans annotated with `@Path` or `@Provider`) as resources in a _JAX-RS_ compliant server. 
-* __Spring Boot__ auto-configuration artifact to automatically enabled and configure a [Resteasy](http://resteasy.jboss.org) server with Spring integration.
+* __Spring Boot__ auto-configuration artifact to automatically enable and configure a [Resteasy](http://resteasy.jboss.org) server with Spring integration.
 * A set of __Spring Boot starters__ to setup _JAX-RS_ compliant clients and servers:
 	* Using either [Jersey](https://github.com/jersey) or [Resteasy](http://resteasy.jboss.org) as _JAX-RS_ implementation.
 	* Using either [Jackson](http://wiki.fasterxml.com/JacksonHome) or [Gson](https://github.com/google/gson) as JSON provider
-	* Using either [Tomcat](tomcat.apache.org) or [Undertow](undertow.io) as embedded servlet container.
+	* Using either [Tomcat](http://tomcat.apache.org) or [Undertow](http://undertow.io) as embedded servlet container.
 
 See the module [documentation](https://holon-platform.com/docs/current/reference/holon-jaxrs.html) for details.
 
