@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.swagger.spring;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
@@ -39,6 +40,7 @@ import io.swagger.models.Swagger;
 @Configuration
 @ConditionalOnClass(Swagger.class)
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
+@AutoConfigureBefore(name="org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration")
 public class SwaggerAutoConfiguration {
 
 	private final static Logger LOGGER = SwaggerLogger.create();
