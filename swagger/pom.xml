@@ -47,6 +47,20 @@
 			<artifactId>holon-core</artifactId>
 			<version>${holon.core.version}</version>
 		</dependency>
+		<!-- Holon auth -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-auth</artifactId>
+			<version>${holon.core.version}</version>
+		</dependency>
+
+		<!-- Optional Resteasy Spring Boot -->
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
+			<version>${project.version}</version>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- Swagger jax-rs -->
 		<dependency>
@@ -196,13 +210,6 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>${resteasy.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 
