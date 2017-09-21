@@ -291,8 +291,9 @@ public class SwaggerConfigurationProperties {
 		private String licenseUrl;
 
 		/**
-		 * Enable authentication for this API listing endpoint using the {@link Authenticate} annotation behaviour,
-		 * specifying the allowed authentication schemes.
+		 * Enable authentication for this API listing endpoint using the
+		 * <code>com.holonplatform.auth.annotations.Authenticate</code> annotation behaviour, specifying the allowed
+		 * authentication schemes.
 		 * <p>
 		 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
 		 * allowed.
