@@ -47,8 +47,7 @@ import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostPr
  * @since 5.0.0
  */
 @Configuration
-@ConditionalOnClass(name = { "org.glassfish.jersey.server.spring.SpringComponentProvider",
-		"javax.servlet.ServletRegistration" })
+@ConditionalOnClass(ResourceConfig.class)
 @AutoConfigureBefore(JerseyAutoConfiguration.class)
 public class JerseyServerAutoConfiguration {
 
