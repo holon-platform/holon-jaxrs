@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.holonplatform.auth.annotations.Authenticate;
-
 /**
  * Configuration properties for Swagger auto configuration.
  *
@@ -98,8 +96,9 @@ public class SwaggerConfigurationProperties {
 	private boolean prettyPrint;
 
 	/**
-	 * Enable authentication for the API listing endpoints using the {@link Authenticate} annotation behaviour,
-	 * specifying the allowed authentication schemes.
+	 * Enable authentication for the API listing endpoints using the
+	 * <code>com.holonplatform.auth.annotations.Authenticate</code> annotation behaviour, specifying the allowed
+	 * authentication schemes.
 	 * <p>
 	 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
 	 * allowed.
