@@ -34,6 +34,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerJerseyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,7 +46,7 @@ public class TestSwaggerResteasyAutoConfiguration {
 	private int port;
 
 	@Configuration
-	@EnableAutoConfiguration(exclude = JerseyAutoConfiguration.class)
+	@EnableAutoConfiguration(exclude = { JerseyAutoConfiguration.class, SwaggerJerseyAutoConfiguration.class })
 	static class Config {
 
 		@Bean

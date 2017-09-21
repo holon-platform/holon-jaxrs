@@ -13,31 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.spring.internal;
+package com.holonplatform.jaxrs.swagger.spring;
 
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
+import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
+import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
 
 import io.swagger.jaxrs.listing.SwaggerSerializers;
+import io.swagger.models.Swagger;
 
 /**
- * Swagger configuration for Jersey using {@link SwaggerConfigurationProperties}.
+ * Spring Boot Swagger auto-configuration class for Jersey runtime.
  * 
  * @since 5.0.0
  */
-public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, BeanClassLoaderAware {
+@Configuration
+@ConditionalOnClass(Swagger.class)
+@ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
+@EnableConfigurationProperties(SwaggerConfigurationProperties.class)
+public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware {
 
-	/**
-	 * Logger
-	 */
 	private final static Logger LOGGER = SwaggerLogger.create();
 
 	private ClassLoader classLoader;
@@ -45,13 +53,14 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, Bea
 	@Value("${spring.jersey.application-path:/}")
 	private String apiPath;
 
-	/**
-	 * Configuration properties
-	 */
+	private final ResourceConfig config;
+
 	private final SwaggerConfigurationProperties configurationProperties;
 
-	public SwaggerJerseyConfiguration(SwaggerConfigurationProperties configurationProperties) {
+	public SwaggerJerseyAutoConfiguration(ResourceConfig config,
+			SwaggerConfigurationProperties configurationProperties) {
 		super();
+		this.config = config;
 		this.configurationProperties = configurationProperties;
 	}
 
@@ -64,14 +73,8 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, Bea
 		this.classLoader = classLoader;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.
-	 * ResourceConfig)
-	 */
-	@Override
-	public void customize(ResourceConfig config) {
+	@PostConstruct
+	public void config() {
 		// Serializers
 		if (!config.isRegistered(SwaggerSerializers.class)) {
 			config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
@@ -85,11 +88,10 @@ public class SwaggerJerseyConfiguration implements ResourceConfigCustomizer, Bea
 		for (ApiListingDefinition definition : definitions) {
 			definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
 				config.register(e.getResourceClass());
-				LOGGER.info("[" + e.getGroupId() + "] Swagger API listing configured - Path: "
+				LOGGER.info("[Jersey] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
 						+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
 			});
 		}
-
 	}
 
 }

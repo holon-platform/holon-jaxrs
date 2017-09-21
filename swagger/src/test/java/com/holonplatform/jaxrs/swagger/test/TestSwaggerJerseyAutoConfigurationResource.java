@@ -20,7 +20,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,40 +27,34 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
+import com.holonplatform.jaxrs.swagger.test.resources2.TestEndpoint2;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSwaggerJerseyAutoConfiguration {
+public class TestSwaggerJerseyAutoConfigurationResource {
 
 	@LocalServerPort
 	private int port;
-
+	
 	@Configuration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
+	@ComponentScan(basePackageClasses=TestEndpoint2.class)
 	static class Config {
 
-		@Bean
-		public ResourceConfig applicationConfig() {
-			ResourceConfig cfg = new ResourceConfig();
-			cfg.register(TestEndpoint.class);
-			return cfg;
-		}
-
 	}
-
+	
 	@Test
 	public void testEndpoint() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test2").path("ping");
 		String response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
 	}
@@ -75,7 +68,7 @@ public class TestSwaggerJerseyAutoConfiguration {
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/json", response.getMediaType().toString());
 	}
-
+	
 	@Test
 	public void testSwaggerYaml() {
 		Client client = JerseyClientBuilder.createClient();
@@ -85,5 +78,5 @@ public class TestSwaggerJerseyAutoConfiguration {
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/yaml", response.getMediaType().toString());
 	}
-
+	
 }
