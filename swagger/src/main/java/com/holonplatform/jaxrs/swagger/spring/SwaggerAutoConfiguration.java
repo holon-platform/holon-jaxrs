@@ -40,7 +40,7 @@ import io.swagger.models.Swagger;
 @Configuration
 @ConditionalOnClass(Swagger.class)
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
-@AutoConfigureBefore(name="org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration")
+@AutoConfigureBefore(name = "org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration")
 public class SwaggerAutoConfiguration {
 
 	private final static Logger LOGGER = SwaggerLogger.create();

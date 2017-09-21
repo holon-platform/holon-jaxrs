@@ -7,3 +7,10 @@ holon:
     resource-package: "com.holonplatform.jaxrs.swagger.test.resources"
     path: "docs"
     
+---
+
+spring:
+  profiles: path
+  
+  jersey:
+    application-path: api
