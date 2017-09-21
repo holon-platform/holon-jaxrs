@@ -17,7 +17,6 @@ package com.holonplatform.jaxrs.swagger.spring;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +45,7 @@ public class SwaggerAutoConfiguration {
 	private final static Logger LOGGER = SwaggerLogger.create();
 
 	@Configuration
-	@ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
+	@ConditionalOnClass(name = "org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer")
 	static class EnableSwaggerJersey implements InitializingBean {
 
 		@Bean
@@ -62,7 +61,7 @@ public class SwaggerAutoConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnBean(type = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig")
+	@ConditionalOnClass(name = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer")
 	static class EnableSwaggerResteasy implements InitializingBean {
 
 		@Bean
