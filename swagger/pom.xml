@@ -54,14 +54,6 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
-		<!-- Optional Resteasy Spring Boot -->
-		<dependency>
-			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
-			<version>${project.version}</version>
-			<optional>true</optional>
-		</dependency>
-
 		<!-- Swagger jax-rs -->
 		<dependency>
 			<groupId>io.swagger</groupId>
