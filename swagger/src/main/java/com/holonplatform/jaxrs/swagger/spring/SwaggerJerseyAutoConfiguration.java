@@ -17,13 +17,12 @@ package com.holonplatform.jaxrs.swagger.spring;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,7 +43,7 @@ import io.swagger.models.Swagger;
 @ConditionalOnClass(Swagger.class)
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
-public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware {
+public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, ResourceConfigCustomizer {
 
 	private final static Logger LOGGER = SwaggerLogger.create();
 
@@ -53,14 +52,10 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware {
 	@Value("${spring.jersey.application-path:/}")
 	private String apiPath;
 
-	private final ResourceConfig config;
-
 	private final SwaggerConfigurationProperties configurationProperties;
 
-	public SwaggerJerseyAutoConfiguration(ResourceConfig config,
-			SwaggerConfigurationProperties configurationProperties) {
+	public SwaggerJerseyAutoConfiguration(SwaggerConfigurationProperties configurationProperties) {
 		super();
-		this.config = config;
 		this.configurationProperties = configurationProperties;
 	}
 
@@ -73,8 +68,14 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware {
 		this.classLoader = classLoader;
 	}
 
-	@PostConstruct
-	public void config() {
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.
+	 * ResourceConfig)
+	 */
+	@Override
+	public void customize(ResourceConfig config) {
 		// Serializers
 		if (!config.isRegistered(SwaggerSerializers.class)) {
 			config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);

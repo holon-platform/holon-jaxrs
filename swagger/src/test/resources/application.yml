@@ -8,9 +8,15 @@ holon:
     path: "docs"
     
 ---
-
 spring:
   profiles: path
   
   jersey:
     application-path: api
+
+---
+spring:
+  profiles: filter
+  
+  jersey:
+    type: filter
