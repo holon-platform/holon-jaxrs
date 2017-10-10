@@ -44,11 +44,23 @@
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-jackson-jaxrs</artifactId>
 			<version>${holon.json.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.holon-platform.core</groupId>
+					<artifactId>holon-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-jackson-spring</artifactId>
 			<version>${holon.json.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.holon-platform.core</groupId>
+					<artifactId>holon-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Holon JAX-RS client -->
