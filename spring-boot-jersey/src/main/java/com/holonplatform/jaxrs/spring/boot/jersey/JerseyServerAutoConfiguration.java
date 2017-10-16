@@ -19,11 +19,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,15 +51,27 @@ import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostPr
 @Configuration
 @ConditionalOnClass(ResourceConfig.class)
 @AutoConfigureBefore(JerseyAutoConfiguration.class)
+@EnableConfigurationProperties(JerseyConfigurationProperties.class)
 public class JerseyServerAutoConfiguration {
 
 	@Configuration
 	@ConditionalOnMissingBean(ResourceConfig.class)
 	static class JerseyApplicationConfiguration {
 
+		private final JerseyConfigurationProperties configurationProperties;
+
+		public JerseyApplicationConfiguration(JerseyConfigurationProperties configurationProperties) {
+			super();
+			this.configurationProperties = configurationProperties;
+		}
+		
 		@Bean
 		public ResourceConfig jerseyApplicationConfig() {
-			return new ResourceConfig();
+			ResourceConfig resourceConfig = new ResourceConfig();
+			if (configurationProperties.isForwardOn404()) {
+				resourceConfig.property(ServletProperties.FILTER_FORWARD_ON_404, true);
+			}
+			return resourceConfig;
 		}
 
 	}

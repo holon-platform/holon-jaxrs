@@ -18,3 +18,15 @@ spring:
   
   jersey:
     type: filter
+
+---
+spring:
+  profiles: filter2
+  
+  jersey:
+    type: filter
+    
+holon:
+  jersey:
+    forwardOn404: true
+    
