@@ -65,7 +65,7 @@ To disable this auto-configuration feature the `JerseyServerAutoConfiguration` c
 
 ==== Authentication and authorization
 
-When a `Realm` type bean is detected in Spring context, the JAX-RS server is automtically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
+When a `Realm` type bean is detected in Spring context, the JAX-RS server is automatically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
 
 The auto configuration class perfoms the following operations:
 
