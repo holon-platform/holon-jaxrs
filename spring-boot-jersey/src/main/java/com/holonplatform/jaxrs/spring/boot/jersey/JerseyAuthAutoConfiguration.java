@@ -22,6 +22,7 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
+import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.auth.Realm;
@@ -47,9 +48,22 @@ public class JerseyAuthAutoConfiguration {
 
 	@Configuration
 	@ConditionalOnBean(Realm.class)
-	static class AuthConfiguration {
+	static class AuthConfiguration implements ResourceConfigCustomizer {
 
-		public AuthConfiguration(ResourceConfig config, final Realm realm) {
+		private final Realm realm;
+
+		public AuthConfiguration(final Realm realm) {
+			this.realm = realm;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.
+		 * ResourceConfig)
+		 */
+		@Override
+		public void customize(ResourceConfig config) {
 			// Realm ContextResolver
 			config.register(new ContextResolver<Realm>() {
 

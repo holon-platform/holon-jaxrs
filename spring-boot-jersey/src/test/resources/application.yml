@@ -6,9 +6,15 @@ server:
   port: 8888
   
 ---
-
 spring:
   profiles: path
   
   jersey:
     application-path: api
+    
+---
+spring:
+  profiles: filter
+  
+  jersey:
+    type: filter
