@@ -36,6 +36,8 @@ The `holon-jaxrs-swagger` provides Spring Boot auto-configuration classes to aut
 
 The Swagger auto-configuration is triggered when either a `ResourceConfig` type _Jersey_ configuration bean or a `ResteasyConfig` type _Resteasy_ configuration bean is available in Spring context.
 
+==== Swagger API documentation endpoints configuration using properties
+
 The Swagger auto-configuration relies on the `holon.swagger.*` configuration properties listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationProperties.html[SwaggerConfigurationProperties^] class to configure the Swagger API endpoints.
 
 TIP: Just like any other Spring Boot configuration property, the `holon.swagger.*` properties can be specified in your inside your `application.properties` / `application.yml` file or as command line switches.
@@ -62,7 +64,7 @@ holon:
 
 The `my.api.endpoints` package is scanned to detect JAX-RS API resources and the API listing endpoint will be available at the `http(s):host/docs` URL.
 
-==== Configure multiple API listing endpoints
+===== Configure multiple API listing endpoints
 
 Multiple API listing endpoints configuration is supported using the `holon.swagger.api-groups` configuration property, which accept a list of API _groups_, each bound to a specific API _package_ to scan and which can be independently configured using the <<SwaggerConfigurationProperties>>.
 
@@ -102,6 +104,9 @@ Two API groups are defined:
 .Common configuration properties
 |===
 |Name |Meaning
+
+|_holon.swagger._ *enabled*
+|Whether the Swagger API listing endpoints auto-configuration is enabled. Default is `true`.
 
 |_holon.swagger._ *resourcePackage*
 |The package name to scan to detect API endpoints
@@ -192,3 +197,15 @@ Two API groups are defined:
 |_holon.swagger.api-groups._ *security-roles*
 |A list of security roles for API group listing access control using the JAX-RS `SecurityContext` and the `@RolesAllowed` annotation
 |===
+
+==== Swagger API documentation endpoints auto-configuration
+
+If the `holon.swagger.resourcePackage` configuration property is not provided and no API groups are defined using the `holon.swagger.apiGroups.*` configuration properties, the Holon Swagger integration module will try to auto-configure the Swagger API listing endpoints, relying on the Swagger `@Api` annotation.
+
+Any JAX-RS `@Path` resource declared as a Spring bean which is annotated with the Swagger `@Api` annotation will be auto-detected and used to obtain the package name to use as Swagger API listing endpoint source.
+
+The default `/api-docs` path is used as the Swagger API listing mapping.
+
+To configure the API listing path and the API information properties, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiDefinition.html[ApiDefinition^] annotation can be used. The `@ApiDefinition` annotation can be used at package level (annotating a standard `package-info.java` class) or at resource class level, when a single JAX-RS `@Api` resource class is present.
+
+When more than one package which contains valid JAX-RS `@Api` classes is present, the Swagger API listings path must be different for each package, so the `@ApiDefinition` annotation is required to specify the API documentation path for each package.
