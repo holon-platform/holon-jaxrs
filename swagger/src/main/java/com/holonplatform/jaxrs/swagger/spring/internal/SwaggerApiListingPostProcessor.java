@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.ws.rs.Path;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -205,7 +207,8 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 
 	private static boolean isApiResourceClass(@SuppressWarnings("unused") BeanDefinition definition,
 			Class<?> beanClass) {
-		return AnnotationUtils.getClassWithAnnotation(beanClass, Api.class) != null;
+		return AnnotationUtils.getClassWithAnnotation(beanClass, Api.class) != null
+				&& AnnotationUtils.getClassWithAnnotation(beanClass, Path.class) != null;
 	}
 
 	private static String getPathOrDefault(String path) {
