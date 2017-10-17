@@ -58,7 +58,7 @@
 		<bintray.package>holon-jaxrs</bintray.package>
 
 		<!-- Holon core -->
-		<holon.core.version>5.0.1</holon.core.version>
+		<holon.core.version>5.0.2</holon.core.version>
 
 		<!-- Holon json -->
 		<holon.json.version>5.0.0</holon.json.version>
