@@ -45,6 +45,12 @@ public class SwaggerApiAutoDetectCondition extends SpringBootCondition {
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		final RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(),
 				"holon.swagger.");
+
+		if (!resolver.getProperty("holon.swagger.enabled", boolean.class, true)) {
+			return ConditionOutcome.noMatch(ConditionMessage.forCondition("SwaggerApiAutoDetectCondition")
+					.because("holon.swagger.enabled is false"));
+		}
+
 		if (resolver.containsProperty("resourcePackage")) {
 			return ConditionOutcome.noMatch(
 					ConditionMessage.forCondition("SwaggerApiAutoDetectCondition").available("resourcePackage"));
