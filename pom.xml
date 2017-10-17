@@ -61,7 +61,7 @@
 		<holon.core.version>5.0.2</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.0.0</holon.json.version>
+		<holon.json.version>5.0.1</holon.json.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.0.1</jax-rs.api.version>
