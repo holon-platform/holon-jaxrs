@@ -32,6 +32,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SwaggerConfigurationProperties {
 
 	public static final String DEFAULT_PATH = "/api-docs";
+	
+	/**
+	 * Whether to enable Swagger API listing endpoint configuration. Defaults to <code>true</code>.
+	 */
+	private boolean enabled = true;
 
 	/**
 	 * The package name to scan to detect API endpoints. Ignored when at least {@link ApiGroupConfiguration} is present.
@@ -112,6 +117,14 @@ public class SwaggerConfigurationProperties {
 	private String[] securityRoles;
 
 	private final List<ApiGroupConfiguration> apiGroups = new LinkedList<>();
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public String getResourcePackage() {
 		return resourcePackage;

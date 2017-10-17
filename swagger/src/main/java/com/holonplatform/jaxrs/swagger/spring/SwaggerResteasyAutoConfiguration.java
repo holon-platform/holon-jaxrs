@@ -47,12 +47,12 @@ import io.swagger.models.Swagger;
 public class SwaggerResteasyAutoConfiguration {
 
 	private final static Logger LOGGER = SwaggerLogger.create();
-	
+
 	@Bean
 	public ResteasyConfigCustomizer swaggerConfiguration(SwaggerConfigurationProperties configurationProperties) {
 		return new SwaggerResteasyConfiguration(configurationProperties);
 	}
-	
+
 	class SwaggerResteasyConfiguration implements ResteasyConfigCustomizer, BeanClassLoaderAware {
 
 		private ClassLoader classLoader;
@@ -81,30 +81,31 @@ public class SwaggerResteasyAutoConfiguration {
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer#customize(com.holonplatform.jaxrs.spring.
-		 * boot.resteasy.ResteasyConfig)
+		 * @see com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer#customize(com.holonplatform.jaxrs.
+		 * spring. boot.resteasy.ResteasyConfig)
 		 */
 		@Override
 		public void customize(ResteasyConfig config) {
-			// Serializers
-			if (!config.isRegistered(SwaggerSerializers.class)) {
-				config.register(SwaggerSerializers.class);
+			if (configurationProperties.isEnabled()) {
+				// Serializers
+				if (!config.isRegistered(SwaggerSerializers.class)) {
+					config.register(SwaggerSerializers.class);
+				}
+				// check configuration
+				if (configurationProperties.isPrettyPrint()) {
+					SwaggerSerializers.setPrettyPrint(true);
+				}
+				// API listings
+				final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils
+						.getApiListings(configurationProperties);
+				for (ApiListingDefinition definition : definitions) {
+					definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
+						config.register(e.getResourceClass());
+						LOGGER.info("[" + e.getGroupId() + "] Swagger API listing configured - Path: "
+								+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
+					});
+				}
 			}
-			// check configuration
-			if (configurationProperties.isPrettyPrint()) {
-				SwaggerSerializers.setPrettyPrint(true);
-			}
-			// API listings
-			final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
-			for (ApiListingDefinition definition : definitions) {
-				definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
-					config.register(e.getResourceClass());
-					LOGGER.info("[" + e.getGroupId() + "] Swagger API listing configured - Path: "
-							+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
-				});
-			}
-
 		}
 
 	}

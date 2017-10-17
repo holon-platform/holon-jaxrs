@@ -76,22 +76,24 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, Res
 	 */
 	@Override
 	public void customize(ResourceConfig config) {
-		// Serializers
-		if (!config.isRegistered(SwaggerSerializers.class)) {
-			config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
-		}
-		// check configuration
-		if (configurationProperties.isPrettyPrint()) {
-			SwaggerSerializers.setPrettyPrint(true);
-		}
-		// API listings
-		final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
-		for (ApiListingDefinition definition : definitions) {
-			definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
-				config.register(e.getResourceClass());
-				LOGGER.info("[Jersey] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
-						+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
-			});
+		if (configurationProperties.isEnabled()) {
+			// Serializers
+			if (!config.isRegistered(SwaggerSerializers.class)) {
+				config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
+			}
+			// check configuration
+			if (configurationProperties.isPrettyPrint()) {
+				SwaggerSerializers.setPrettyPrint(true);
+			}
+			// API listings
+			final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
+			for (ApiListingDefinition definition : definitions) {
+				definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
+					config.register(e.getResourceClass());
+					LOGGER.info("[Jersey] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
+							+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
+				});
+			}
 		}
 	}
 

@@ -20,3 +20,13 @@ spring:
   
   jersey:
     type: filter
+
+---
+spring:
+  profiles: disabled
+  
+holon:
+  swagger:
+    enabled: false
+
+    
