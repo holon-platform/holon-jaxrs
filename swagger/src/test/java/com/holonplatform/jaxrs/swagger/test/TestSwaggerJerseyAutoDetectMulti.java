@@ -20,7 +20,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,51 +27,54 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@ActiveProfiles("dft")
-public class TestSwaggerJerseyAutoConfiguration {
+public class TestSwaggerJerseyAutoDetectMulti {
 
 	@LocalServerPort
 	private int port;
 
 	@Configuration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
+	@ComponentScan(basePackages = "com.holonplatform.jaxrs.swagger.test.resources4")
 	static class Config {
-
-		@Bean
-		public ResourceConfig applicationConfig() {
-			ResourceConfig cfg = new ResourceConfig();
-			cfg.register(TestEndpoint.class);
-			return cfg;
-		}
 
 	}
 
 	@Test
-	public void testEndpoint() {
+	public void testEndpoints() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
+
+		WebTarget target = client.target("http://localhost:" + port + "/v1").path("ping");
 		String response = target.request().get(String.class);
+		Assert.assertEquals("pong", response);
+
+		target = client.target("http://localhost:" + port + "/v2").path("ping");
+		response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
 	}
 
 	@Test
 	public void testSwaggerJson() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs");
+
+		WebTarget target = client.target("http://localhost:" + port + "/v1/docs");
 		Response response = target.request().get();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertNotNull(response.getEntity());
+		Assert.assertEquals("application/json", response.getMediaType().toString());
+
+		target = client.target("http://localhost:" + port + "/v2/docs");
+		response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/json", response.getMediaType().toString());
@@ -81,8 +83,15 @@ public class TestSwaggerJerseyAutoConfiguration {
 	@Test
 	public void testSwaggerYaml() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
+
+		WebTarget target = client.target("http://localhost:" + port + "/v1/docs").queryParam("type", "yaml");
 		Response response = target.request().get();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertNotNull(response.getEntity());
+		Assert.assertEquals("application/yaml", response.getMediaType().toString());
+
+		target = client.target("http://localhost:" + port + "/v2/docs").queryParam("type", "yaml");
+		response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/yaml", response.getMediaType().toString());

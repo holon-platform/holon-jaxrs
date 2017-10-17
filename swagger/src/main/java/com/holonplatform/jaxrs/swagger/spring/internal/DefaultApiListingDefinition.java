@@ -147,6 +147,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	 * Get the API listing path
 	 * @return the API listing path
 	 */
+	@Override
 	public String getPath() {
 		return path;
 	}

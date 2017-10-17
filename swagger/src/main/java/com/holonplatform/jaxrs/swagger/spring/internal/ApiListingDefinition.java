@@ -33,6 +33,12 @@ public interface ApiListingDefinition extends Serializable {
 	 * @return Group id
 	 */
 	String getGroupId();
+	
+	/**
+	 * Get the API listing path
+	 * @return the API listing path
+	 */
+	String getPath();
 
 	/**
 	 * Configure the JAX-RS API listing endpoint using this definition.

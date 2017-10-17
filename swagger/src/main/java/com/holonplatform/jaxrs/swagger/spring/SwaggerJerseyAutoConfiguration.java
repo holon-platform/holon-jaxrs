@@ -24,11 +24,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
+import com.holonplatform.jaxrs.swagger.spring.internal.JerseyApiListingPostProcessor;
+import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerApiAutoDetectCondition;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
 
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -95,6 +99,17 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, Res
 				});
 			}
 		}
+	}
+
+	@Configuration
+	@Conditional(SwaggerApiAutoDetectCondition.class)
+	static class ApiResourcesAutoConfiguration {
+
+		@Bean
+		public static JerseyApiListingPostProcessor apiResourcesPostProcessor() {
+			return new JerseyApiListingPostProcessor();
+		}
+
 	}
 
 }

@@ -37,12 +37,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
+import com.holonplatform.jaxrs.swagger.test.resources2.TestEndpoint2;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@ActiveProfiles("dft")
-public class TestSwaggerJerseyAutoConfiguration {
+@ActiveProfiles("groups")
+public class TestSwaggerJerseyAutoConfigurationGroups {
 
 	@LocalServerPort
 	private int port;
@@ -55,24 +56,35 @@ public class TestSwaggerJerseyAutoConfiguration {
 		public ResourceConfig applicationConfig() {
 			ResourceConfig cfg = new ResourceConfig();
 			cfg.register(TestEndpoint.class);
+			cfg.register(TestEndpoint2.class);
 			return cfg;
 		}
 
 	}
 
 	@Test
-	public void testEndpoint() {
+	public void testEndpoints() {
 		Client client = JerseyClientBuilder.createClient();
 		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
+		Assert.assertEquals("pong", response);
+		target = client.target("http://localhost:" + port + "/test2").path("ping");
+		response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
 	}
 
 	@Test
 	public void testSwaggerJson() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs");
+		
+		WebTarget target = client.target("http://localhost:" + port + "/docs1");
 		Response response = target.request().get();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertNotNull(response.getEntity());
+		Assert.assertEquals("application/json", response.getMediaType().toString());
+		
+		target = client.target("http://localhost:" + port + "/docs2");
+		response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/json", response.getMediaType().toString());
@@ -81,8 +93,15 @@ public class TestSwaggerJerseyAutoConfiguration {
 	@Test
 	public void testSwaggerYaml() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
+		
+		WebTarget target = client.target("http://localhost:" + port + "/docs1").queryParam("type", "yaml");
 		Response response = target.request().get();
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertNotNull(response.getEntity());
+		Assert.assertEquals("application/yaml", response.getMediaType().toString());
+		
+		target = client.target("http://localhost:" + port + "/docs2").queryParam("type", "yaml");
+		response = target.request().get();
 		Assert.assertEquals(200, response.getStatus());
 		Assert.assertNotNull(response.getEntity());
 		Assert.assertEquals("application/yaml", response.getMediaType().toString());

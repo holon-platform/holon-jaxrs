@@ -31,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
@@ -40,6 +41,7 @@ import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
+@ActiveProfiles("dft")
 public class TestSwaggerResteasyAutoConfiguration {
 
 	@LocalServerPort

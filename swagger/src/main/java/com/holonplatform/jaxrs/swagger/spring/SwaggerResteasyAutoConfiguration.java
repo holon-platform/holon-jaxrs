@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.internal.Logger;
@@ -30,6 +31,8 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
+import com.holonplatform.jaxrs.swagger.spring.internal.ResteasyApiListingPostProcessor;
+import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerApiAutoDetectCondition;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
 
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -101,11 +104,22 @@ public class SwaggerResteasyAutoConfiguration {
 				for (ApiListingDefinition definition : definitions) {
 					definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
 						config.register(e.getResourceClass());
-						LOGGER.info("[" + e.getGroupId() + "] Swagger API listing configured - Path: "
+						LOGGER.info("[Resteasy] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
 								+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
 					});
 				}
 			}
+		}
+
+	}
+
+	@Configuration
+	@Conditional(SwaggerApiAutoDetectCondition.class)
+	static class ApiResourcesAutoConfiguration {
+
+		@Bean
+		public static ResteasyApiListingPostProcessor apiResourcesPostProcessor() {
+			return new ResteasyApiListingPostProcessor();
 		}
 
 	}
