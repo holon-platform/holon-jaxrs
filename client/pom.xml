@@ -123,5 +123,23 @@
 		</dependency>
 
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>jersey-226</id>
+			<properties>
+				<jax-rs.api.version>2.1</jax-rs.api.version>
+				<jersey.version>2.26</jersey.version>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.glassfish.jersey.inject</groupId>
+					<artifactId>jersey-hk2</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 </project>

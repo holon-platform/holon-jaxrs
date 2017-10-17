@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -180,18 +181,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring3</artifactId>
-			<version>${jersey.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jvnet</groupId>
-					<artifactId>tiger-types</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>${jersey.version}</version>
@@ -203,7 +192,7 @@
 			<version>${resteasy.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
@@ -212,5 +201,152 @@
 		</dependency>
 
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jersey-226</id>
+			<properties>
+				<jax-rs.api.version>2.1</jax-rs.api.version>
+				<jersey.version>2.26</jersey.version>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-web</artifactId>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.glassfish.jersey.core</groupId>
+							<artifactId>jersey-server</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.containers</groupId>
+							<artifactId>jersey-container-servlet-core</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.containers</groupId>
+							<artifactId>jersey-container-servlet</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.ext</groupId>
+							<artifactId>jersey-bean-validation</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.ext</groupId>
+							<artifactId>jersey-spring3</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.media</groupId>
+							<artifactId>jersey-media-json-jackson</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>com.holon-platform.jaxrs</groupId>
+					<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
+					<version>${project.version}</version>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.glassfish.jersey.core</groupId>
+							<artifactId>jersey-server</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.containers</groupId>
+							<artifactId>jersey-container-servlet-core</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.containers</groupId>
+							<artifactId>jersey-container-servlet</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.ext</groupId>
+							<artifactId>jersey-bean-validation</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.ext</groupId>
+							<artifactId>jersey-spring3</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.jersey.media</groupId>
+							<artifactId>jersey-media-json-jackson</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.inject</groupId>
+					<artifactId>jersey-hk2</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.core</groupId>
+					<artifactId>jersey-server</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet-core</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.ext</groupId>
+					<artifactId>jersey-bean-validation</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>javax.el</groupId>
+							<artifactId>javax.el-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>org.glassfish.web</groupId>
+							<artifactId>javax.el</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.ext</groupId>
+					<artifactId>jersey-spring4</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.jvnet</groupId>
+							<artifactId>tiger-types</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-json-jackson</artifactId>
+					<version>${jersey.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+						<configuration>
+							<excludes>
+								<exclude>**/TestSwaggerResteasy*</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
