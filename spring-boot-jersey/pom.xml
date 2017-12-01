@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.holon-platform.jaxrs</groupId>
 		<artifactId>holon-jaxrs-root</artifactId>
-		<version>5.0.4</version>
+		<version>5.0.5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
