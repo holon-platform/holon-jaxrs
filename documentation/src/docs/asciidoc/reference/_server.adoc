@@ -66,4 +66,10 @@ For example, to use stardard `javax.annotation.security` annotations on resource
 * In *Jersey*, register the standard `RolesAllowedDynamicFeature` in server resources configuration.
 * In *Resteasy*, activate the role-based security access control setting a servlet the context parameter `resteasy.role.based.security` to `true`.
 
+=== JAX-RS HttpRequest
 
+The link:{apidir}/com/holonplatform/jaxrs/server/JaxrsHttpRequest.html[JaxrsHttpRequest^] interface represents a `HttpRequest` backed by a JAX-RS request, and can be used as an adapter to use JAX-RS request messages as an `HttpRequest`.
+
+To create a `HttpRequest` from a JAX-RS request context, the `JaxrsHttpRequest create(...)` static methods can be used. The creation methods use JAX-RS injectable request information to obtain the concrete request attributes and configuration, such as `Request`, `UriInfo` and `HttpHeaders`.
+
+This way, a JAX-RS request can be used for example with a Holon `MessageAuthenticator`, to perform authentication operations directly using the request message. See link:core.html#MessageAuthenticator[MessageAuthenticator] section for further information.

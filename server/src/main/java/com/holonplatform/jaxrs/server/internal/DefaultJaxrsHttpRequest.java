@@ -17,6 +17,7 @@ package com.holonplatform.jaxrs.server.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,13 +32,14 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.HttpRequest;
 import com.holonplatform.http.internal.AbstractHttpRequest;
+import com.holonplatform.jaxrs.server.JaxrsHttpRequest;
 
 /**
  * {@link HttpRequest} using JAX-RS context informations.
  * 
  * @since 5.0.0
  */
-public class JaxrsHttpRequest extends AbstractHttpRequest {
+public class DefaultJaxrsHttpRequest extends AbstractHttpRequest implements JaxrsHttpRequest {
 
 	/**
 	 * HTTP request method
@@ -65,13 +67,12 @@ public class JaxrsHttpRequest extends AbstractHttpRequest {
 	 * @param uriInfo URI informations
 	 * @param headers Headers informations
 	 */
-	public JaxrsHttpRequest(Request request, UriInfo uriInfo, HttpHeaders headers) {
+	public DefaultJaxrsHttpRequest(Request request, UriInfo uriInfo, HttpHeaders headers) {
 		super();
-
-		ObjectUtils.argumentNotNull(request, "Request must be not null");
 		ObjectUtils.argumentNotNull(uriInfo, "UriInfo must be not null");
+		ObjectUtils.argumentNotNull(headers, "HttpHeaders must be not null");
 
-		this.method = request.getMethod();
+		this.method = (request != null) ? request.getMethod() : null;
 		this.uriInfo = uriInfo;
 		this.headers = headers;
 		this.queryParameters = uriInfo.getQueryParameters();
@@ -186,6 +187,19 @@ public class JaxrsHttpRequest extends AbstractHttpRequest {
 	@Override
 	public InputStream getBody() throws IOException, UnsupportedOperationException {
 		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.server.JaxrsHttpRequest#getRequestURI()
+	 */
+	@Override
+	public String getRequestURI() {
+		URI uri = uriInfo.getRequestUri();
+		if (uri != null) {
+			return uri.toString();
+		}
+		return null;
 	}
 
 }
