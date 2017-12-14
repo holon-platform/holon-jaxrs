@@ -35,11 +35,6 @@ public final class FormDataFormats implements Serializable {
 	private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
 	private static final String TIME_FORMAT_PATTERN = "HH:mm:ss";
 
-	public static final DateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.US);
-	public static final DateFormat TIME_FORMAT = new SimpleDateFormat(TIME_FORMAT_PATTERN, Locale.US);
-	public static final DateFormat DATETIME_FORMAT = new SimpleDateFormat(
-			DATE_FORMAT_PATTERN + "'T'" + TIME_FORMAT_PATTERN, Locale.US);
-
 	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN, Locale.US);
 	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN, Locale.US);
 	public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter
@@ -58,6 +53,18 @@ public final class FormDataFormats implements Serializable {
 	}
 
 	private FormDataFormats() {
+	}
+
+	public static DateFormat getDateFormat() {
+		return new SimpleDateFormat(DATE_FORMAT_PATTERN, Locale.US);
+	}
+
+	public static DateFormat getTimeFormat() {
+		return new SimpleDateFormat(TIME_FORMAT_PATTERN, Locale.US);
+	}
+
+	public static DateFormat getDateTimeFormat() {
+		return new SimpleDateFormat(DATE_FORMAT_PATTERN + "'T'" + TIME_FORMAT_PATTERN, Locale.US);
 	}
 
 }

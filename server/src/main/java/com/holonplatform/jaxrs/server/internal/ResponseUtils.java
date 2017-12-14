@@ -47,7 +47,7 @@ public final class ResponseUtils implements Serializable {
 		return buildAuthenticationErrorResponse(
 				(error != null && error.getScheme() != null) ? new String[] { error.getScheme() } : null,
 				(error != null) ? error.getErrorCode() : null, (error != null) ? error.getErrorDescription() : null,
-				(error != null) ? error.getHttpStatus() : null, realmName);
+				(error != null) ? error.getHttpStatus() : 0, realmName);
 	}
 
 	/**

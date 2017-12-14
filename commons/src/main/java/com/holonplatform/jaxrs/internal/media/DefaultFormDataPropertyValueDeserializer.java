@@ -37,8 +37,10 @@ public enum DefaultFormDataPropertyValueDeserializer implements FormDataProperty
 
 	INSTANCE;
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.media.FormDataPropertyValueDeserializer#deserialize(com.holonplatform.core.property.Property, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.media.FormDataPropertyValueDeserializer#deserialize(com.holonplatform.core.property.
+	 * Property, java.lang.String)
 	 */
 	@Override
 	public Object deserialize(Property<?> property, String value) throws PropertyReadException {
@@ -56,20 +58,20 @@ public enum DefaultFormDataPropertyValueDeserializer implements FormDataProperty
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Object deserialize(Property<?> property, Class<?> targetType, String value) throws ParseException {
-		
+
 		// string
 		if (TypeUtils.isString(targetType)) {
 			return value;
 		}
-		
+
 		// boolean
 		if (TypeUtils.isBoolean(targetType)) {
 			return Boolean.parseBoolean(value);
 		}
-		
+
 		// enum
 		if (TypeUtils.isEnum(targetType)) {
 			// try by ordinal
@@ -85,11 +87,11 @@ public enum DefaultFormDataPropertyValueDeserializer implements FormDataProperty
 		// number
 		if (TypeUtils.isIntegerNumber(targetType)) {
 			Number parsed = FormDataFormats.INTEGER_FORMAT.parse(value);
-			return ConversionUtils.convertNumberToTargetClass(parsed, (Class<Number>)targetType);
+			return ConversionUtils.convertNumberToTargetClass(parsed, (Class<Number>) targetType);
 		}
 		if (TypeUtils.isDecimalNumber(targetType)) {
 			Number parsed = FormDataFormats.DECIMAL_FORMAT.parse(value);
-			return ConversionUtils.convertNumberToTargetClass(parsed, (Class<Number>)targetType);
+			return ConversionUtils.convertNumberToTargetClass(parsed, (Class<Number>) targetType);
 		}
 
 		// date and times
@@ -112,30 +114,30 @@ public enum DefaultFormDataPropertyValueDeserializer implements FormDataProperty
 		if (LocalTime.class.isAssignableFrom(targetType)) {
 			return LocalTime.parse(value, FormDataFormats.TIME_FORMATTER);
 		}
-		
+
 		return null;
 	}
-	
+
 	private static java.util.Date parseDateValue(Property<?> property, String value) {
 		if (property.getConfiguration().getTemporalType().isPresent()) {
 			switch (property.getConfiguration().getTemporalType().get()) {
 			case DATE:
 				try {
-					return FormDataFormats.DATE_FORMAT.parse(value);
+					return FormDataFormats.getDateFormat().parse(value);
 				} catch (@SuppressWarnings("unused") ParseException e) {
 					// ignore
 				}
 				break;
 			case DATE_TIME:
 				try {
-					return FormDataFormats.DATETIME_FORMAT.parse(value);
+					return FormDataFormats.getDateTimeFormat().parse(value);
 				} catch (@SuppressWarnings("unused") ParseException e) {
 					// ignore
 				}
 				break;
 			case TIME:
 				try {
-					return FormDataFormats.TIME_FORMAT.parse(value);
+					return FormDataFormats.getTimeFormat().parse(value);
 				} catch (@SuppressWarnings("unused") ParseException e) {
 					// ignore
 				}
@@ -144,17 +146,17 @@ public enum DefaultFormDataPropertyValueDeserializer implements FormDataProperty
 				break;
 			}
 		}
-		
+
 		try {
-			return FormDataFormats.DATETIME_FORMAT.parse(value);
+			return FormDataFormats.getDateTimeFormat().parse(value);
 		} catch (@SuppressWarnings("unused") ParseException e) {
 			// try date only
 			try {
-				return FormDataFormats.DATE_FORMAT.parse(value);
+				return FormDataFormats.getDateFormat().parse(value);
 			} catch (@SuppressWarnings("unused") ParseException e1) {
 				// try time only
 				try {
-					return FormDataFormats.TIME_FORMAT.parse(value);
+					return FormDataFormats.getTimeFormat().parse(value);
 				} catch (@SuppressWarnings("unused") ParseException e2) {
 					// ignore
 				}
