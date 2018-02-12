@@ -76,7 +76,7 @@
 		<swagger.version>1.5.18</swagger.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.7.9</bytebuddy.version>
+		<bytebuddy.version>1.7.10</bytebuddy.version>
 
 	</properties>
 
