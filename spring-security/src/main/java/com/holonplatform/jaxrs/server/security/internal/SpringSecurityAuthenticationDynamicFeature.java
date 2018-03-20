@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 Holon TDCN.
+ * Copyright 2016-2017 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,23 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.server.internal.auth;
+package com.holonplatform.jaxrs.server.security.internal;
 
 import java.lang.reflect.AnnotatedElement;
 
 import javax.ws.rs.Priorities;
-import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.FeatureContext;
 
 import com.holonplatform.auth.annotations.Authenticate;
+import com.holonplatform.jaxrs.server.internal.auth.AbstractAuthenticationDynamicFeature;
 
 /**
- * A {@link DynamicFeature} to add an {@link AuthenticationFilter} to {@link Authenticate} annotated JAX-RS resource
- * classes and methods.
- *
- * @since 5.0.0
+ * Register a {@link SpringSecurityAuthContextFilter} for {@link Authenticate} JAX-RS resources class or methods.
+ * 
+ * @since 5.1.0
  */
-public class AuthenticationDynamicFeature extends AbstractAuthenticationDynamicFeature {
+public class SpringSecurityAuthenticationDynamicFeature extends AbstractAuthenticationDynamicFeature {
 
 	/*
 	 * (non-Javadoc)
@@ -39,10 +38,7 @@ public class AuthenticationDynamicFeature extends AbstractAuthenticationDynamicF
 	 */
 	@Override
 	protected boolean processElement(FeatureContext context, AnnotatedElement element, Authenticate authenticate) {
-		// AuthContext setup for SecurityContext
-		context.register(AuthContextFilter.class, Priorities.AUTHENTICATION - 10);
-		// Authenticator
-		context.register(new AuthenticationFilter(authenticate.schemes()), Priorities.AUTHENTICATION);
+		context.register(SpringSecurityAuthContextFilter.class, Priorities.AUTHENTICATION - 15);
 		return true;
 	}
 

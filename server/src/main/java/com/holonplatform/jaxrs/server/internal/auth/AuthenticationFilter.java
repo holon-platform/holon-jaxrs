@@ -27,7 +27,9 @@ import javax.ws.rs.ext.Providers;
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnsupportedMessageException;
+import com.holonplatform.core.internal.Logger;
 import com.holonplatform.http.HttpStatus;
+import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.jaxrs.server.internal.JaxrsContainerHttpRequest;
 import com.holonplatform.jaxrs.server.internal.ResponseUtils;
 
@@ -39,6 +41,8 @@ import com.holonplatform.jaxrs.server.internal.ResponseUtils;
  */
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
+
+	private final static Logger LOGGER = JaxrsLogger.create();
 
 	@Context
 	private Providers providers;
@@ -73,13 +77,22 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		final AuthContext authContext = (AuthContext) requestContext.getSecurityContext();
 		// check authenticated
 		if (!authContext.getAuthentication().isPresent()) {
+
+			LOGGER.debug(() -> "Authenticate request using AuthContext");
+
 			// authenticate
 			try {
 				authContext.authenticate(new JaxrsContainerHttpRequest(requestContext), schemes);
-			} catch (@SuppressWarnings("unused") UnsupportedMessageException e) {
+			} catch (UnsupportedMessageException e) {
+
+				LOGGER.debug(() -> "Authentication error: aborting request", e);
+
 				requestContext.abortWith(ResponseUtils.buildAuthenticationErrorResponse(schemes, null, null,
 						HttpStatus.UNAUTHORIZED.getCode(), null));
 			} catch (AuthenticationException e) {
+
+				LOGGER.debug(() -> "Authentication error: aborting request", e);
+
 				requestContext.abortWith(ResponseUtils.buildAuthenticationErrorResponse(e, null));
 			}
 		}

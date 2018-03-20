@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.server.internal.auth;
+package com.holonplatform.jaxrs.server.security.internal;
 
 import javax.annotation.Priority;
 import javax.ws.rs.core.FeatureContext;
@@ -22,15 +22,15 @@ import org.glassfish.jersey.internal.spi.AutoDiscoverable;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
-import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
+import com.holonplatform.jaxrs.server.security.SpringSecurityAuthenticationFeature;
 
 /**
- * Jersey {@link AutoDiscoverable} class to register {@link AuthenticationFeature}.
+ * Jersey {@link AutoDiscoverable} class to register the {@link SpringSecurityAuthContextFilter}.
  *
- * @since 5.0.0
+ * @since 5.1.0
  */
-@Priority(AutoDiscoverable.DEFAULT_PRIORITY)
-public class JerseyAuthenticationAutoDiscoverable implements AutoDiscoverable {
+@Priority(AutoDiscoverable.DEFAULT_PRIORITY - 10)
+public class JerseySpringSecurityFilterAutoDiscoverable implements AutoDiscoverable {
 
 	private static final Logger LOGGER = JaxrsLogger.create();
 
@@ -40,10 +40,10 @@ public class JerseyAuthenticationAutoDiscoverable implements AutoDiscoverable {
 	 */
 	@Override
 	public void configure(FeatureContext context) {
-		if (!context.getConfiguration().isRegistered(AuthenticationFeature.class)) {
-			context.register(AuthenticationFeature.class);
+		if (!context.getConfiguration().isRegistered(SpringSecurityAuthenticationFeature.class)) {
+			context.register(SpringSecurityAuthenticationFeature.class);
 
-			LOGGER.debug(() -> AuthenticationFeature.class.getName() + " registered");
+			LOGGER.debug(() -> SpringSecurityAuthenticationFeature.class.getName() + " registered");
 		}
 	}
 
