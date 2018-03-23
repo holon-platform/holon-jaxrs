@@ -61,6 +61,7 @@ import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
@@ -194,7 +195,7 @@ public class TestAuthJwt extends JerseyTest {
 		final SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
 
 		final JwtConfiguration cfg = JwtConfiguration.builder().issuer("AuthIssuer").includeDetails(true)
-				.includePermissions(true).signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+				.includePermissions(true).signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(key.getEncoded()).build();
 
 		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBearerResolver())
