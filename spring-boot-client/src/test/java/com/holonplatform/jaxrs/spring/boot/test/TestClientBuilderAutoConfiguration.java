@@ -36,6 +36,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.jaxrs.client.JaxrsRestClient;
 import com.holonplatform.jaxrs.spring.boot.JaxrsClientBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -77,6 +79,13 @@ public class TestClientBuilderAutoConfiguration {
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(clientBuilder);
+	}
+	
+	@Test
+	public void testFactory() {
+		RestClient rc = RestClient.create();
+		Assert.assertNotNull(rc);
+		Assert.assertTrue(rc instanceof JaxrsRestClient);
 	}
 
 	@Test
