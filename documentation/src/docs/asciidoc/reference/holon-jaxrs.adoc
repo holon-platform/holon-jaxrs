@@ -1,4 +1,6 @@
-= Holon JAX-RS integration
+= Holon Platform JAX-RS Module - Reference manual
+:description: Holon platform JAX-RS module reference documentation. \
+It concerns the platform JAX-RS and REST services support, including authentication and authorization, JWT support, Jersey and Resteasy integration, Swagger OpenAPI support, Spring framework integration and Spring Boot auto-configuration.
 :revnumber: {project-version}
 :apidir: ../api/holon-jax-rs
 :coreapidir: ../api/holon-core
@@ -8,17 +10,21 @@
 :toc: left
 :toclevels: 3
 
-Copyright © 2016-2017
+Copyright © 2016-2018
 
 _Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically._
 
 == Introduction
 
-The Holon Platform *JAX-RS* module provides support, components and configuration helpers concerning the link:https://github.com/jax-rs/spec/blob/master/spec.pdf[JAX-RS^] - _Java API for RESTful Web Service_ standard.
+The Holon Platform *JAX-RS* module provides support, components and configuration helpers concerning the link:https://github.com/jax-rs/spec/blob/master/spec.pdf[JAX-RS^] - _Java API for RESTful Web Services_.
 
 The module provides *JAX-RS* implementations and integrations for platform foundation components and structures, such as the link:holon-core.html#RestClient[RestClient] API, server-side authentication and authorization using a link:holon-core.html#Realm[Realm] and a complete link:http://swagger.io[Swagger^] _OpenAPI_ support for data containers such as link:holon-core.html#PropertyBox[PropertyBox].
 
-Furthermore, the module makes available a set of *auto-configuration* features, both for the _JAX-RS_ ecosystem and for the *Spring* and *Spring Boot* world.
+Regarding the *JSON* data-interchange format, this module uses the link:holon-json.html[Holon JSON module] to make available the Holon platform JSON extensions and configuration facilities for JAX-RS endpoints and clients, allowing to seamlessy use link:https://github.com/FasterXML/jackson[Jackson^] or link:https://github.com/google/gson[Gson^] as JSON providers and provide support for _temporal_ types (including the `java.time.*` API) and the `PropertyBox` type out-of-the-box. 
+
+Furthermore, the module makes available a set of *auto-configuration* features, both for the JAX-RS ecosystem and for the link:https://spring.io[Spring^] and link:https://projects.spring.io/spring-boot[Spring Boot^] world.
+
+A complete support for the most used JAX-RS implementations (link:https://github.com/jersey[Jersey^] and  link:http://resteasy.jboss.org[Resteasy^]) is provided, including Resteasy auto-configuration classes for Spring Boot integration.
 
 == Obtaining the artifacts
 
@@ -59,9 +65,21 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+[[WhatsNew51x]]
+== What's new in version 5.1.x
+
+* Improved support for the `java.time.*` Date and Time API data types when a `PropertyBox` type is serialized and deserialize as *JSON* in JAX-RS endpoints. See <<JSONMediaTypePropertyBox>>.
+
+* The new `JaxrsAuthenticationInspector` API is available in JAX-RS endpoints to inspect current `Authentication` and perform authorization controls using a JAX-RS `SecurityContext`. See <<JaxrsAuthenticationInspector>>.
+
+* Improved *Spring Boot* auto-configuration support for _Jersey_ and _Resteasy_ JAX-RS implementations. See <<JaxrsSpringBoot>>.
+
+* Improved link:https://swagger.io[Swagger^] integration and auto-configuration, using Spring Boot application properties for easier configuration. See <<SwaggerSpringBoot,Swagger Spring Boot integration>>.
+
+[[JaxrsPropertyBox]]
 == `PropertyBox` serialization and deserialization support
 
-The link:holon-core.html#PropertyBox[PropertyBox] data container serialization and deserialization support for JAX-RS compliant servers and clients is available using the following _media types_:
+The link:holon-core.html#PropertyBox[PropertyBox] type serialization and deserialization support for JAX-RS compliant servers and clients is available using the following _media types_:
 
 * `application/json` - see <<JSONMediaTypePropertyBox>>
 * `application/x-www-form-urlencoded` - see <<FormMediaTypePropertyBox>>
@@ -69,14 +87,16 @@ The link:holon-core.html#PropertyBox[PropertyBox] data container serialization a
 [[JSONMediaTypePropertyBox]]
 === JSON media type
 
-The *JSON* serialization and deserialization support for `PropertyBox` is provided by the link:holon-json[Holon Platform JSON module]. Both link:http://wiki.fasterxml.com/JacksonHome[Jackson] and link:https://github.com/google/gson[Gson] JSON processors are supported.
+The *JSON* serialization and deserialization support for the `PropertyBox` type is provided by the link:holon-json[Holon Platform JSON module]. Both https://github.com/FasterXML/jackson[Jackson^] and link:https://github.com/google/gson[Gson^] JSON providers are supported.
 
-Just ensure the suitable artifact is present in classpath to auto-configure the required _providers_ and _context resolvers_ for a JAX-RS server and/or client to enable *JSON* serialization and deserialization support for `PropertyBox`:
+To learn about `PropertyBox` type mapping strategies and configuration options see the link:holon-json#PropertyBox[PropertyBox] section of the Holon Platform JSON module documentation.
 
-* `com.holon-platform.json` / `holon-jackson-jaxrs` for JSON support using *Jackson*
-* `com.holon-platform.json` / `holon-gson-jaxrs` for JSON support using *Gson*
+To enable the `PropertyBox` type support for JSON media type, just ensure that a suitable artifact is present in classpath:
 
-See the link:holon-json[Holon Platform JSON module documentation] for details and configuration options.
+* `holon-jackson-jaxrs` to use the *Jackson* library. See link:holon-json#JacksonJAXRS[Jackson JAX-RS integration] for details.
+* `holon-gson-jaxrs` to use the *Gson* library. See link:holon-json#GsonJAXRS[Gson JAX-RS integration] for details.
+
+The auto-configuration facilities provided by this two artifacts allow to automatically register and setup all the required JAX-RS features, both for link:https://github.com/jersey[Jersey^] and for link:http://resteasy.jboss.org[Resteasy^] JAX-RS implementations.
 
 With the `PropertyBox` _JSON_ support enabled, you can write JAX-RS endpoints like this:
 
@@ -91,13 +111,13 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExamplePropertyBox.java[
 [[FormMediaTypePropertyBox]]
 === Form/URLencoded media type
 
-The `application/x-www-form-urlencoded` media type for `PropertyBox` serialization and deserialization is supported by default and auto-configured when one of the artifacts of the *JAX-RS* is present in classpath.
+The `application/x-www-form-urlencoded` media type for `PropertyBox` serialization and deserialization is supported by default and auto-configured for _Jersey_ and _Resteasy_ when the `holon-jaxrs-commons` artifact is present in classpath.
 
 You can explicitly configure the `application/x-www-form-urlencoded` media type support in a JAX-RS server or client registering the link:{apidir}/com/holonplatform/jaxrs/media/FormDataPropertyBoxFeature.html[FormDataPropertyBoxFeature^].
 
-CAUTION: Only *simple data types* (Strings, Numbers, Booleans, Enums and Dates) are supported for `PropertyBox` serialization and deserialization using the `application/x-www-form-urlencoded` media type, so you cannot use complex property values (such as JavaBeans) as `PropertyBox` property values. The *JSON* media type is strongly recommended as `PropertyBox` data interchange format in a JAX-RS environment.
+CAUTION: Only *simple data types* (Strings, Numbers, Booleans, Enums and Dates) are supported for `PropertyBox` serialization and deserialization using the `application/x-www-form-urlencoded` media type, so you cannot use complex property values (such as Java beans) as `PropertyBox` property values. The *JSON* media type is strongly recommended as `PropertyBox` data interchange format in a JAX-RS environment.
 
-With the `PropertyBox` for the _form/urlencoded_ format support enabled, you can write JAX-RS endpoints like this:
+With the _form/urlencoded_ `PropertyBox` type support enabled, you can write JAX-RS endpoints like this:
 
 [source, java]
 ----

@@ -30,6 +30,7 @@ To create a regular Swagger *Model definition*, listed in the _definitions_ sect
 
 CAUTION: Ensure to assign the same model name to `PropertyBox` type parameters and return types which are meant to be used with the same property set and to declare different model names for different property sets.
 
+[[SwaggerSpringBoot]]
 === Spring Boot integration
 
 The `holon-jaxrs-swagger` provides Spring Boot auto-configuration classes to automatically configure *Swagger API listing JAX-RS endpoints* in a Spring Boot application.

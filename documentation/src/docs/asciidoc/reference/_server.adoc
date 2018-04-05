@@ -1,3 +1,4 @@
+[[JaxrsServer]]
 == JAX-RS Server
 
 _Maven coordinates_:
@@ -8,36 +9,106 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact deals with JAX-RS server resources <<Authentication>> and <<Authorization>>, using platform foundation APIs, such as link:holon-core.html#Realm[Realm].
+The JAX-RS server-side integration deals with the JAX-RS server resources <<Authentication>> and <<Authorization>>, using platform foundation APIs, such as the link:holon-core.html#Realm[Realm] API.
+
+The JAX-RS link:{apidir}/com/holonplatform/jaxrs/server/auth/AuthenticationFeature.html[AuthenticationFeature^] class can be used in a JAX-RS server application to enable the Holon platform *authentication and authorization support* for JAX-RS endpoints, using the platform foundation authentication architecture and APIs.
+
+When the `holon-jaxrs-server` artifact is present in classpath, this feature is automatically registered for *Jersey* and *Resteasy* JAX-RS server runtimes, leveraging on Jersey _AutoDiscoverable_ and Resteasy Java Service extensions features.
+
+NOTE: See the link:holon-core.html#Auth[Authentication and authorization] documentation for information about the platform authentication and authorization architecture and APIs.
+
+=== Disable the Authentication feature
+
+To explicitly disable the JAX-RS `AuthenticationFeature`, the `holon.jaxrs.server.disable-authentication` property name can be used, registering it as a JAX-RS server configuration property name (with an arbitrary not null value).
 
 [[Authentication]]
 === Authentication
 
-The link:{apidir}/com/holonplatform/jaxrs/server/auth/AuthenticationFeature.html[AuthenticationFeature^] can be used in a JAX-RS server to enable authentication support using the core link:{coreapidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] annotation.
+The JAX-RS authentication integration, through the link:{apidir}/com/holonplatform/jaxrs/server/auth/AuthenticationFeature.html[AuthenticationFeature^] JAX-RS feature, relies on the link:{coreapidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] annotation, which is detected at both JAX-RS resource *class* and *method* level.
 
-The feature is automatically registered for *Jersey* and *Resteasy* server runtimes using Java Service extensions and auto-discoverable. To explicitly disable the feature, the `holon.jaxrs.server.disable-authentication` property name can be used, registering it as a server configuration property name (with an arbitraty not null value).
+The `@Authenticate` annotation can be used to protect JAX-RS resource classes and/or methods from unauthorized
+access and relies on the Holon platform link:holon-core.html#Realm[Realm] API to perform actual authentication and authorization operations. For this reason, a `Realm` instance must be configured and available in JAX-RS server context to enable the authentication feature.
 
-When this feature is enabled, the standard JAX-RS `SecurityContext` of every request will be replaced with an link:{coreapidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] compatible implementation, which will be used to perform authentication when required.
+See <<JaxrsRealmConfiguration>> for details.
 
-NOTE: See link:holon-core.html#Auth[Authentication and authorization] documentation for information about the platform authentication and authorization architecture, API and components.
+During a JAX-RS request, when the `@Authenticate` annotation is detected on a JAX-RS endpoint resource class and/or method, the authentication and authorization control flow is triggered, which is based on the following strategy:
 
-The JAX-RS resource classes and/or methods annotated with `@Authenticate` will be protected from unauthorized
-access, performing client authentication using the `AuthContext` security context setted up by this feature as described above.
+. The standard JAX-RS `SecurityContext` of the request is replaced with an link:{coreapidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] API compatible implementation, backed by the configured `Realm`. This `AuthContext` will be used to provide the authenticated _principal_, if available, and to perform role-based authorization controls through the JAX-RS `SecurityContext` API.
 
-When authentication informations provided by a client for an `@Authenticate` annotated resource are missing or invalid, a `401 - Unauthorized` status response is returned, including a `WWW_AUTHENTICATE` header for each allowed authentication scheme, if any.
+. The request JAX-RS is authenticated using the incoming request message and the request `AuthContext` (and so the `Realm` to which the `AuthContext` is bound), possibly using the authentication _scheme_ specified through the `@Authenticate` annotation, if available (see <<AuthenticationSchemes>> for details).
+.. If authentication does not succeed (for example when the authentication informations provided by the client are missing, incomplete or invalid), a `401 - Unauthorized` status response is returned, including a `WWW_AUTHENTICATE` header for each allowed authentication scheme, if any.
 
-==== `Realm` configuration
+. The property configured `SecurityContext` can be later obtained in the JAX-RS resource (using for example the standard `@Context` annotation) to inspect the authenticated _principal_ and perform role-based authorization controls. See <<JaxrsAuthenticationInspector>> for more advanced authentication inspection and authorization controls.
 
-The feature relies on a `Realm` to perform authentication operations, which must be available either:
+[[JaxrsRealmConfiguration]]
+==== JAX-RS `Realm` configuration
 
-* From a suitable JAX-RS `ContextResolver` which returns the `Realm` instance
-* Or as a platform standard link:holon-core.html#Context[Context] resource with default `Realm` context key (i.e. `com.holonplatform.auth.Realm`)
+As stated in the previous section, the JAX-RS `AuthenticationFeature` relies on the core `Realm` API to perform actual authentication and authorization operations. For this reason, a `Realm` instance must be configured and available in JAX-RS server context.
 
+The `Realm` instance must be configured with the appropriate `Authenticator` and `Authorizer` sets, according to the authentication and authorization strategies which have to be supported by the JAX-RS application. Furthermore, one or more `AuthenticationTokenResolver` can be configured to extract the authentication credentials from the incoming JAX-RS request message and obtain a suitable `AuthenticationToken` to be submitted to the Realm authenticators.
+
+The `Realm` instance can be provided in two ways:
+
+*1.* Using a standard JAX-RS `javax.ws.rs.ext.ContextResolver` instance bound to the `Realm` type and registered in JAX-RS server context.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=realm1,indent=0]
+----
+<1> Register a message resolver which extract HTTP _Basic_ authentication credentials from the request message and provides a `AccountCredentialsToken` configured with such credentials
+<2> Register an `Account` based authenticator to process the `AccountCredentialsToken` and perform authentication using an `AccountProvider` to obtain account informations
+<3> Register a default `Authorizer`, which uses authentication _permissions_ to perform authorization controls
+
+*2.* Using the the Holon platform link:holon-core.html#Context[Context] architecture to provide the `Realm` instance as a context resource, using the `Realm` class name as _resource key_.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=realm2,indent=0]
+----
+<1> Register a configured `Realm` instance in the default _classloader_ scope, using the default resource key (the `Realm` class name)
+
+[[AuthenticationSchemes]]
 ==== Authentication schemes
 
-Allowed authentication *schemes* can be specified using the `schemes()` attribute of the `@Authenticate` annotation attribute. If any scheme is specified for a resource, a scheme-matching link:{coreapidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] must be registered in `Realm` to perform authentication with given scheme.
+When more than one *authentication scheme* is supported by the current `Realm`, allowed authentication schemes for each JAX-RS resource class or method can be specified  using the `schemes()` attribute of the `@Authenticate` annotation.
+
+When the authentication scheme is specified, the authentication will be performed using a matching `AuthenticationTokenResolver` by using the scheme name, if available. For this reason, a suitable, scheme-matching link:{coreapidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] must be registered in `Realm` to perform authentication using a specific authentication scheme.
 
 See link:holon-core.html#MessageAuthenticator[MessageAuthenticator] for information about _message authenticators_ and builtin authenticators for HTTP schemes like `Basic` and `Bearer`.
+
+[[JaxrsAuthenticationInspector]]
+=== Using `AuthenticationInspector` with JAX-RS `SecurityContext`
+
+When the <<Authentication>> feature is used for JAX-RS `SecurityContext` setup, the link:{apidir}/com/holonplatform/jaxrs/server/auth/JaxrsAuthenticationInspector.html[JaxrsAuthenticationInspector^] API can be used to obtain the authenticated _principal_ as an `Authentication` (the default authenticated principal representation in the Holon platform architecture) and to perform authorization controls using the `Authentication` granted _permissions_.
+
+The `JaxrsAuthenticationInspector` API can be obtained from a `SecurityContext` instance using the `of` builder method and makes available all the methods provided by the standard `AuthenticationInspector` API.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=authinsp,indent=0]
+----
+<1> Obtain a `JaxrsAuthenticationInspector` from current `SecurityContext`
+<2> Check if an authenticated principal is available
+<3> Get the `Authentication` reference if available
+<4> Requires the `Authentication` reference, throwing an exception if the context is not authenticated
+<5> Checks if the role named `ROLE1` is granted to the authenticated principal
+<6> Checks if the role named `ROLE1` or the role named `ROLE2` is granted to the authenticated principal
+
+[[Authorization]]
+=== Authorization
+
+When a `SecurityContext` is setted up, for example using the <<Authentication>> feature, it can be used to check if an account is authenticated and perform role-based access control.
+
+For example, to use stardard `javax.annotation.security` annotations on resource classes for role-based access control, you can:
+
+* In *Jersey*, register the standard `RolesAllowedDynamicFeature` in server resources configuration.
+* In *Resteasy*, activate the role-based security access control setting a servlet the context parameter `resteasy.role.based.security` to `true`.
+
+The role-based authorization control, when the <<Authentication>> feature is enabled and the JAX-RS resource class or method is secured using the `@Authenticate` annotation, is performed using the `AuthContext` type `SecurityContext`, that is, is delegated to the _authorizers_ registered in the `Realm` which is bound to the authentication context. 
+
+This means that, by default, the current `Authentication` _permissions_ are used to perform the authorization controls, using the permission's String representation when a role-based authorization control is performed.
+
+TIP: See the link:holon-core.html#Authorizer[Authorizer] section of the `Realm` documentation for more information about permissions representation and authorization control strategies.
 
 ==== Example
 
@@ -56,20 +127,19 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAuth.java[tag=aut
 <9> Create a JAX-RS `ContextResolver` to provide the `Realm` instance to use
 <10> Register the Realm `ContextResolver` in JAX-RS application (for example, using a Jersey `ResourceConfig`)
 
-[[Authorization]]
-=== Authorization
-
-When a `SecurityContext` is setted up, for example using the <<Authentication>> feature, it can be used to check if an account is authenticated and perform role-based access control.
-
-For example, to use stardard `javax.annotation.security` annotations on resource classes for role-based access control, you can:
-
-* In *Jersey*, register the standard `RolesAllowedDynamicFeature` in server resources configuration.
-* In *Resteasy*, activate the role-based security access control setting a servlet the context parameter `resteasy.role.based.security` to `true`.
+TIP: See the GitHub link:https://github.com/holon-platform/holon-examples[Holon Platform Examples repository] for more examples about JAX-RS authentication and authorization, including examples on how to use *JWT* (JSON Web Tokens) for JAX-RS endpoint authentication.
 
 === JAX-RS HttpRequest
 
-The link:{apidir}/com/holonplatform/jaxrs/server/JaxrsHttpRequest.html[JaxrsHttpRequest^] interface represents a `HttpRequest` backed by a JAX-RS request, and can be used as an adapter to use JAX-RS request messages as an `HttpRequest`.
+The link:{apidir}/com/holonplatform/jaxrs/server/JaxrsHttpRequest.html[JaxrsHttpRequest^] interface represents a `HttpRequest` backed by a JAX-RS request, and can be used as an adapter to obtain a JAX-RS request messages as an `HttpRequest` API, the default Holon platform representation of an HTTP request message.
 
-To create a `HttpRequest` from a JAX-RS request context, the `JaxrsHttpRequest create(...)` static methods can be used. The creation methods use JAX-RS injectable request information to obtain the concrete request attributes and configuration, such as `Request`, `UriInfo` and `HttpHeaders`.
+To create a `HttpRequest` from a JAX-RS request context, the `create(...)` static methods can be used. The creation methods use JAX-RS injectable request information to obtain the concrete request attributes and configuration, such as `Request`, `UriInfo` and `HttpHeaders`.
 
-This way, a JAX-RS request can be used for example with a Holon `MessageAuthenticator`, to perform authentication operations directly using the request message. See link:core.html#MessageAuthenticator[MessageAuthenticator] section for further information.
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleRequest.java[tag=jaxrsreq,indent=0]
+----
+<1> Build a `JaxrsHttpRequest` from current request information
+<2> Get the request language, if available
+
+TIP: See the link:holon-core.html#MessageAuthenticator[MessageAuthenticator] documentation for information about _message authenticators_ and to learn how to use the `HttpRequest` API to perform message-based authentication.
