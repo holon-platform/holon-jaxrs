@@ -1,3 +1,30 @@
+[[JaxrsSpringSecurity]]
+== Spring Security integration
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-spring-security</artifactId>
+<version>{revnumber}</version>
+----
+
+The link:{apidir}/com/holonplatform/jaxrs/server/security/SpringSecurityAuthenticationFeature.html[SpringSecurityAuthenticationFeature^] JAX-RS feature can be used to enable the `@Authenticate` annotation based authentication strategy using a configured *Spring Security* context as authentication handler.
+
+When this feature is registered and enabled, the authentication strategy and behaviour put in place by the standard <<Authentication>> feature can be seamlessy implemented using a *Spring Security* context, instead of a `Realm` based authentication setup.
+
+Just like the standard <<Authentication>> feature, when the `@Authenticate` annotation is detected on a JAX-RS endpoint resource class and/or method, the standard JAX-RS `SecurityContext` of the request is replaced with an link:{coreapidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] API compatible implementation, which is backed by the concrete Spring Security `SecurityContext`.
+
+This way, the incoming request authentication and authorization is delegated to the Spring Security context, and the possible authenticated _principal_ is mapped to a default Holon Platform `Authentication` reference, which can be seamlessy used by the Holon Platform authentication and authorization features and APIs.
+
+See the core link:holon-core.html#SpringSecurity[Spring Security integration] documentation for details about the integration between the Holon Platform authentication/authorization architecture and the Spring Security one.
+
+=== Feature configuration
+
+When the `holon-jaxrs-spring-security` artifact is present in classpath, the `SpringSecurityAuthenticationFeature` is automatically registered for *Jersey* and *Resteasy* JAX-RS server runtimes, leveraging on Jersey _AutoDiscoverable_ and Resteasy Java Service extensions features.
+
+Just like the standard <<Authentication>> feature, the `holon.jaxrs.server.disable-authentication` property name can be used to explicitly disable this feature, registering it as a JAX-RS server configuration property name (with an arbitrary not null value).
+
 [[JaxrsSpringBoot]]
 == Spring Boot integration
 

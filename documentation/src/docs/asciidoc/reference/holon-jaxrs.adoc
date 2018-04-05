@@ -72,6 +72,8 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * The new `JaxrsAuthenticationInspector` API is available in JAX-RS endpoints to inspect current `Authentication` and perform authorization controls using a JAX-RS `SecurityContext`. See <<JaxrsAuthenticationInspector>>.
 
+* Added support for *Spring Security* based authentication, providing features to integrate the `@Authenticate` annotation based authentication behaviour and using the Spring Security context as authentication handler. See <<JaxrsSpringSecurity>>.
+
 * Improved *Spring Boot* auto-configuration support for _Jersey_ and _Resteasy_ JAX-RS implementations. See <<JaxrsSpringBoot>>.
 
 * Improved link:https://swagger.io[Swagger^] integration and auto-configuration, using Spring Boot application properties for easier configuration. See <<SwaggerSpringBoot,Swagger Spring Boot integration>>.
