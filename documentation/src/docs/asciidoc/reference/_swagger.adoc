@@ -9,14 +9,21 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact provides a complete integration with link:http://swagger.io[Swagger^] _OpenAPI Specification_, to configure API listing JAX-RS endpoints and to handle the `PropertyBox` data container type as a Swagger _Model_ definition.
+This artifact provides a complete integration with link:http://swagger.io[Swagger^] _OpenAPI Specification_, to configure the *API listing* Swagger JAX-RS endpoints and to handle the `PropertyBox` data type as a Swagger _Model_ definition.
+
+Furthermore, a set of *Spring Boot* auto-configuration classes is provided for Swagger API documentation endpoints auto configuration. 
 
 === `PropertyBox` support
 
-When the `holon-jaxrs-swagger` artifact is in classpath, the Swagger JAX-RS engine is automatically configured to support the `PropertyBox` type as API parameter or return type, but to ensure a proper `PropertyBox` handling the internal _SwaggerContext_ must be setted up. This can be done either by:
+When the `holon-jaxrs-swagger` artifact is in classpath, the Swagger JAX-RS engine is automatically configured to support the `PropertyBox` type as API parameter or return type.
 
-* Using the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerConfiguration.html[SwaggerConfiguration^] Swagger `BeanConfig` extension class, instead of the standard `BeanConfig` class
-* Or providing the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerContextListener.html[SwaggerContextListener^] Swagger `ReaderListener` class as a Swagger scanned resource class
+But to ensure a proper `PropertyBox` type handling in the Swagger API documentation parser, the internal _SwaggerContext_ must be setted up. This can be done either by:
+
+* Using the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerConfiguration.html[SwaggerConfiguration^] Swagger `BeanConfig` extension class, instead of the standard `BeanConfig` class.
+
+* Or providing the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerContextListener.html[SwaggerContextListener^] Swagger `ReaderListener` type class as a Swagger scanned resource class.
+
+NOTE: When the <<SwaggerSpringBoot>> is enabled, the Swagger JAX-RS engine is automatically configured by the module auto-configuration classes.
 
 === `PropertyBox` model definition
 
