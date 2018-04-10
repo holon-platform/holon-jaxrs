@@ -106,7 +106,7 @@ public class TestAuthJwt extends JerseyTest {
 					.orElseThrow(() -> new InternalServerErrorException("JWT configuration not available"));
 
 			// build JWT
-			String jwt = JwtTokenBuilder.buildJwtToken(configuration, authc, UUID.randomUUID().toString());
+			String jwt = JwtTokenBuilder.get().buildJwt(configuration, authc, UUID.randomUUID().toString());
 			// ok
 			return Response.ok(jwt, MediaType.TEXT_PLAIN).build();
 
@@ -195,8 +195,8 @@ public class TestAuthJwt extends JerseyTest {
 		final SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
 
 		final JwtConfiguration cfg = JwtConfiguration.builder().issuer("AuthIssuer").includeDetails(true)
-				.includePermissions(true).signatureAlgorithm(JwtSignatureAlgorithm.HS256)
-				.sharedKey(key.getEncoded()).build();
+				.includePermissions(true).signatureAlgorithm(JwtSignatureAlgorithm.HS256).sharedKey(key.getEncoded())
+				.build();
 
 		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBearerResolver())
 				.authenticator(Account.authenticator(provider))
