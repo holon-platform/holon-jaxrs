@@ -22,9 +22,22 @@ The module provides *JAX-RS* implementations and integrations for platform found
 
 Regarding the *JSON* data-interchange format, this module uses the link:holon-json.html[Holon JSON module] to make available the Holon platform JSON extensions and configuration facilities for JAX-RS endpoints and clients, allowing to seamlessy use link:https://github.com/FasterXML/jackson[Jackson^] or link:https://github.com/google/gson[Gson^] as JSON providers and provide support for _temporal_ types (including the `java.time.*` API) and the `PropertyBox` type out-of-the-box. 
 
+The module provides a full support for link:http://swagger.io[Swagger^] and the *OpenAPI specification* including support for the `PropertyBox` type (to be exposed as a Swagger _Model_ definition) and for Swagger API listing endpoints (both in _JSON_ and _YAML_ formats) auto-configuration. 
+
 Furthermore, the module makes available a set of *auto-configuration* features, both for the JAX-RS ecosystem and for the link:https://spring.io[Spring^] and link:https://projects.spring.io/spring-boot[Spring Boot^] world.
 
 A complete support for the most used JAX-RS implementations (link:https://github.com/jersey[Jersey^] and  link:http://resteasy.jboss.org[Resteasy^]) is provided, including Resteasy auto-configuration classes for Spring Boot integration.
+
+=== Sources and contributions
+
+The Holon Platform *JAX-RS* module source code is available from the GitHub repository link:https://github.com/holon-platform/holon-jaxrs[https://github.com/holon-platform/holon-jaxrs^].
+
+See the repository `README` file for information about:
+
+* The source code structure.
+* How to build the module artifacts from sources.
+* Where to find the code examples.
+* How to contribute to the module development.
 
 == Obtaining the artifacts
 
