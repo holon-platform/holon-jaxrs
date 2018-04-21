@@ -110,6 +110,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 									SwaggerContext.getSwagger());
 
 							ap.items(propertyBoxProperty);
+							response.setResponseSchema(ap);
 						} else if (isPropertyBoxModelType(response.getResponseSchema())) {
 							final Model propertyBoxModel = buildPropertyBoxModel(propertySet, true, false,
 									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
