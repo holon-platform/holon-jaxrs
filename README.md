@@ -38,6 +38,10 @@ This module is tested against [Jersey](https://github.com/jersey) version __2.x_
 
 See [releases](https://github.com/holon-platform/holon-jaxrs/releases) for the available releases. Each release tag provides a link to the closed issues.
 
+#### 5.1.x release notes
+
+See [What's new in version 5.1.x](https://docs.holon-platform.com/current/reference/holon-jaxrs.html#WhatsNew51x) to learn about the new features and API operations of the 5.1 minor release.
+
 ### Obtain the artifacts
 
 The [Holon Platform](https://holon-platform.com) is open source and licensed under the [Apache 2.0 license](LICENSE.md). All the artifacts (including binaries, sources and javadocs) are available from the [Maven Central](https://mvnrepository.com/repos/central) repository.
@@ -50,7 +54,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.jaxrs</groupId>
         <artifactId>holon-jaxrs-bom</artifactId>
-        <version>5.0.5</version>
+        <version>5.1.0</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
@@ -115,6 +119,7 @@ Maven _group id_: `com.holon-platform.jaxrs`
 
 Artifact id | Description
 ----------- | -----------
+`holon-jaxrs-commons` | Common JAX-RS support classes
 `holon-jaxrs-client` | JAX-RS implementation of the core platform `RestClient` API
 `holon-jaxrs-server` | JAX-RS server-side __authentication and authorization__ features using platform core APIs and services, such as `Realm` and `AuthContext`
 `holon-jaxrs-swagger` | [Swagger](http://swagger.io) configuration and JAX-RS API listing endpoints with `PropertyBox` support
