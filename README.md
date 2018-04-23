@@ -1,5 +1,7 @@
 # Holon platform JAX-RS module
 
+> Latest release: [5.1.0](#obtain-the-artifacts)
+
 This is the __JAX-RS__ module of the [Holon Platform](https://holon-platform.com), which provides support, components and configuration helpers concerning the [JAX-RS](https://github.com/jax-rs/spec/blob/master/spec.pdf) - _Java API for RESTful Web Service_ standard.
 
 The module main features are:
