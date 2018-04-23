@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.9</version>
+		<version>1.0.11</version>
 	</parent>
 
 	<groupId>com.holon-platform.jaxrs</groupId>
 	<artifactId>holon-jaxrs-root</artifactId>
-	<version>5.0.6-SNAPSHOT</version>
+	<version>5.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -48,8 +48,8 @@
 		<connection>scm:git:https://github.com/holon-platform/holon-jaxrs.git</connection>
 		<url>https://github.com/holon-platform/holon-jaxrs</url>
 		<developerConnection>scm:git:https://github.com/holon-platform/holon-jaxrs.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,10 +58,10 @@
 		<bintray.package>holon-jaxrs</bintray.package>
 
 		<!-- Holon core -->
-		<holon.core.version>5.0.6</holon.core.version>
+		<holon.core.version>5.1.0</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.0.4</holon.json.version>
+		<holon.json.version>5.1.0</holon.json.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.0.1</jax-rs.api.version>
@@ -73,10 +73,10 @@
 		<resteasy.version>3.1.4.Final</resteasy.version>
 
 		<!-- Swagger -->
-		<swagger.version>1.5.17</swagger.version>
+		<swagger.version>1.5.19</swagger.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.7.9</bytebuddy.version>
+		<bytebuddy.version>1.8.7</bytebuddy.version>
 
 	</properties>
 
@@ -84,6 +84,7 @@
 		<module>commons</module>
 		<module>client</module>
 		<module>server</module>
+		<module>spring-security</module>
 		<module>swagger</module>
 		<module>spring-boot-client</module>
 		<module>spring-boot-jersey</module>

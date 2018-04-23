@@ -1,3 +1,4 @@
+[[JaxrsRestClient]]
 == JAX-RS `RestClient` implementation
 
 _Maven coordinates_:
@@ -8,32 +9,33 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact makes available a *JAX-RS* standard implementation of the platform link:holon-core.html#RestClient[RestClient] API, a Java client to deal with _RESTful web services_ APIs using the `HTTP` protocol.
+This artifact makes available a *JAX-RS* implementation of the Holon Platform link:holon-core.html#RestClient[RestClient] API, a Java client API to deal with _RESTful web services_ using the `HTTP` protocol.
 
 The `RestClient` interface provides a fluent _builder_ to compose and execute _RESTful web services_ invocations, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
 
-The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data container out-of-the-box.
+The `RestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data type  out-of-the-box.
 
-TIP: See link:holon-core.html#RestClient[RestClient documentation] for information about the `RestClient` configuration and API.
+TIP: See the link:holon-core.html#RestClient[RestClient API documentation] for information about the `RestClient` configuration and available operations.
 
 === Getting started
 
-To obtain a *JAX-RS* `RestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/JaxrsRestClient.html[JaxrsRestClient^] interface can be used, either specifying the *JAX-RS* `Client` instance or using the default client builder implementation class provided by the JAX-RS implementation provider.
+To obtain a JAX-RS `RestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/JaxrsRestClient.html[JaxrsRestClient^] interface can be used, either specifying the concrete JAX-RS `javax.ws.rs.client.Client` instance to use or relying on the default JAX-RS  `Client` provided by the `javax.ws.rs.client.ClientBuilder` class.
 
-Furthermore, a `RestClientFactory` is automatically registered to provide a `JaxrsRestClient` implementation using default `RestClient` creation methods.
+Furthermore, a `RestClientFactory` is automatically registered to provide a `JaxrsRestClient` implementation using the default `RestClient` creation methods.
 
-.RestClient example
+TIP: See the link:holon-core.html#RestClientFactory[RestClient factory] section of the core documentation for more information about `RestClient` factories.
+
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleRestClient.java[tag=restclient,indent=0]
 ----
-<1> Create a *JAX-RS* `RestClient` using default JAX-RS Client
+<1> Create a JAX-RS `RestClient` API using the default JAX-RS `Client`
 <2> Setup a _default target_, i.e. the base `URI` which will be used for all the invocations made with this `RestClient` instance
-<3> Create a `RestClient` specying the `JaxrsRestClient` type
-<4> Create a `RestClient` using default factories
-<5> Create a `RestClient` using default factories and set a default base URI
-<6> Get a generic JSON response using a _template_ variable and map it into a `TestData` bean
+<3> Create a `RestClient` API specifying the `JaxrsRestClient` type, to ensure a JAX-RS implementation of the `RestClient` API is provided
+<4> Create a `RestClient` API using the default `RestClientFactory` lookup strategy
+<5> Create a `RestClient` API using the default `RestClientFactory` lookup strategy and set a default base URI
+<6> Get a generic JSON response using a _template_ variable and map it into a `TestData` type bean
 <7> Get a `PropertyBox` type JSON response entity content using given `PROPERTY_SET`
 <8> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`
 <9> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`
-<10> Post a `PropertyBox` instance as JSON
+<10> Post a `PropertyBox` type instance using JSON

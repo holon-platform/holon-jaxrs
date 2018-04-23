@@ -15,50 +15,37 @@
  */
 package com.holonplatform.jaxrs.server.internal.auth;
 
-import java.io.IOException;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Providers;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Realm;
-import com.holonplatform.http.internal.HttpUtils;
-import com.holonplatform.jaxrs.server.ResourceUtils;
 
 /**
- * Filter to replace the request {@link SecurityContext} with an {@link AuthContext} compatible implementation, using a
- * {@link Realm} obtained either from a registered {@link ContextResolver} of {@link Realm} type, if available, or as a
- * {@link com.holonplatform.core.Context} resource using {@link Realm#getCurrent()}.
+ * Default filter to replace the request {@link SecurityContext} with an {@link AuthContext} compatible implementation,
+ * using a {@link Realm} obtained either from a registered {@link ContextResolver} of {@link Realm} type, if available,
+ * or as a {@link com.holonplatform.core.Context} resource using {@link Realm#getCurrent()}.
  * 
  * @since 5.0.0
  */
 @Priority(Priorities.AUTHENTICATION - 10)
-public class AuthContextFilter implements ContainerRequestFilter {
+public class AuthContextFilter extends AbstractAuthContextFilter {
 
-	@Context
-	private Providers providers;
+	public AuthContextFilter() {
+		super(true);
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.container.ContainerRequestFilter#filter(javax.ws.rs.container.ContainerRequestContext)
+	 * @see
+	 * com.holonplatform.jaxrs.server.internal.auth.AbstractAuthContextFilter#getAuthContext(com.holonplatform.auth.
+	 * Realm)
 	 */
 	@Override
-	public void filter(ContainerRequestContext requestContext) throws IOException {
-
-		// Get realm
-		Realm realm = ResourceUtils.lookupResource(getClass(), Realm.class, providers)
-				.orElseThrow(() -> new IOException(
-						"AuthContext setup failed: no Realm available from a ContextResolver or as a Context resource"));
-
-		// replace SecurityContext
-		requestContext.setSecurityContext(
-				new AuthSecurityContext(realm, HttpUtils.isSecure(requestContext.getUriInfo().getRequestUri())));
+	protected AuthContext getAuthContext(Realm realm) {
+		return AuthContext.create(realm);
 	}
 
 }

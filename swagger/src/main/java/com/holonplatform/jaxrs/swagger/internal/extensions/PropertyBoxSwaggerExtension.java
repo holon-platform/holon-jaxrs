@@ -60,7 +60,6 @@ import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
@@ -99,19 +98,26 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 				PropertySet<?> propertySet = PropertySetRefIntrospector.get().getPropertySet(aps);
 				if (propertySet != null) {
 					ApiPropertySetModel psm = getResponsePropertySetModel(method).orElse(null);
-					final Property propertyBoxProperty = buildPropertyBoxProperty(propertySet, true,
-							(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
-							(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
-							(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null,
-							SwaggerContext.getSwagger());
 
 					// responses
 					for (Response response : responses.values()) {
-						ArrayProperty ap = isPropertyBoxArrayPropertyType(response.getSchema());
+						ArrayModel ap = isPropertyBoxArrayModelType(response.getResponseSchema());
 						if (ap != null) {
+							final Property propertyBoxProperty = buildPropertyBoxProperty(propertySet, true,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null,
+									SwaggerContext.getSwagger());
+
 							ap.items(propertyBoxProperty);
-						} else if (isPropertyBoxPropertyType(response.getSchema())) {
-							response.schema(propertyBoxProperty);
+							response.setResponseSchema(ap);
+						} else if (isPropertyBoxModelType(response.getResponseSchema())) {
+							final Model propertyBoxModel = buildPropertyBoxModel(propertySet, true, false,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
+									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null,
+									SwaggerContext.getSwagger());
+							response.responseSchema(propertyBoxModel);
 						}
 					}
 				}
@@ -436,17 +442,33 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Check if the given property is and {@link ArrayProperty} of {@link PropertyBox} type using the
+	 * Check whether the given model is of {@link PropertyBox} type using the {@link SwaggerExtensions#MODEL_TYPE}
+	 * extension name.
+	 * @param model Model to check
+	 * @return <code>true</code> if given model is of {@link PropertyBox} type
+	 */
+	private static boolean isPropertyBoxModelType(Model model) {
+		if (model != null && model.getVendorExtensions() != null
+				&& model.getVendorExtensions().containsKey(SwaggerExtensions.MODEL_TYPE.getExtensionName())
+				&& PropertyBox.class.getName()
+						.equals(model.getVendorExtensions().get(SwaggerExtensions.MODEL_TYPE.getExtensionName()))) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Check if the given model is an {@link ArrayModel} of {@link PropertyBox} type using the
 	 * {@link SwaggerExtensions#MODEL_TYPE} extension name.
-	 * @param property Property to check
-	 * @return if the property is of {@link PropertyBox} type, return such property casted to {@link ArrayProperty},
+	 * @param model Model to check
+	 * @return if the model is of {@link PropertyBox} type, return such model casted to {@link ArrayModel},
 	 *         <code>null</code> otherwise
 	 */
-	private static ArrayProperty isPropertyBoxArrayPropertyType(Property property) {
-		if (property != null && ArrayProperty.class.isAssignableFrom(property.getClass())) {
-			final Property items = ((ArrayProperty) property).getItems();
+	private static ArrayModel isPropertyBoxArrayModelType(Model model) {
+		if (model != null && ArrayModel.class.isAssignableFrom(model.getClass())) {
+			final Property items = ((ArrayModel) model).getItems();
 			if (isPropertyBoxPropertyType(items)) {
-				return (ArrayProperty) property;
+				return (ArrayModel) model;
 			}
 		}
 		return null;

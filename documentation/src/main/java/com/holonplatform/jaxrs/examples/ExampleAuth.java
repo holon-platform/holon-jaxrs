@@ -21,16 +21,19 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.ContextResolver;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
+import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.annotations.Authenticate;
+import com.holonplatform.core.Context;
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
+import com.holonplatform.jaxrs.server.auth.JaxrsAuthenticationInspector;
 
 @SuppressWarnings("unused")
 public class ExampleAuth {
@@ -46,6 +49,7 @@ public class ExampleAuth {
 		public String test() {
 			return "test";
 		}
+
 	}
 
 	@Path("semiprotected")
@@ -93,6 +97,52 @@ public class ExampleAuth {
 		register(realmContextResolver); // <10>
 	}
 	// end::auth[]
+
+	// tag::realm1[]
+	class RealmContextResolver implements ContextResolver<Realm> {
+
+		@Override
+		public Realm getContext(Class<?> type) {
+			return Realm.builder() //
+					.resolver(AuthenticationToken.httpBasicResolver()) // <1>
+					.authenticator(Account.authenticator(getAccountProvider())) // <2>
+					.withDefaultAuthorizer() // <3>
+					.build();
+		}
+
+	}
+	// end::realm1[]
+
+	public void contextResourceRealm() {
+		// tag::realm2[]
+		Context.get().classLoaderScope() // <1>
+				.map(s -> s.put(Realm.CONTEXT_KEY, Realm.builder().resolver(AuthenticationToken.httpBasicResolver())
+						.authenticator(Account.authenticator(getAccountProvider())).withDefaultAuthorizer().build()));
+		// end::realm2[]
+	}
+
+	// tag::authinsp[]
+	@Authenticate
+	@GET
+	@Path("name")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getPrincipalName(@javax.ws.rs.core.Context SecurityContext securityContext) {
+		JaxrsAuthenticationInspector inspector = JaxrsAuthenticationInspector.of(securityContext); // <1>
+
+		boolean isAuthenticated = inspector.isAuthenticated(); // <2>
+		Optional<Authentication> auth = inspector.getAuthentication(); // <3>
+		Authentication authc = inspector.requireAuthentication(); // <4>
+
+		boolean permitted = inspector.isPermitted("ROLE1"); // <5>
+		permitted = inspector.isPermittedAny("ROLE1", "ROLE2"); // <6>
+
+		return inspector.getAuthentication().map(a -> a.getName()).orElse(null);
+	}
+	// end::authinsp[]
+
+	private static AccountProvider getAccountProvider() {
+		return null;
+	}
 
 	private void register(Class<?> resource) {
 

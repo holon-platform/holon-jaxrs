@@ -1,4 +1,41 @@
+[[JaxrsSpringSecurity]]
+== Spring Security integration
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-spring-security</artifactId>
+<version>{revnumber}</version>
+----
+
+The link:{apidir}/com/holonplatform/jaxrs/server/security/SpringSecurityAuthenticationFeature.html[SpringSecurityAuthenticationFeature^] JAX-RS feature can be used to enable the `@Authenticate` annotation based authentication strategy using a configured *Spring Security* context as authentication handler.
+
+When this feature is registered and enabled, the authentication strategy and behaviour put in place by the standard <<Authentication>> feature can be seamlessy implemented using a *Spring Security* context, instead of a `Realm` based authentication setup.
+
+Just like the standard <<Authentication>> feature, when the `@Authenticate` annotation is detected on a JAX-RS endpoint resource class and/or method, the standard JAX-RS `SecurityContext` of the request is replaced with an link:{coreapidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] API compatible implementation, which is backed by the concrete Spring Security `SecurityContext`.
+
+This way, the incoming request authentication and authorization is delegated to the Spring Security context, and the possible authenticated _principal_ is mapped to a default Holon Platform `Authentication` reference, which can be seamlessy used by the Holon Platform authentication and authorization features and APIs.
+
+See the core link:holon-core.html#SpringSecurity[Spring Security integration] documentation for details about the integration between the Holon Platform authentication/authorization architecture and the Spring Security one.
+
+=== Feature configuration
+
+When the `holon-jaxrs-spring-security` artifact is present in classpath, the `SpringSecurityAuthenticationFeature` is automatically registered for *Jersey* and *Resteasy* JAX-RS server runtimes, leveraging on Jersey _AutoDiscoverable_ and Resteasy Java Service extensions features.
+
+Just like the standard <<Authentication>> feature, the `holon.jaxrs.server.disable-authentication` property name can be used to explicitly disable this feature, registering it as a JAX-RS server configuration property name (with an arbitrary not null value).
+
+[[JaxrsSpringBoot]]
 == Spring Boot integration
+
+The JAX-RS module *Spring Boot* integration provides auto-configuration facilities to:
+
+* Auto-configure a <<JaxrsRestClient>>.
+* Auto-configure the <<Authentication>> feature when a `Realm` type bean is detected.
+* Simplify the <<Jersey>> auto-configuration.
+* Enable the <<Resteasy>> auto-configuration.
+
+Futhermore, a set of <<JaxrsStarters>> are available to provide a quick JAX-RS server and/or client application setup using the Maven dependency system.
 
 [[Client]]
 === JAX-RS Client
@@ -11,13 +48,17 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact provides a Spring Boot auto-configuration class to automatically register a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilder.html[JaxrsClientBuilder^] bean, which can be used to obtain a configured JAX-RS `Client` instance.
+This artifact provides a Spring Boot auto-configuration class to automatically register a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilder.html[JaxrsClientBuilder^] bean, which can be used to obtain a configured `javax.ws.rs.client.Client` instance.
 
-To customize the JAX-RS `ClientBuilder` used to obtain the client instances, the link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientCustomizer.html[JaxrsClientCustomizer^] interface can be used: any Spring bean which implement the `JaxrsClientCustomizer` interface will be auto-detected and the `customize(ClientBuilder clientBuilder)` method will be invoked when a `ClientBuilder` is created.
+Besides the `JaxrsClientBuilder` bean type, a `RestClient` factory is automatically registered, allowing to simply obtain a `RestClient` API instance through the `RestClient.create()` static method, using the `javax.ws.rs.client.Client` instance provided by the `JaxrsClientBuilder` API.
 
-To replace the default `ClientBuilder` instance lookup/creation strategy, a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilderFactory.html[JaxrsClientBuilderFactory^] bean type can be declared in Spring context, which will be used by the `JaxrsClientBuilder` to create a new `ClientBuilder` instance.
+TIP: See <<JaxrsRestClient>> for more information about the JAX-RS `RestClient` API.
 
-Furthermore, a `RestClient` factory is automatically registered to use the `JaxrsClientBuilder` (if available) to obtain the JAX-RS `Client` instance to be used by a JAX-RS `RestClient` created through the `RestClient.create()` method.
+To customize the JAX-RS `ClientBuilder` used to obtain the concrete `javax.ws.rs.client.Client` instances, the link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientCustomizer.html[JaxrsClientCustomizer^] interface can be used. 
+
+Any Spring context bean which implement the `JaxrsClientCustomizer` interface will be auto-detected and the `customize(ClientBuilder clientBuilder)` method will be invoked when a `ClientBuilder` is created.
+
+To replace the default `ClientBuilder` instance lookup/creation strategy, a link:{apidir}/com/holonplatform/jaxrs/spring/boot/JaxrsClientBuilderFactory.html[JaxrsClientBuilderFactory^] bean type can be declared in Spring context, which will be used by the `JaxrsClientBuilder` to create a new JAX-RS `ClientBuilder` instance.
 
 For example, given a Spring Boot application with the following configuration:
 
@@ -28,7 +69,7 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleClientBuilder.jav
 <1> Add a `JaxrsClientCustomizer` which registers a property in JAX-RS `ClientBuilder`
 <2> Add a `JaxrsClientCustomizer` which setup the `ClientBuilder` to use a *SSLContext* with a _trust all_ manager and dummy host name verifier
 
-A JAX-RS Client, configured according to the declared customizers, can be obtained as follows:
+A JAX-RS `Client` (and a `RestClient` API backed by the Client), configured according to the declared customizers, can be obtained as follows:
 
 [source, java]
 ----
@@ -48,30 +89,35 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact provides a link:https://github.com/jersey[Jersey^] Spring Boot auto-configuration class to automatically register any Spring context *bean* annotated with `@Path` or `@Provider` JAX-RS annotations as a server resource, using the default `ResourceConfig` Jersey configuration bean.
+This artifact provides link:https://github.com/jersey[Jersey^] Spring Boot auto-configuration classes to simplify the Jersey JAX-RS runtime configuration, the JAX-RS server resources registration and the authentication and authorization features setup.
 
-If custom `ResourceConfig` type bean is not available in Spring context, a *default one* will be automatically created.
+==== Automatic JAX-RS server resources registration
 
-IMPORTANT: For `@Provider` annotated bean classes, only *singleton* scoped beans are allowed.
+When the `holon-jaxrs-spring-boot-jersey` is available in classpath, any Spring context *bean* annotated with the `@Path` or `@Provider` JAX-RS annotations is automatically registered as a JAX-RS server resource, using the default `ResourceConfig` Jersey configuration bean.
 
-The `holon.jersey.bean-scan` Spring boot application property can be used, setting it to `false`, to disable automatic bean resources scan and registration.
+IMPORTANT: For `@Provider` annotated bean classes auto-registration, only *singleton* scoped beans are allowed.
 
-To disable this auto-configuration feature the `JerseyServerAutoConfiguration` class can be excluded:
+Furthermore, a default Jersey `ResourceConfig` type bean is created when no other `ResourceConfig` type bean is available in the Spring context.
 
-[source, java]
-----
-@EnableAutoConfiguration(exclude={JerseyServerAutoConfiguration.class})
-----
+To disable the automatic JAX-RS bean resources registration, the `holon.jersey.bean-scan` Spring boot application property can be used: when setted to `false`, this auto-configuration feature will be disabled.
+
+==== Handling the `jersey.config.servlet.filter.forwardOn404` configuration property
+
+When Jersey is registered as a Servlet _filter_, the Spring Boot application configuration property  `holon.jersey.forwardOn404` is available to set the (boolean) value of the standard `jersey.config.servlet.filter.forwardOn404` configuration property.
+
+When setted to `true`, it configures the Jersey filter in order to forward the requests for URLs it doesn't know, instead of responding with a `404` error code.
+
+This can be useful when the Jersey filter is mapped to the root context path but other servlets are mapped to a sub path.
 
 ==== Authentication and authorization
 
-When a `Realm` type bean is detected in Spring context, the JAX-RS server is automatically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
+When a `Realm` type bean is detected in Spring context, the JAX-RS server is automatically configured to support *authentication*, registering the <<Authentication>> feature (and so enabling the `@Authenticate` annotation detection), and *authorization*, relying on standard `javax.annotation.security.*` annotations.
 
-The auto configuration class perfoms the following operations:
+The auto-configuration class perfoms the following operations:
 
-* Registers a `ContextResolver` providing the `Realm` bean instance
-* Registers the `AuthenticationFeature`
-* Registers the Jersey `RolesAllowedDynamicFeature`
+* Registers a `ContextResolver` providing the `Realm` bean instance.
+* Registers the <<Authentication>> feature.
+* Registers the default Jersey link:https://jersey.github.io/apidocs/2.25/jersey/org/glassfish/jersey/server/filter/RolesAllowedDynamicFeature.html[RolesAllowedDynamicFeature^] to support `javax.annotation.security.*` annotations based authorization.
 
 To disable this auto-configuration feature the `JerseyServerAutoConfiguration` class can be excluded:
 
@@ -80,6 +126,7 @@ To disable this auto-configuration feature the `JerseyServerAutoConfiguration` c
 @EnableAutoConfiguration(exclude={JerseyAuthAutoConfiguration.class})
 ----
 
+[[Resteasy]]
 === Resteasy
 
 _Maven coordinates_:
@@ -90,7 +137,9 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-This artifact provides a link:http://resteasy.jboss.org[Resteasy^] Spring Boot auto-configuration classes to *automatically setup a Resteasy JAX-RS server implementation* with Spring integration enabled, providing configuration through Spring Boot application properties.
+This artifact provides link:http://resteasy.jboss.org[Resteasy^] Spring Boot auto-configuration classes to *automatically setup a Resteasy JAX-RS server runtime* and configure it using Spring Boot application configuration properties.
+
+Furthermore, it provide auto-configuration classes to simplify the JAX-RS server resources registration and the authentication and authorization features setup.
 
 ==== Configuration
 
@@ -98,21 +147,23 @@ The link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfig.ht
 
 The `ResteasyConfig` must be declared as a singleton Spring bean to be used by the Resteasy auto-configuration classes. If a `ResteasyConfig` type bean is not available, a *default one* will be automatically created.
 
-Just like the <<Jersey>> auto-configuration artifact, this module automatically register any Spring context *bean* annotated with `@Path` or `@Provider` JAX-RS annotations as a server resource.
-
-IMPORTANT: For `@Provider` annotated bean classes, only *singleton* scoped beans are allowed.
-
-The Resteasy JAX-RS application path can be defined either using the `ApplicationPath` annotation on the
+The Resteasy JAX-RS application path can be defined either using the default JAX-RS `@ApplicationPath` annotation on the
 `ResteasyConfig` bean class or through the `holon.resteasy.application-path` configuration property. See <<ConfigurationProperties>> for a list of available configuration properties.
 
-==== `ResteasyConfigCustomizer`
+==== Resteasy configuration customization
 
 Any Spring bean which implements the link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfigCustomizer.html[ResteasyConfigCustomizer^] interface, is automatically discovered and its `customize` method is called, allowing to customize the `ResteasyConfig` instance before it is used.
 
-[[ConfigurationProperties]]
-==== Configuration properties
+==== Automatic JAX-RS server resources registration
 
-The link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfigurationProperties.html[ResteasyConfigurationProperties^] lists the configuration properties (with the `holon.resteasy` prefix) which can be used to setup the Resteasy auto-configuration.
+Just like the <<Jersey>> auto-configuration classes, this module automatically register any Spring context *bean* annotated with the `@Path` or `@Provider` JAX-RS annotations as a JAX-RS server resource.
+
+IMPORTANT: For `@Provider` annotated bean classes, only *singleton* scoped beans are allowed.
+
+[[ConfigurationProperties]]
+==== Resteasy configuration properties
+
+The link:{apidir}/com/holonplatform/jaxrs/spring/boot/resteasy/ResteasyConfigurationProperties.html[ResteasyConfigurationProperties^] lists the configuration properties (with the `holon.resteasy` prefix) which can be used to setup the Resteasy auto-configuration, using standard Spring Boot configuration property sources.
 
 TIP: Just like any other Spring Boot configuration property, the `holon.resteasy.*` properties can be specified in your inside your `application.properties` / `application.yml` file or as command line switches.
 
@@ -142,21 +193,22 @@ TIP: Just like any other Spring Boot configuration property, the `holon.resteasy
 
 ==== Authentication and authorization
 
-When a `Realm` type bean is detected in Spring context, the JAX-RS server is automtically configured to support *authentication*, relying on `@Authenticate` annotation (see <<Authentication>>), and *authorization*, relying on `javax.annotation.security.*` annotations.
+When a `Realm` type bean is detected in Spring context, the JAX-RS server is automtically configured to support *authentication*, registering the <<Authentication>> feature (and so enabling the `@Authenticate` annotation detection), and *authorization*, relying on standard `javax.annotation.security.*` annotations.
 
-The auto configuration class perfoms the following operations:
+The auto-configuration class perfoms the following operations:
 
-* Registers a `ContextResolver` providing the `Realm` bean instance
-* Registers the `AuthenticationFeature`
-* Set the `resteasy.role.based.security` context init parameter to `true`
+* Registers a `ContextResolver` providing the `Realm` bean instance.
+* Registers the <<Authentication>> feature.
+* Set the `resteasy.role.based.security` context init parameter to `true` to enable `javax.annotation.security.*` annotations based authorization.
 
-To disable this auto-configuration feature the `ResteasyAuthAutoConfiguration` class can be excluded:
+To disable this auto-configuration features, the `ResteasyAuthAutoConfiguration` class can be excluded:
 
 [source, java]
 ----
 @EnableAutoConfiguration(exclude={ResteasyAuthAutoConfiguration.class})
 ----
 
+[[JaxrsStarters]]
 === Spring Boot starters
 
 The following _starter_ artifacts are available to provide a quick JAX-RS server and/or client application setup using the Maven dependency system.

@@ -69,6 +69,11 @@ public class AuthenticationFeature implements Feature {
 	 */
 	public static final String DISABLE_AUTHENTICATION = "holon.jaxrs.server.disable-authentication";
 
+	/**
+	 * Current request {@link AuthContext} reference property name
+	 */
+	public static final String AUTH_CONTEXT_PROPERTY_NAME = AuthContext.class.getName();
+
 	/*
 	 * (non-Javadoc)
 	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
@@ -87,6 +92,8 @@ public class AuthenticationFeature implements Feature {
 
 			if (!context.getConfiguration().isRegistered(AuthenticationDynamicFeature.class)) {
 				context.register(AuthenticationDynamicFeature.class);
+
+				LOGGER.debug(() -> AuthenticationDynamicFeature.class.getName() + " registered");
 			}
 			return true;
 		}

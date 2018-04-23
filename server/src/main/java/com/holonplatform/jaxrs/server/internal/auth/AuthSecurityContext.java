@@ -16,13 +16,19 @@
 package com.holonplatform.jaxrs.server.internal.auth;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Optional;
 
 import javax.ws.rs.core.SecurityContext;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
-import com.holonplatform.auth.Realm;
-import com.holonplatform.auth.internal.DefaultAuthContext;
+import com.holonplatform.auth.Authentication.AuthenticationListener;
+import com.holonplatform.auth.AuthenticationToken;
+import com.holonplatform.auth.Permission;
+import com.holonplatform.auth.exceptions.AuthenticationException;
+import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.messaging.Message;
 
 /**
  * A {@link SecurityContext} implementation which uses an {@link AuthContext} to perform authentication, provide
@@ -34,7 +40,12 @@ import com.holonplatform.auth.internal.DefaultAuthContext;
  * 
  * @since 5.0.0
  */
-public class AuthSecurityContext extends DefaultAuthContext implements SecurityContext {
+public class AuthSecurityContext implements AuthContext, SecurityContext {
+
+	/**
+	 * Concrete {@link AuthContext}
+	 */
+	private final AuthContext authContext;
 
 	/**
 	 * Whether the authentication context is handled using a secure channel (such as HTTPS)
@@ -42,13 +53,23 @@ public class AuthSecurityContext extends DefaultAuthContext implements SecurityC
 	private final boolean secureChannel;
 
 	/**
-	 * Construct a new AuthSecurityContext
-	 * @param realm Authentication realm (not null)
+	 * Construct a new AuthSecurityContext.
+	 * @param authContext Concrete {@link AuthContext} (not null)
 	 * @param secureChannel Whether the authentication context is handled using a secure channel (such as HTTPS)
 	 */
-	public AuthSecurityContext(Realm realm, boolean secureChannel) {
-		super(realm);
+	public AuthSecurityContext(AuthContext authContext, boolean secureChannel) {
+		super();
+		ObjectUtils.argumentNotNull(authContext, "AuthContext must be not null");
+		this.authContext = authContext;
 		this.secureChannel = secureChannel;
+	}
+
+	/**
+	 * Get the concrete {@link AuthContext}.
+	 * @return the auth context
+	 */
+	protected AuthContext getAuthContext() {
+		return authContext;
 	}
 
 	/**
@@ -85,6 +106,121 @@ public class AuthSecurityContext extends DefaultAuthContext implements SecurityC
 	@Override
 	public String getAuthenticationScheme() {
 		return getAuthentication().map(a -> a.getScheme().orElse(null)).orElse(null);
+	}
+
+	// ------- AuthContext
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.auth.Authentication.AuthenticationNotifier#addAuthenticationListener(com.holonplatform.auth.
+	 * Authentication.AuthenticationListener)
+	 */
+	@Override
+	public void addAuthenticationListener(AuthenticationListener authenticationListener) {
+		getAuthContext().addAuthenticationListener(authenticationListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.auth.Authentication.AuthenticationNotifier#removeAuthenticationListener(com.holonplatform.auth.
+	 * Authentication.AuthenticationListener)
+	 */
+	@Override
+	public void removeAuthenticationListener(AuthenticationListener authenticationListener) {
+		getAuthContext().removeAuthenticationListener(authenticationListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#getAuthentication()
+	 */
+	@Override
+	public Optional<Authentication> getAuthentication() {
+		return getAuthContext().getAuthentication();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.auth.AuthenticationToken)
+	 */
+	@Override
+	public Authentication authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+		return getAuthContext().authenticate(authenticationToken);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.core.messaging.Message,
+	 * java.lang.String[])
+	 */
+	@Override
+	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
+		return getAuthContext().authenticate(message, schemes);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#unauthenticate()
+	 */
+	@Override
+	public Optional<Authentication> unauthenticate() {
+		return getAuthContext().unauthenticate();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermitted(com.holonplatform.auth.Permission[])
+	 */
+	@Override
+	public boolean isPermitted(Permission... permissions) {
+		return getAuthContext().isPermitted(permissions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.lang.String[])
+	 */
+	@Override
+	public boolean isPermitted(String... permissions) {
+		return getAuthContext().isPermitted(permissions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.Permission[])
+	 */
+	@Override
+	public boolean isPermittedAny(Permission... permissions) {
+		return getAuthContext().isPermittedAny(permissions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(java.lang.String[])
+	 */
+	@Override
+	public boolean isPermittedAny(String... permissions) {
+		return getAuthContext().isPermittedAny(permissions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.util.Collection)
+	 */
+	@Override
+	public boolean isPermitted(Collection<? extends Permission> permissions) {
+		return getAuthContext().isPermitted(permissions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(java.util.Collection)
+	 */
+	@Override
+	public boolean isPermittedAny(Collection<? extends Permission> permissions) {
+		return getAuthContext().isPermittedAny(permissions);
 	}
 
 }

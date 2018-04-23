@@ -19,7 +19,6 @@ import java.lang.reflect.AnnotatedElement;
 
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 
 import com.holonplatform.auth.annotations.Authenticate;
@@ -30,40 +29,21 @@ import com.holonplatform.auth.annotations.Authenticate;
  *
  * @since 5.0.0
  */
-public class AuthenticationDynamicFeature implements DynamicFeature {
+public class AuthenticationDynamicFeature extends AbstractAuthenticationDynamicFeature {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.container.DynamicFeature#configure(javax.ws.rs.container.ResourceInfo,
-	 * javax.ws.rs.core.FeatureContext)
+	 * @see
+	 * com.holonplatform.jaxrs.server.internal.auth.AbstractAuthenticationDynamicFeature#processElement(javax.ws.rs.core
+	 * .FeatureContext, java.lang.reflect.AnnotatedElement, com.holonplatform.auth.annotations.Authenticate)
 	 */
 	@Override
-	public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-		// check method
-		if (!registerAuthenticationFilters(context, resourceInfo.getResourceMethod())) {
-			// check class
-			registerAuthenticationFilters(context, resourceInfo.getResourceClass());
-		}
-	}
-
-	/**
-	 * Checks if given <code>element</code> has the {@link Authenticate} annotation and if so registers the required
-	 * authentication filters.
-	 * @param context Feature context
-	 * @param element Annotated element
-	 * @return <code>true</code> if the {@link Authenticate} annotation was found and the authentication filters were
-	 *         registered, <code>false</code> otherwise
-	 */
-	private static boolean registerAuthenticationFilters(FeatureContext context, AnnotatedElement element) {
-		if (element.isAnnotationPresent(Authenticate.class)) {
-			// AuthContext setup for SecurityContext
-			context.register(AuthContextFilter.class, Priorities.AUTHENTICATION - 10);
-			// Authenticator
-			context.register(new AuthenticationFilter(element.getAnnotation(Authenticate.class).schemes()),
-					Priorities.AUTHENTICATION);
-			return true;
-		}
-		return false;
+	protected boolean processElement(FeatureContext context, AnnotatedElement element, Authenticate authenticate) {
+		// AuthContext setup for SecurityContext
+		context.register(AuthContextFilter.class, Priorities.AUTHENTICATION - 10);
+		// Authenticator
+		context.register(new AuthenticationFilter(authenticate.schemes()), Priorities.AUTHENTICATION);
+		return true;
 	}
 
 }
