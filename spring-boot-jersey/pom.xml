@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform.jaxrs</groupId>
 		<artifactId>holon-jaxrs-root</artifactId>
-		<version>5.1.1-SNAPSHOT</version>
+		<version>5.2.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
@@ -136,13 +138,13 @@
 			<id>jersey-226</id>
 			<properties>
 				<jax-rs.api.version>2.1</jax-rs.api.version>
-				<jersey.version>2.26</jersey.version>
+				<jersey.profile.version>2.26</jersey.profile.version>
 			</properties>
 			<dependencies>
 				<dependency>
 					<groupId>org.glassfish.jersey.core</groupId>
 					<artifactId>jersey-server</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
@@ -179,31 +181,31 @@
 				<dependency>
 					<groupId>org.glassfish.jersey.inject</groupId>
 					<artifactId>jersey-hk2</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.glassfish.jersey.core</groupId>
 					<artifactId>jersey-server</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.glassfish.jersey.containers</groupId>
 					<artifactId>jersey-container-servlet-core</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.glassfish.jersey.containers</groupId>
 					<artifactId>jersey-container-servlet</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<groupId>org.glassfish.jersey.ext</groupId>
 					<artifactId>jersey-bean-validation</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 					<exclusions>
 						<exclusion>
@@ -219,7 +221,7 @@
 				<dependency>
 					<groupId>org.glassfish.jersey.ext</groupId>
 					<artifactId>jersey-spring4</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 					<exclusions>
 						<exclusion>
@@ -231,11 +233,28 @@
 				<dependency>
 					<groupId>org.glassfish.jersey.media</groupId>
 					<artifactId>jersey-media-json-jackson</artifactId>
-					<version>${jersey.version}</version>
+					<version>${jersey.profile.version}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
 		</profile>
 	</profiles>
+
+	<build>
+		<plugins>
+			<!-- JDK9 Automatic-Module-Name -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>com.holonplatform.jaxrs.spring.boot.jersey</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
