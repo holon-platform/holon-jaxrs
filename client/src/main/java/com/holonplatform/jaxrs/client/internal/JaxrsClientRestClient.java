@@ -83,6 +83,7 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		return new DefaultRequestDefinition(this);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public <T, R> ResponseEntity<T> invoke(RequestDefinition requestDefinition, HttpMethod method,
 			RequestEntity<R> requestEntity, ResponseType<T> responseType, boolean onlySuccessfulStatusCode) {

@@ -45,7 +45,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -152,9 +152,9 @@ public class ResteasyAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(name = "resteasyServletRegistration")
 	@ConditionalOnProperty(prefix = "holon.resteasy", name = "type", havingValue = "servlet", matchIfMissing = true)
-	public ServletRegistrationBean resteasyServletRegistration() {
+	public ServletRegistrationBean<Servlet> resteasyServletRegistration() {
 		final Servlet servlet = new HttpServlet30Dispatcher();
-		final ServletRegistrationBean registration = new ServletRegistrationBean(servlet, this.path);
+		final ServletRegistrationBean<Servlet> registration = new ServletRegistrationBean<>(servlet, this.path);
 		registration.setName(getServletRegistrationName());
 		registration.setLoadOnStartup(this.resteasy.getServlet().getLoadOnStartup());
 		registration.setAsyncSupported(true);
@@ -175,9 +175,9 @@ public class ResteasyAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(name = "jerseyFilterRegistration")
 	@ConditionalOnProperty(prefix = "holon.resteasy", name = "type", havingValue = "filter")
-	public FilterRegistrationBean resteasyFilterRegistration() {
+	public FilterRegistrationBean<Filter> resteasyFilterRegistration() {
 		final Filter filter = new Filter30Dispatcher();
-		FilterRegistrationBean registration = new FilterRegistrationBean();
+		FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>();
 		registration.setFilter(filter);
 		registration.setUrlPatterns(Arrays.asList(this.path));
 		registration.setOrder(this.resteasy.getFilter().getOrder());

@@ -89,12 +89,12 @@ public class TestFormData extends JerseyTest {
 	@Override
 	protected Application configure() {
 		return new ResourceConfig().register(LoggingFeature.class).register(TestResource.class);
-				//.register(FormDataPropertyBoxFeature.class); // using auto-config
+		// .register(FormDataPropertyBoxFeature.class); // using auto-config
 	}
 
 	@Override
 	protected void configureClient(ClientConfig config) {
-		//config.register(FormDataPropertyBoxFeature.class); // using auto-config
+		// config.register(FormDataPropertyBoxFeature.class); // using auto-config
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class TestFormData extends JerseyTest {
 		Assert.assertEquals(Integer.valueOf(1), box.getValue(INT));
 		Assert.assertEquals(Double.valueOf(1.5), box.getValue(DBL));
 		Assert.assertEquals("1", box.getValue(STR));
-		
+
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.MILLISECOND, 0);
 		c.set(Calendar.SECOND, 0);
@@ -115,49 +115,50 @@ public class TestFormData extends JerseyTest {
 		c.set(Calendar.MONTH, 2);
 		c.set(Calendar.YEAR, 2020);
 
-		box = PropertyBox.builder(SET).set(INT, 1).set(STR, "value1").set(DBL, 7.5).set(BLN, true)
-				.set(ENM, TestEnum.B).set(DAT1, c.getTime()).set(DAT2, c.getTime())
-				.build();
+		box = PropertyBox.builder(SET).set(INT, 1).set(STR, "value1").set(DBL, 7.5).set(BLN, true).set(ENM, TestEnum.B)
+				.set(DAT1, c.getTime()).set(DAT2, c.getTime()).build();
 
-		Response response = target("/test/post").request()
-				.post(Entity.entity(box, MediaType.APPLICATION_FORM_URLENCODED));
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
+		try (Response response = target("/test/post").request()
+				.post(Entity.entity(box, MediaType.APPLICATION_FORM_URLENCODED))) {
+			Assert.assertEquals(200, response.getStatus());
+			Assert.assertNotNull(response.getEntity());
 
-		box = SET.execute(() -> response.readEntity(PropertyBox.class));
-		Assert.assertEquals(Integer.valueOf(1), box.getValue(INT));
-		Assert.assertEquals(Double.valueOf(7.5), box.getValue(DBL));
-		Assert.assertEquals("value1", box.getValue(STR));
-		Assert.assertTrue(box.getValue(BLN));
-		Assert.assertEquals(TestEnum.B, box.getValue(ENM));
-		
-		c = Calendar.getInstance();
-		c.set(Calendar.MILLISECOND, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		
-		c.setTime(box.getValue(DAT1));
-		
-		Assert.assertEquals(30, c.get(Calendar.MINUTE));
-		Assert.assertEquals(18, c.get(Calendar.HOUR_OF_DAY));
-		Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
-		Assert.assertEquals(2, c.get(Calendar.MONTH));
-		Assert.assertEquals(2020, c.get(Calendar.YEAR));
-		
-		Calendar.getInstance();
-		c.set(Calendar.MILLISECOND, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		
-		c.setTime(box.getValue(DAT2));
-		
-		Assert.assertEquals(0, c.get(Calendar.MINUTE));
-		Assert.assertEquals(0, c.get(Calendar.HOUR_OF_DAY));
-		Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
-		Assert.assertEquals(2, c.get(Calendar.MONTH));
-		Assert.assertEquals(2020, c.get(Calendar.YEAR));
+			box = SET.execute(() -> response.readEntity(PropertyBox.class));
+			Assert.assertEquals(Integer.valueOf(1), box.getValue(INT));
+			Assert.assertEquals(Double.valueOf(7.5), box.getValue(DBL));
+			Assert.assertEquals("value1", box.getValue(STR));
+			Assert.assertTrue(box.getValue(BLN));
+			Assert.assertEquals(TestEnum.B, box.getValue(ENM));
+
+			c = Calendar.getInstance();
+			c.set(Calendar.MILLISECOND, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.HOUR_OF_DAY, 0);
+
+			c.setTime(box.getValue(DAT1));
+
+			Assert.assertEquals(30, c.get(Calendar.MINUTE));
+			Assert.assertEquals(18, c.get(Calendar.HOUR_OF_DAY));
+			Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
+			Assert.assertEquals(2, c.get(Calendar.MONTH));
+			Assert.assertEquals(2020, c.get(Calendar.YEAR));
+
+			Calendar.getInstance();
+			c.set(Calendar.MILLISECOND, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.HOUR_OF_DAY, 0);
+
+			c.setTime(box.getValue(DAT2));
+
+			Assert.assertEquals(0, c.get(Calendar.MINUTE));
+			Assert.assertEquals(0, c.get(Calendar.HOUR_OF_DAY));
+			Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
+			Assert.assertEquals(2, c.get(Calendar.MONTH));
+			Assert.assertEquals(2020, c.get(Calendar.YEAR));
+
+		}
 
 	}
 

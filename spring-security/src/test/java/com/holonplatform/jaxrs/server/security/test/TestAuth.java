@@ -46,11 +46,13 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -60,14 +62,30 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
 
-/*@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestAuth.Config.class)
-@WebAppConfiguration*/
 public class TestAuth extends JerseyTest {
+
+	public static class NoOpPasswordEncoder implements PasswordEncoder {
+
+		@Override
+		public String encode(CharSequence rawPassword) {
+			return rawPassword.toString();
+		}
+
+		@Override
+		public boolean matches(CharSequence rawPassword, String encodedPassword) {
+			return rawPassword.toString().equals(encodedPassword);
+		}
+
+	}
 
 	@Configuration
 	@EnableWebSecurity
 	public static class Config extends WebSecurityConfigurerAdapter {
+
+		@Bean
+		public static PasswordEncoder passwordEncoder() {
+			return new NoOpPasswordEncoder();
+		}
 
 		@Autowired
 		public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -222,6 +240,7 @@ public class TestAuth extends JerseyTest {
 
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testBaseAuth() {
 
@@ -231,6 +250,7 @@ public class TestAuth extends JerseyTest {
 		assertEquals(200, response.getStatus());
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testAuth() {
 

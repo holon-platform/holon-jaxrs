@@ -63,18 +63,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-test</artifactId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -86,110 +76,26 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.json</groupId>
+			<artifactId>holon-jackson-jaxrs</artifactId>
+			<version>${holon.json.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>jersey-226</id>
-			<properties>
-				<jax-rs.api.version>2.1</jax-rs.api.version>
-				<jersey.version>2.26</jersey.version>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-jersey</artifactId>
-					<scope>test</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>org.glassfish.jersey.core</groupId>
-							<artifactId>jersey-server</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.jersey.containers</groupId>
-							<artifactId>jersey-container-servlet-core</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.jersey.containers</groupId>
-							<artifactId>jersey-container-servlet</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.jersey.ext</groupId>
-							<artifactId>jersey-bean-validation</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.jersey.ext</groupId>
-							<artifactId>jersey-spring3</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.jersey.media</groupId>
-							<artifactId>jersey-media-json-jackson</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.inject</groupId>
-					<artifactId>jersey-hk2</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.core</groupId>
-					<artifactId>jersey-server</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.containers</groupId>
-					<artifactId>jersey-container-servlet-core</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.containers</groupId>
-					<artifactId>jersey-container-servlet</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.ext</groupId>
-					<artifactId>jersey-bean-validation</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>javax.el</groupId>
-							<artifactId>javax.el-api</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.glassfish.web</groupId>
-							<artifactId>javax.el</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.ext</groupId>
-					<artifactId>jersey-spring4</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-					<exclusions>
-						<exclusion>
-							<groupId>org.jvnet</groupId>
-							<artifactId>tiger-types</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>org.glassfish.jersey.media</groupId>
-					<artifactId>jersey-media-json-jackson</artifactId>
-					<version>${jersey.version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>

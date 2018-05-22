@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,7 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.test.resources.TestEndpoint;
 public class TestResteasyAutoConfiguration {
 
 	@Configuration
-	@EnableAutoConfiguration
+	@EnableAutoConfiguration(exclude = JsonbAutoConfiguration.class)
 	@ComponentScan(basePackageClasses = TestBeanEndpoint.class)
 	static class Config {
 
@@ -51,7 +52,7 @@ public class TestResteasyAutoConfiguration {
 		public TestService testService() {
 			return new TestService();
 		}
-		
+
 		@Bean
 		public ResteasyConfig resteasyConfig() {
 			ResteasyConfig cfg = new ResteasyConfig();
@@ -76,7 +77,7 @@ public class TestResteasyAutoConfiguration {
 		String response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
 	}
-	
+
 	@Test
 	public void testEndpoint2() {
 		Client client = ClientBuilder.newClient();
