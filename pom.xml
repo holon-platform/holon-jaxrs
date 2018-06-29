@@ -73,10 +73,10 @@
 		<resteasy.version>3.1.4.Final</resteasy.version>
 
 		<!-- Swagger -->
-		<swagger.version>1.5.19</swagger.version>
+		<swagger.version>1.5.20</swagger.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.8.11</bytebuddy.version>
+		<bytebuddy.version>1.8.12</bytebuddy.version>
 
 	</properties>
 
