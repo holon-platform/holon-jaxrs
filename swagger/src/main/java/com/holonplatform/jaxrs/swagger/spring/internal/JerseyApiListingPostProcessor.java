@@ -28,9 +28,12 @@ public class JerseyApiListingPostProcessor extends SwaggerApiListingPostProcesso
 
 	@Value("${spring.jersey.application-path:/}")
 	private String apiPath;
-	
-	/* (non-Javadoc)
-	 * @see org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.ResourceConfig)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer#customize(org.glassfish.jersey.server.
+	 * ResourceConfig)
 	 */
 	@Override
 	public void customize(ResourceConfig config) {

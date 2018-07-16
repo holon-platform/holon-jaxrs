@@ -54,7 +54,7 @@ public class TestJerseyAuthAutoConfigurationFilter2 {
 
 	@Test
 	public void testConfig() {
-		Assert.assertTrue((Boolean)jerseyConfig.getProperty(ServletProperties.FILTER_FORWARD_ON_404));
+		Assert.assertTrue((Boolean) jerseyConfig.getProperty(ServletProperties.FILTER_FORWARD_ON_404));
 	}
 
 	@Test

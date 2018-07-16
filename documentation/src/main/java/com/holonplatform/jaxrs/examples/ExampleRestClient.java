@@ -47,13 +47,13 @@ public class ExampleRestClient {
 
 		RestClient client = JaxrsRestClient.create() // <1>
 				.defaultTarget(new URI("https://host/api")); // <2>
-		
+
 		client = RestClient.create(JaxrsRestClient.class.getName()); // <3>
-		
+
 		client = RestClient.create(); // <4>
-		
+
 		client = RestClient.forTarget("https://host/api"); // <5>
-		
+
 		Optional<TestData> testData = client.request().path("data/{id}").resolve("id", 1) // <6>
 				.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
 

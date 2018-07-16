@@ -39,8 +39,8 @@ import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostPr
  * </p>
  * <p>
  * Any bean annotated with {@link Path} or {@link Provider} is detected and automatically registered as a JAX-RS
- * resource. To disable automatic resource scan and registration, the <code>holon.jersey.bean-scan</code>
- * configuration property with a <code>false</code> value can be used.
+ * resource. To disable automatic resource scan and registration, the <code>holon.jersey.bean-scan</code> configuration
+ * property with a <code>false</code> value can be used.
  * </p>
  * <p>
  * Note that {@link Provider} annotated bean must be <em>singleton</em> scoped.
@@ -64,7 +64,7 @@ public class JerseyServerAutoConfiguration {
 			super();
 			this.configurationProperties = configurationProperties;
 		}
-		
+
 		@Bean
 		public ResourceConfig jerseyApplicationConfig() {
 			ResourceConfig resourceConfig = new ResourceConfig();

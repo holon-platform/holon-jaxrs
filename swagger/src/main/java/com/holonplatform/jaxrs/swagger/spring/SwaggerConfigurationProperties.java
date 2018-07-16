@@ -32,7 +32,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SwaggerConfigurationProperties {
 
 	public static final String DEFAULT_PATH = "/api-docs";
-	
+
 	/**
 	 * Whether to enable Swagger API listing endpoint configuration. Defaults to <code>true</code>.
 	 */

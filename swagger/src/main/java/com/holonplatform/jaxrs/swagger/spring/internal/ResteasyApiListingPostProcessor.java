@@ -25,13 +25,17 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer;
  * 
  * @since 5.0.0
  */
-public class ResteasyApiListingPostProcessor extends SwaggerApiListingPostProcessor implements ResteasyConfigCustomizer {
+public class ResteasyApiListingPostProcessor extends SwaggerApiListingPostProcessor
+		implements ResteasyConfigCustomizer {
 
 	@Value("${holon.resteasy.application-path:/}")
 	private String apiPath;
-	
-	/* (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer#customize(com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer#customize(com.holonplatform.jaxrs.spring.
+	 * boot.resteasy.ResteasyConfig)
 	 */
 	@Override
 	public void customize(ResteasyConfig config) {

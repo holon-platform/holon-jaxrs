@@ -41,7 +41,6 @@ import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 @ActiveProfiles("path")
 public class TestJerseyAutoConfigurationPath {
 
-
 	@Configuration
 	@EnableAutoConfiguration
 	@ComponentScan(basePackageClasses = TestEndpoint.class)

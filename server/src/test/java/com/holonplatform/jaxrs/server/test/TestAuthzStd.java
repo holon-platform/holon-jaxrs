@@ -177,16 +177,13 @@ public class TestAuthzStd extends JerseyTest {
 		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBasicResolver())
 				.authenticator(Account.authenticator(provider)).withDefaultAuthorizer().build();
 
-		return new ResourceConfig()
-				.register(RolesAllowedDynamicFeature.class)
-				.register(new ContextResolver<Realm>() {
+		return new ResourceConfig().register(RolesAllowedDynamicFeature.class).register(new ContextResolver<Realm>() {
 
-					@Override
-					public Realm getContext(Class<?> type) {
-						return realm;
-					}
-				}).register(ProtectedResource.class).register(SemiProtectedResource.class)
-				.register(PublicResource.class);
+			@Override
+			public Realm getContext(Class<?> type) {
+				return realm;
+			}
+		}).register(ProtectedResource.class).register(SemiProtectedResource.class).register(PublicResource.class);
 	}
 
 	// Avoid conflict with Resteasy in classpath

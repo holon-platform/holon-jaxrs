@@ -29,7 +29,7 @@ public class TestBeanEndpoint {
 
 	@Autowired
 	private TestService ts;
-	
+
 	@GET
 	@Path("ping")
 	@Produces(MediaType.TEXT_PLAIN)

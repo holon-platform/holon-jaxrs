@@ -80,7 +80,7 @@ public class TestClientBuilderAutoConfiguration {
 	public void testConfig() {
 		Assert.assertNotNull(clientBuilder);
 	}
-	
+
 	@Test
 	public void testFactory() {
 		RestClient rc = RestClient.create();
