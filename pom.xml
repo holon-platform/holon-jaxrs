@@ -81,7 +81,7 @@
 		<bytebuddy.version>1.8.12</bytebuddy.version>
 		
 		<!-- Test -->
-		<jackson.test.version>2.9.5</jackson.test.version>
+		<jackson.test.version>2.9.6</jackson.test.version>
 
 	</properties>
 
