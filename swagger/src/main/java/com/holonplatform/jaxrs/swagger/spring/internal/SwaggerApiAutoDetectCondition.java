@@ -15,16 +15,17 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
-import java.util.Map;
-
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
 /**
  * A Spring Boot condition to check if the <code>holon.swagger.resourcePackage</code> or the
@@ -43,23 +44,23 @@ public class SwaggerApiAutoDetectCondition extends SpringBootCondition {
 	 */
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
-		final RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(),
-				"holon.swagger.");
-
-		if (!resolver.getProperty("holon.swagger.enabled", boolean.class, true)) {
+		// check enabled
+		if (!Binder.get(context.getEnvironment()).bind("holon.swagger.enabled", Boolean.class).orElse(Boolean.TRUE)) {
 			return ConditionOutcome.noMatch(ConditionMessage.forCondition("SwaggerApiAutoDetectCondition")
 					.because("holon.swagger.enabled is false"));
 		}
 
-		if (resolver.containsProperty("resourcePackage")) {
+		if (Binder.get(context.getEnvironment()).bind("resource-package", String.class).isBound()) {
 			return ConditionOutcome.noMatch(
 					ConditionMessage.forCondition("SwaggerApiAutoDetectCondition").available("resourcePackage"));
 		}
-		Map<String, Object> ag = resolver.getSubProperties("apiGroups");
-		if (ag != null && ag.size() > 0) {
+
+		if (Binder.get(context.getEnvironment()).bind("api-groups", Bindable.listOf(ApiGroupConfiguration.class))
+				.map(groups -> (groups == null) ? 0 : groups.size()).orElse(0) > 0) {
 			return ConditionOutcome
 					.noMatch(ConditionMessage.forCondition("SwaggerApiAutoDetectCondition").available("apiGroups"));
 		}
+
 		return ConditionOutcome.match();
 	}
 

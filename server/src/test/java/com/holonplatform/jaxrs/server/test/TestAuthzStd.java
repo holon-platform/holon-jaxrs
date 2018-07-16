@@ -195,6 +195,7 @@ public class TestAuthzStd extends JerseyTest {
 		return client;
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testAuth() {
 

@@ -224,6 +224,7 @@ public class TestAuthJwt extends JerseyTest {
 
 	// Test
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testAuth() {
 

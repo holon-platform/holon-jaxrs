@@ -24,9 +24,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -68,16 +68,18 @@ public class TestSwaggerJerseyAutoDetectMulti {
 		Client client = JerseyClientBuilder.createClient();
 
 		WebTarget target = client.target("http://localhost:" + port + "/v1/docs");
-		Response response = target.request().get();
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
-		Assert.assertEquals("application/json", response.getMediaType().toString());
+		try (Response response = target.request().get()) {
+			Assert.assertEquals(200, response.getStatus());
+			Assert.assertNotNull(response.getEntity());
+			Assert.assertEquals("application/json", response.getMediaType().toString());
+		}
 
 		target = client.target("http://localhost:" + port + "/v2/docs");
-		response = target.request().get();
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
-		Assert.assertEquals("application/json", response.getMediaType().toString());
+		try (Response response = target.request().get()) {
+			Assert.assertEquals(200, response.getStatus());
+			Assert.assertNotNull(response.getEntity());
+			Assert.assertEquals("application/json", response.getMediaType().toString());
+		}
 	}
 
 	@Test
@@ -85,16 +87,18 @@ public class TestSwaggerJerseyAutoDetectMulti {
 		Client client = JerseyClientBuilder.createClient();
 
 		WebTarget target = client.target("http://localhost:" + port + "/v1/docs").queryParam("type", "yaml");
-		Response response = target.request().get();
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
-		Assert.assertEquals("application/yaml", response.getMediaType().toString());
+		try (Response response = target.request().get()) {
+			Assert.assertEquals(200, response.getStatus());
+			Assert.assertNotNull(response.getEntity());
+			Assert.assertEquals("application/yaml", response.getMediaType().toString());
+		}
 
 		target = client.target("http://localhost:" + port + "/v2/docs").queryParam("type", "yaml");
-		response = target.request().get();
-		Assert.assertEquals(200, response.getStatus());
-		Assert.assertNotNull(response.getEntity());
-		Assert.assertEquals("application/yaml", response.getMediaType().toString());
+		try (Response response = target.request().get()) {
+			Assert.assertEquals(200, response.getStatus());
+			Assert.assertNotNull(response.getEntity());
+			Assert.assertEquals("application/yaml", response.getMediaType().toString());
+		}
 	}
 
 }

@@ -194,6 +194,7 @@ public class TestAuth extends JerseyTest {
 		return client;
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testAuth() {
 
