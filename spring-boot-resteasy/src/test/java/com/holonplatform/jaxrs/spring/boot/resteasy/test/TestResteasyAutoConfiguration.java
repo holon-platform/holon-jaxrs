@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.test.beans.TestService;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.resources.TestEndpoint;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 public class TestResteasyAutoConfiguration {
 
@@ -65,6 +66,9 @@ public class TestResteasyAutoConfiguration {
 	@Autowired
 	private ResteasyConfig resteasyConfig;
 
+	@LocalServerPort
+	private int port;
+
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(resteasyConfig);
@@ -73,7 +77,7 @@ public class TestResteasyAutoConfiguration {
 	@Test
 	public void testEndpoint() {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8888/test").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
 		Assert.assertEquals("pong", response);
 	}
@@ -81,7 +85,7 @@ public class TestResteasyAutoConfiguration {
 	@Test
 	public void testEndpoint2() {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8888/test2").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test2").path("ping");
 		String response = target.request().get(String.class);
 		Assert.assertEquals("pung", response);
 	}
