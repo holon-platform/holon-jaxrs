@@ -60,10 +60,10 @@
 		<bintray.package>holon-jaxrs</bintray.package>
 
 		<!-- Holon core -->
-		<holon.core.version>5.2.0-SNAPSHOT</holon.core.version>
+		<holon.core.version>5.2.0-alpha1</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.2.0-SNAPSHOT</holon.json.version>
+		<holon.json.version>5.2.0-alpha1</holon.json.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
