@@ -15,26 +15,15 @@
  */
 package com.holonplatform.jaxrs.client.internal;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.HttpStatus;
-import com.holonplatform.http.MediaType;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
-import com.holonplatform.http.internal.HttpUtils;
 import com.holonplatform.http.internal.rest.AbstractRestClient;
 import com.holonplatform.http.internal.rest.DefaultRequestDefinition;
 import com.holonplatform.http.rest.RequestEntity;
@@ -89,12 +78,12 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 			RequestEntity<R> requestEntity, ResponseType<T> responseType, boolean onlySuccessfulStatusCode) {
 
 		// invocation builder
-		final Builder builder = configure(requestDefinition).request();
+		final Builder builder = JaxrsRestClientOperations.configure(getClient(), requestDefinition).request();
 		// headers
 		requestDefinition.getHeaders().forEach((n, v) -> builder.header(n, v));
 
 		// invocation
-		final javax.ws.rs.client.Invocation invocation = buildRequestEntity(requestEntity)
+		final javax.ws.rs.client.Invocation invocation = JaxrsRestClientOperations.buildRequestEntity(requestEntity)
 				.map(r -> builder.build(method.getMethodName(), r)).orElse(builder.build(method.getMethodName()));
 
 		// invoke
@@ -115,60 +104,6 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		}
 
 		return new JaxrsResponseEntity<>(response, responseType);
-	}
-
-	/**
-	 * Configure a JAX-RS {@link WebTarget} using given request definition
-	 * @param request Request definition
-	 * @return Configured WebTarget
-	 */
-	protected WebTarget configure(RequestDefinition request) {
-		WebTarget target = getClient().target(request.getRequestURI());
-		// template parameters
-		target = target.resolveTemplates(request.getTemplateParameters());
-		// query parameters
-		for (Entry<String, Object[]> qp : request.getQueryParameters().entrySet()) {
-			target = target.queryParam(qp.getKey(), qp.getValue());
-		}
-		// property set
-		final WebTarget configuredTarget = target;
-		request.getPropertySet().ifPresent(ps -> configuredTarget.register(new PropertyBoxReaderInterceptor(ps)));
-		// done
-		return configuredTarget;
-	}
-
-	private static final String APPLICATION_FORM_URLENCODED_MEDIA_TYPE = MediaType.APPLICATION_FORM_URLENCODED
-			.toString();
-
-	/**
-	 * Build a jax-rs {@link Entity} from given request entity
-	 * @param requestEntity Request entity
-	 * @return jax-rs Entity
-	 */
-	protected Optional<Entity<?>> buildRequestEntity(RequestEntity<?> requestEntity) {
-		if (requestEntity != null) {
-			boolean form = requestEntity.getMediaType().map(m -> APPLICATION_FORM_URLENCODED_MEDIA_TYPE.equals(m))
-					.orElse(Boolean.FALSE);
-			return requestEntity.getPayload().map(p -> form ? Entity.form(convert(HttpUtils.getAsMultiMap(p)))
-					: Entity.entity(p, requestEntity.getMediaType().orElse(null)));
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Convert the given map into {@link MultivaluedMap}.
-	 * @param data Map to convert
-	 * @return Converted map
-	 */
-	private static MultivaluedMap<String, String> convert(Map<String, List<String>> data) {
-		if (data != null) {
-			MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
-			for (Entry<String, List<String>> entry : data.entrySet()) {
-				mvm.put(entry.getKey(), entry.getValue());
-			}
-			return mvm;
-		}
-		return null;
 	}
 
 }
