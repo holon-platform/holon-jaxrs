@@ -62,6 +62,9 @@
 
 		<!-- Holon json -->
 		<holon.json.version>5.2.0-alpha2-SNAPSHOT</holon.json.version>
+		
+		<!-- Holon reactor -->
+		<holon.reactor.version>5.2.0-SNAPSHOT</holon.reactor.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
@@ -86,6 +89,7 @@
 	<modules>
 		<module>commons</module>
 		<module>client</module>
+		<module>client-reactor</module>
 		<module>server</module>
 		<module>spring-security</module>
 		<module>swagger</module>
