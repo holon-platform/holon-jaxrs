@@ -15,13 +15,15 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration;
@@ -32,14 +34,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.beans.TestBeanEndpoint;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.beans.TestService;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.resources.TestEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 public class TestResteasyAutoConfiguration {
@@ -71,7 +73,7 @@ public class TestResteasyAutoConfiguration {
 
 	@Test
 	public void testConfig() {
-		Assert.assertNotNull(resteasyConfig);
+		assertNotNull(resteasyConfig);
 	}
 
 	@Test
@@ -79,7 +81,7 @@ public class TestResteasyAutoConfiguration {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 	@Test
@@ -87,7 +89,7 @@ public class TestResteasyAutoConfiguration {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:" + port + "/test2").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pung", response);
+		assertEquals("pung", response);
 	}
 
 }

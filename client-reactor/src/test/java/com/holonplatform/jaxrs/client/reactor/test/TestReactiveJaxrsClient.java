@@ -16,9 +16,9 @@
 package com.holonplatform.jaxrs.client.reactor.test;
 
 import static com.holonplatform.core.property.PathProperty.create;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,14 +50,11 @@ import javax.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.holonplatform.core.internal.utils.ConversionUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -68,8 +65,10 @@ import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.jaxrs.client.reactor.JaxrsReactiveRestClient;
 import com.holonplatform.reactor.http.ReactiveRestClient;
+import com.holonplatform.test.JerseyTest5;
+import com.holonplatform.test.TestUtils;
 
-public class TestReactiveJaxrsClient extends JerseyTest {
+public class TestReactiveJaxrsClient extends JerseyTest5 {
 
 	private static ExecutorService executorService;
 
@@ -84,8 +83,8 @@ public class TestReactiveJaxrsClient extends JerseyTest {
 		SLF4JBridgeHandler.install();
 	}
 
-	@BeforeClass
-	public static void initExecutor() {
+	@BeforeAll
+	static void initExecutor() {
 		executorService = Executors.newSingleThreadExecutor();
 	}
 
@@ -284,10 +283,10 @@ public class TestReactiveJaxrsClient extends JerseyTest {
 		final ReactiveRestClient client = JaxrsReactiveRestClient.create(getClient()).defaultTarget(getBaseUri());
 
 		final HttpStatus status = client.request().path("test").path("ping").get(String.class).doOnSuccess(response -> {
-			Assert.assertEquals(HttpStatus.OK, response.getStatus());
+			assertEquals(HttpStatus.OK, response.getStatus());
 			final String entity = response.getPayload().orElse(null);
-			Assert.assertNotNull(entity);
-			Assert.assertEquals("PONG", entity);
+			assertNotNull(entity);
+			assertEquals("PONG", entity);
 		}).map(r -> r.getStatus()).block();
 
 		assertEquals(HttpStatus.OK, status);
@@ -392,7 +391,7 @@ public class TestReactiveJaxrsClient extends JerseyTest {
 			}
 		}).block();
 
-		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
+		assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
 	}
 
 	@Test

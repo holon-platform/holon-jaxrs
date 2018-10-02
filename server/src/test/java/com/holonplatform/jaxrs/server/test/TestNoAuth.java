@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.server.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,17 +25,17 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
+import com.holonplatform.test.JerseyTest5;
 
-public class TestNoAuth extends JerseyTest {
+public class TestNoAuth extends JerseyTest5 {
 
-	@BeforeClass
-	public static void setup() {
+	@BeforeAll
+	static void setup() {
 		LogConfig.setupLogging();
 	}
 

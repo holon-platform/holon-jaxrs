@@ -15,15 +15,15 @@
  */
 package com.holonplatform.jaxrs.swagger.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -32,13 +32,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 @ActiveProfiles("disabled")
@@ -65,7 +63,7 @@ public class TestSwaggerDisabled {
 		Client client = JerseyClientBuilder.createClient();
 		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 	@Test
@@ -74,7 +72,7 @@ public class TestSwaggerDisabled {
 		WebTarget target = client.target("http://localhost:" + port + "/docs");
 
 		try (Response response = target.request().get()) {
-			Assert.assertEquals(404, response.getStatus());
+			assertEquals(404, response.getStatus());
 		}
 	}
 

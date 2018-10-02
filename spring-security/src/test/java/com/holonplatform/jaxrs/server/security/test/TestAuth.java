@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.server.security.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
@@ -39,12 +39,11 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
-import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,8 +60,9 @@ import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
+import com.holonplatform.test.JerseyTest5;
 
-public class TestAuth extends JerseyTest {
+public class TestAuth extends JerseyTest5 {
 
 	public static class NoOpPasswordEncoder implements PasswordEncoder {
 
@@ -109,8 +109,8 @@ public class TestAuth extends JerseyTest {
 
 	private static Client client;
 
-	@BeforeClass
-	public static void setup() {
+	@BeforeAll
+	static void setup() {
 		LogConfig.setupLogging();
 		client = JerseyClientBuilder.createClient();
 	}

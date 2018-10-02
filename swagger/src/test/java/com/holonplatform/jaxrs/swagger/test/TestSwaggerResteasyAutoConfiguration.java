@@ -15,14 +15,15 @@
  */
 package com.holonplatform.jaxrs.swagger.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,13 +33,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerJerseyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 @ActiveProfiles("dft")
@@ -65,7 +64,7 @@ public class TestSwaggerResteasyAutoConfiguration {
 		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 	@Test
@@ -73,9 +72,9 @@ public class TestSwaggerResteasyAutoConfiguration {
 		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/docs");
 		try (Response response = target.request().get()) {
-			Assert.assertEquals(200, response.getStatus());
-			Assert.assertNotNull(response.readEntity(String.class));
-			Assert.assertEquals("application/json", response.getMediaType().toString());
+			assertEquals(200, response.getStatus());
+			assertNotNull(response.readEntity(String.class));
+			assertEquals("application/json", response.getMediaType().toString());
 		}
 	}
 
@@ -84,9 +83,9 @@ public class TestSwaggerResteasyAutoConfiguration {
 		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
 		try (Response response = target.request().get()) {
-			Assert.assertEquals(200, response.getStatus());
-			Assert.assertNotNull(response.readEntity(String.class));
-			Assert.assertEquals("application/yaml", response.getMediaType().toString());
+			assertEquals(200, response.getStatus());
+			assertNotNull(response.readEntity(String.class));
+			assertEquals("application/yaml", response.getMediaType().toString());
 		}
 	}
 

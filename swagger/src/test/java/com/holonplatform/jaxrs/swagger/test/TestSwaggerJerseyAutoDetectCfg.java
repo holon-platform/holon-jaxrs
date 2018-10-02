@@ -15,14 +15,15 @@
  */
 package com.holonplatform.jaxrs.swagger.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -30,13 +31,11 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources5.TestEndpoint5;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 public class TestSwaggerJerseyAutoDetectCfg {
@@ -56,7 +55,7 @@ public class TestSwaggerJerseyAutoDetectCfg {
 		Client client = JerseyClientBuilder.createClient();
 		WebTarget target = client.target("http://localhost:" + port + "/test5").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 	@Test
@@ -64,9 +63,9 @@ public class TestSwaggerJerseyAutoDetectCfg {
 		Client client = JerseyClientBuilder.createClient();
 		WebTarget target = client.target("http://localhost:" + port + "/docs");
 		try (Response response = target.request().get()) {
-			Assert.assertEquals(200, response.getStatus());
-			Assert.assertNotNull(response.getEntity());
-			Assert.assertEquals("application/json", response.getMediaType().toString());
+			assertEquals(200, response.getStatus());
+			assertNotNull(response.getEntity());
+			assertEquals("application/json", response.getMediaType().toString());
 		}
 	}
 
@@ -75,9 +74,9 @@ public class TestSwaggerJerseyAutoDetectCfg {
 		Client client = JerseyClientBuilder.createClient();
 		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
 		try (Response response = target.request().get()) {
-			Assert.assertEquals(200, response.getStatus());
-			Assert.assertNotNull(response.getEntity());
-			Assert.assertEquals("application/yaml", response.getMediaType().toString());
+			assertEquals(200, response.getStatus());
+			assertNotNull(response.getEntity());
+			assertEquals("application/yaml", response.getMediaType().toString());
 		}
 	}
 

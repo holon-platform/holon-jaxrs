@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.server.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -47,9 +47,8 @@ import javax.ws.rs.ext.Providers;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
@@ -67,14 +66,15 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.server.ResourceUtils;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
+import com.holonplatform.test.JerseyTest5;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
-public class TestAuthJwt extends JerseyTest {
+public class TestAuthJwt extends JerseyTest5 {
 
-	@BeforeClass
-	public static void setup() {
+	@BeforeAll
+	static void setup() {
 		LogConfig.setupLogging();
 	}
 

@@ -16,9 +16,9 @@
 package com.holonplatform.jaxrs.client.test;
 
 import static com.holonplatform.core.property.PathProperty.create;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,13 +47,10 @@ import javax.ws.rs.core.StreamingOutput;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.holonplatform.core.internal.utils.ConversionUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -65,8 +62,10 @@ import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
+import com.holonplatform.test.JerseyTest5;
+import com.holonplatform.test.TestUtils;
 
-public class TestJaxrsClient extends JerseyTest {
+public class TestJaxrsClient extends JerseyTest5 {
 
 	public TestJaxrsClient() {
 		super();
@@ -328,7 +327,7 @@ public class TestJaxrsClient extends JerseyTest {
 
 		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
 		assertNotNull(s);
-		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
+		assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
 	}
 
 	@Test

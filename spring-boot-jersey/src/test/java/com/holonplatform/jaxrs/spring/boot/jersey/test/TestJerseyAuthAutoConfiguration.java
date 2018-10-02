@@ -15,6 +15,8 @@
  */
 package com.holonplatform.jaxrs.spring.boot.jersey.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Optional;
@@ -23,9 +25,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -33,7 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.AuthenticationToken;
@@ -42,7 +43,7 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.spring.boot.jersey.test.authresources.TestAuthEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @DirtiesContext
 public class TestJerseyAuthAutoConfiguration {
@@ -80,7 +81,7 @@ public class TestJerseyAuthAutoConfiguration {
 						HttpHeaders.SCHEME_BASIC + " "
 								+ Base64.getEncoder().encodeToString(new String("test:test").getBytes("ISO-8859-1")))
 				.get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 }

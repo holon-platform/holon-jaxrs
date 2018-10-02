@@ -15,15 +15,17 @@
  */
 package com.holonplatform.jaxrs.spring.boot.jersey.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,11 +34,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @DirtiesContext
 @ActiveProfiles("filter2")
@@ -54,7 +56,7 @@ public class TestJerseyAuthAutoConfigurationFilter2 {
 
 	@Test
 	public void testConfig() {
-		Assert.assertTrue((Boolean) jerseyConfig.getProperty(ServletProperties.FILTER_FORWARD_ON_404));
+		assertTrue((Boolean) jerseyConfig.getProperty(ServletProperties.FILTER_FORWARD_ON_404));
 	}
 
 	@Test
@@ -62,7 +64,7 @@ public class TestJerseyAuthAutoConfigurationFilter2 {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8888/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 }

@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.12</version>
+		<version>1.1.0</version>
 	</parent>
 
 	<groupId>com.holon-platform.jaxrs</groupId>
@@ -62,7 +64,7 @@
 
 		<!-- Holon json -->
 		<holon.json.version>5.2.0-alpha2-SNAPSHOT</holon.json.version>
-		
+
 		<!-- Holon reactor -->
 		<holon.reactor.version>5.2.0-SNAPSHOT</holon.reactor.version>
 
@@ -73,16 +75,16 @@
 		<jersey.version>2.27</jersey.version>
 
 		<!-- Resteasy -->
-		<resteasy.version>3.6.0.Final</resteasy.version>
+		<resteasy.version>3.6.1.Final</resteasy.version>
 
 		<!-- Swagger -->
-		<swagger.version>1.5.20</swagger.version>
+		<swagger.version>1.5.21</swagger.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.8.12</bytebuddy.version>
+		<bytebuddy.version>1.9.0</bytebuddy.version>
 
 		<!-- Test -->
-		<jackson.test.version>2.9.6</jackson.test.version>
+		<jackson.test.version>2.9.7</jackson.test.version>
 
 	</properties>
 
@@ -111,6 +113,26 @@
 		<module>bom</module>
 		<module>documentation</module>
 	</modules>
+
+	<dependencies>
+		<!-- JUnit 5 tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Logback for tests -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

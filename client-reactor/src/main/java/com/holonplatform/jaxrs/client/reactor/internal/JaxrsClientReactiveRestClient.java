@@ -29,12 +29,11 @@ import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
-import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.ResponseType;
 import com.holonplatform.jaxrs.client.internal.JaxrsRawResponseEntity;
-import com.holonplatform.jaxrs.client.internal.JaxrsResponseEntity;
 import com.holonplatform.jaxrs.client.internal.JaxrsRestClientOperations;
 import com.holonplatform.jaxrs.client.reactor.JaxrsReactiveRestClient;
+import com.holonplatform.reactor.http.ReactiveResponseEntity;
 import com.holonplatform.reactor.http.ReactiveRestClient;
 import com.holonplatform.reactor.http.internal.AbstractReactiveRestClient;
 import com.holonplatform.reactor.http.internal.DefaultReactiveRequestDefinition;
@@ -90,7 +89,7 @@ public class JaxrsClientReactiveRestClient extends AbstractReactiveRestClient im
 	 * com.holonplatform.http.rest.ResponseType, boolean)
 	 */
 	@Override
-	public <T, R> Mono<ResponseEntity<T>> invoke(ReactiveRequestDefinition requestDefinition, HttpMethod method,
+	public <T, R> Mono<ReactiveResponseEntity<T>> invoke(ReactiveRequestDefinition requestDefinition, HttpMethod method,
 			RequestEntity<R> requestEntity, ResponseType<T> responseType, boolean onlySuccessfulStatusCode) {
 
 		// invocation builder
@@ -101,11 +100,11 @@ public class JaxrsClientReactiveRestClient extends AbstractReactiveRestClient im
 
 		// invoker
 		final AsyncInvoker invoker = builder.async();
-		
-		return Mono.<ResponseEntity<T>>create(sink -> {
+
+		return Mono.<ReactiveResponseEntity<T>>create(sink -> {
 			Optional<Entity<?>> entity = JaxrsRestClientOperations.buildRequestEntity(requestEntity);
 			if (entity.isPresent()) {
-				invoker.method(method.getMethodName(), entity.get(), 
+				invoker.method(method.getMethodName(), entity.get(),
 						new ResponseInvocationCallback<>(sink, responseType, onlySuccessfulStatusCode));
 			} else {
 				invoker.method(method.getMethodName(),
@@ -113,15 +112,14 @@ public class JaxrsClientReactiveRestClient extends AbstractReactiveRestClient im
 			}
 		});
 	}
-	
 
 	private final class ResponseInvocationCallback<T> implements InvocationCallback<Response> {
 
-		private final MonoSink<ResponseEntity<T>> sink;
+		private final MonoSink<ReactiveResponseEntity<T>> sink;
 		private final ResponseType<T> responseType;
 		private final boolean onlySuccessfulStatusCode;
 
-		public ResponseInvocationCallback(MonoSink<ResponseEntity<T>> stage, ResponseType<T> responseType,
+		public ResponseInvocationCallback(MonoSink<ReactiveResponseEntity<T>> stage, ResponseType<T> responseType,
 				boolean onlySuccessfulStatusCode) {
 			super();
 			this.sink = stage;
@@ -139,7 +137,7 @@ public class JaxrsClientReactiveRestClient extends AbstractReactiveRestClient im
 			if (onlySuccessfulStatusCode && !HttpStatus.isSuccessStatusCode(response.getStatus())) {
 				sink.error(new UnsuccessfulResponseException(new JaxrsRawResponseEntity(response)));
 			} else {
-				sink.success(new JaxrsResponseEntity<>(response, responseType));
+				sink.success(new JaxrsReactiveResponseEntity<>(response, responseType));
 			}
 		}
 

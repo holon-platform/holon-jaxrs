@@ -15,6 +15,10 @@
  */
 package com.holonplatform.jaxrs.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,10 +36,8 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
@@ -44,8 +46,9 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.jaxrs.LogConfig;
+import com.holonplatform.test.JerseyTest5;
 
-public class TestFormData extends JerseyTest {
+public class TestFormData extends JerseyTest5 {
 
 	public static enum TestEnum {
 		A, B;
@@ -61,8 +64,8 @@ public class TestFormData extends JerseyTest {
 
 	public static final PropertySet<?> SET = PropertySet.of(STR, INT, DBL, BLN, ENM, DAT1, DAT2);
 
-	@BeforeClass
-	public static void setup() {
+	@BeforeAll
+	static void setup() {
 		LogConfig.setupLogging();
 	}
 
@@ -101,10 +104,10 @@ public class TestFormData extends JerseyTest {
 	public void testMethods() {
 
 		PropertyBox box = SET.execute(() -> target("/test/get/1").request().get(PropertyBox.class));
-		Assert.assertNotNull(box);
-		Assert.assertEquals(Integer.valueOf(1), box.getValue(INT));
-		Assert.assertEquals(Double.valueOf(1.5), box.getValue(DBL));
-		Assert.assertEquals("1", box.getValue(STR));
+		assertNotNull(box);
+		assertEquals(Integer.valueOf(1), box.getValue(INT));
+		assertEquals(Double.valueOf(1.5), box.getValue(DBL));
+		assertEquals("1", box.getValue(STR));
 
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.MILLISECOND, 0);
@@ -120,15 +123,15 @@ public class TestFormData extends JerseyTest {
 
 		try (Response response = target("/test/post").request()
 				.post(Entity.entity(box, MediaType.APPLICATION_FORM_URLENCODED))) {
-			Assert.assertEquals(200, response.getStatus());
-			Assert.assertNotNull(response.getEntity());
+			assertEquals(200, response.getStatus());
+			assertNotNull(response.getEntity());
 
 			box = SET.execute(() -> response.readEntity(PropertyBox.class));
-			Assert.assertEquals(Integer.valueOf(1), box.getValue(INT));
-			Assert.assertEquals(Double.valueOf(7.5), box.getValue(DBL));
-			Assert.assertEquals("value1", box.getValue(STR));
-			Assert.assertTrue(box.getValue(BLN));
-			Assert.assertEquals(TestEnum.B, box.getValue(ENM));
+			assertEquals(Integer.valueOf(1), box.getValue(INT));
+			assertEquals(Double.valueOf(7.5), box.getValue(DBL));
+			assertEquals("value1", box.getValue(STR));
+			assertTrue(box.getValue(BLN));
+			assertEquals(TestEnum.B, box.getValue(ENM));
 
 			c = Calendar.getInstance();
 			c.set(Calendar.MILLISECOND, 0);
@@ -138,11 +141,11 @@ public class TestFormData extends JerseyTest {
 
 			c.setTime(box.getValue(DAT1));
 
-			Assert.assertEquals(30, c.get(Calendar.MINUTE));
-			Assert.assertEquals(18, c.get(Calendar.HOUR_OF_DAY));
-			Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
-			Assert.assertEquals(2, c.get(Calendar.MONTH));
-			Assert.assertEquals(2020, c.get(Calendar.YEAR));
+			assertEquals(30, c.get(Calendar.MINUTE));
+			assertEquals(18, c.get(Calendar.HOUR_OF_DAY));
+			assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
+			assertEquals(2, c.get(Calendar.MONTH));
+			assertEquals(2020, c.get(Calendar.YEAR));
 
 			Calendar.getInstance();
 			c.set(Calendar.MILLISECOND, 0);
@@ -152,11 +155,11 @@ public class TestFormData extends JerseyTest {
 
 			c.setTime(box.getValue(DAT2));
 
-			Assert.assertEquals(0, c.get(Calendar.MINUTE));
-			Assert.assertEquals(0, c.get(Calendar.HOUR_OF_DAY));
-			Assert.assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
-			Assert.assertEquals(2, c.get(Calendar.MONTH));
-			Assert.assertEquals(2020, c.get(Calendar.YEAR));
+			assertEquals(0, c.get(Calendar.MINUTE));
+			assertEquals(0, c.get(Calendar.HOUR_OF_DAY));
+			assertEquals(3, c.get(Calendar.DAY_OF_MONTH));
+			assertEquals(2, c.get(Calendar.MONTH));
+			assertEquals(2020, c.get(Calendar.YEAR));
 
 		}
 

@@ -15,6 +15,9 @@
  */
 package com.holonplatform.jaxrs.spring.boot.jersey.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,9 +27,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,11 +38,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @DirtiesContext
 @ActiveProfiles("testprop")
@@ -77,7 +79,7 @@ public class TestJerseyAutoConfigurationDisable {
 
 	@Test
 	public void testConfig() {
-		Assert.assertNotNull(jerseyConfig);
+		assertNotNull(jerseyConfig);
 	}
 
 	@Test
@@ -85,7 +87,7 @@ public class TestJerseyAutoConfigurationDisable {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8889/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pang", response);
+		assertEquals("pang", response);
 	}
 
 }

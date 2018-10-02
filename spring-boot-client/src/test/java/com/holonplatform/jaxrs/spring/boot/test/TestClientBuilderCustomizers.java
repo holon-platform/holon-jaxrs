@@ -15,6 +15,9 @@
  */
 package com.holonplatform.jaxrs.spring.boot.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -31,9 +34,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,14 +44,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 import com.holonplatform.jaxrs.spring.boot.JaxrsClientBuilder;
 import com.holonplatform.jaxrs.spring.boot.JaxrsClientCustomizer;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @DirtiesContext
 @ActiveProfiles("ssl")
@@ -116,24 +118,23 @@ public class TestClientBuilderCustomizers {
 	public void testSslEndpoint() {
 		Client client = clientBuilder.build();
 
-		Assert.assertEquals("test", client.getConfiguration().getProperty("test.customizers"));
+		assertEquals("test", client.getConfiguration().getProperty("test.customizers"));
 
 		WebTarget target = client.target("https://localhost:8443/test").path("ping");
 		String response = target.request().get(String.class);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 	@Test
 	public void testClientFactory() {
 		RestClient client = RestClient.create();
-		Assert.assertTrue(client instanceof JaxrsRestClient);
+		assertTrue(client instanceof JaxrsRestClient);
 
-		Assert.assertEquals("test",
-				((JaxrsRestClient) client).getClient().getConfiguration().getProperty("test.customizers"));
+		assertEquals("test", ((JaxrsRestClient) client).getClient().getConfiguration().getProperty("test.customizers"));
 
 		String response = client.request().target("https://localhost:8443/test").path("ping").getForEntity(String.class)
 				.orElse(null);
-		Assert.assertEquals("pong", response);
+		assertEquals("pong", response);
 	}
 
 }
