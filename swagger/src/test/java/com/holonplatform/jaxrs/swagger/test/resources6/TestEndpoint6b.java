@@ -21,24 +21,21 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Component;
 
-import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@ApiDefinition(docsPath = "/api/docs2")
-@Api(value = "System Test", produces = "text/html")
+@Api
 @Component
-@Path("system")
+@Path("test2")
 public class TestEndpoint6b {
 
-	@ApiOperation("Just returns a HTML basic page with information.")
+	@ApiOperation("Test operation")
 	@ApiResponses(@ApiResponse(code = 200, message = "OK"))
 	@GET
 	@Path("check")
-	public Response returnSomeHTMLTexT() {
+	public Response getText() {
 		return Response.ok().entity("text").build();
 	}
 

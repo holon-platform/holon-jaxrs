@@ -17,6 +17,7 @@ package com.holonplatform.jaxrs.swagger.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -33,12 +34,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources6.TestEndpoint6a;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSwaggerJerseyAutoConfigurationMulti {
+public class TestSwaggerJerseyAutoConfigurationMerge {
 
 	@LocalServerPort
 	private int port;
@@ -57,8 +59,8 @@ public class TestSwaggerJerseyAutoConfigurationMulti {
 				.resolveTemplate("objectId", "test");
 		String response = target.request().get(String.class);
 		assertEquals("test", response);
-		
-		target = client.target("http://localhost:" + port).path("system/check");
+
+		target = client.target("http://localhost:" + port).path("test2/check");
 		response = target.request().get(String.class);
 		assertEquals("text", response);
 	}
@@ -66,18 +68,14 @@ public class TestSwaggerJerseyAutoConfigurationMulti {
 	@Test
 	public void testSwaggerJson() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/api/docs");
+		WebTarget target = client.target("http://localhost:" + port + SwaggerConfigurationProperties.DEFAULT_PATH);
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
-		}
-		
-		target = client.target("http://localhost:" + port + "/api/docs2");
-		try (Response response = target.request().get()) {
-			assertEquals(200, response.getStatus());
-			assertNotNull(response.getEntity());
-			assertEquals("application/json", response.getMediaType().toString());
+			final String json = response.readEntity(String.class);
+			assertTrue(json.contains("/object/{objectId}"));
+			assertTrue(json.contains("/test2/check"));
 		}
 	}
 

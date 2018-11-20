@@ -37,6 +37,7 @@ import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 
@@ -124,7 +125,7 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		}
 
 		// build API listing definitions
-		definitions = resources.stream().map(r -> {
+		List<ApiListingDefinition> initialDefinitions = resources.stream().map(r -> {
 			final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(
 					r.getResourceClass().getName());
 			definition.setClassesToScan(Collections.singleton(r.getResourceClass()));
@@ -150,7 +151,62 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 			return definition;
 		}).collect(Collectors.toList());
 
-		// TODO check duplicate or semanticaly equal docs api paths
+		// try to merge consistent definitions
+		List<ApiListingDefinition> mergedDefinitions = new ArrayList<>(initialDefinitions);
+
+		if (!initialDefinitions.isEmpty()) {
+			List<ApiListingDefinition> currentDefinitions = new ArrayList<>(initialDefinitions);
+			ApiListingDefinition merged = null;
+			do {
+				for (ApiListingDefinition definition : currentDefinitions) {
+					merged = mergeDefinition(definition, mergedDefinitions);
+					if (merged != null) {
+						break;
+					}
+				}
+				if (merged != null) {
+					currentDefinitions = mergedDefinitions;
+				}
+			} while (merged != null);
+
+			// check duplicate or semanticaly equal docs api paths
+			for (ApiListingDefinition definition : mergedDefinitions) {
+				// get definition with same or overlapping path
+				final String path = definition.getEndpointPath();
+				Optional<String> found = mergedDefinitions.stream().filter(d -> definition != d).filter(d -> {
+					if (path.equals(d.getEndpointPath())) {
+						return true;
+					}
+					return false;
+				}).map(d -> d.getEndpointPath()).findFirst();
+				if (found.isPresent()) {
+					throw new SwaggerConfigurationException(
+							"More than one Swagger API listing definition path is in conflict. Path: [" + path
+									+ "] - conflicting path: [" + found.get() + "]");
+				}
+			}
+		}
+
+		this.definitions = mergedDefinitions;
+	}
+
+	private static ApiListingDefinition mergeDefinition(ApiListingDefinition definition,
+			List<ApiListingDefinition> definitions) {
+		ApiListingDefinition merged = null;
+		ApiListingDefinition source = null;
+		for (ApiListingDefinition d : definitions) {
+			merged = definition.isMergeable(d).orElse(null);
+			if (merged != null) {
+				source = d;
+				break;
+			}
+		}
+		if (merged != null) {
+			definitions.remove(definition);
+			definitions.remove(source);
+			definitions.add(merged);
+		}
+		return merged;
 	}
 
 	/**
@@ -177,18 +233,6 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		return Optional.ofNullable(resourceClass.getPackage().getAnnotation(Api.class));
 	}
 
-	private boolean hasApiDefinition(String path) {
-		final String docsPath = getPathOrDefault(path);
-		if (definitions != null) {
-			for (ApiListingDefinition d : definitions) {
-				if (docsPath.equalsIgnoreCase(d.getEndpointPath())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * Checks whether the given bean class is to be considered a Swagger API resource class.
 	 * @param beanClass The class to check
@@ -198,15 +242,6 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		return AnnotationUtils.hasAnnotation(beanClass, Path.class)
 				&& (AnnotationUtils.hasAnnotation(beanClass, Api.class)
 						|| AnnotationUtils.hasAnnotation(beanClass, ApiDefinition.class));
-	}
-
-	/**
-	 * Get the API listing endpoint path.
-	 * @param path The path
-	 * @return The given path or {@link SwaggerConfigurationProperties#DEFAULT_PATH} if path was null or blank
-	 */
-	private static String getPathOrDefault(String path) {
-		return (path != null && !path.trim().equals("")) ? path : SwaggerConfigurationProperties.DEFAULT_PATH;
 	}
 
 	private static class ApiResource {

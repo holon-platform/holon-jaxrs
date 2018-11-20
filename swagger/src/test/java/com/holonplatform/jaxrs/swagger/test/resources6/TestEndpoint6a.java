@@ -25,14 +25,15 @@ import javax.ws.rs.core.Response;
 import org.springframework.stereotype.Component;
 
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@ApiDefinition(docsPath = "/api/docs", title = "Test", version = "v1", prettyPrint = true)
-@Api(value = "Trolley", consumes = "application/json", produces = "application/json")
+@ApiDefinition(docsPath = SwaggerConfigurationProperties.DEFAULT_PATH, title = "Test", version = "v1", prettyPrint = true)
+@Api
 @Component
 @Path("object")
 public class TestEndpoint6a {
@@ -43,13 +44,13 @@ public class TestEndpoint6a {
 	public String ping() {
 		return "pong";
 	}
-	
-	@ApiOperation("Just returns a JSON object.")
-    @ApiResponses(@ApiResponse(code=200, message="OK"))
-    @GET
-    @Path("{objectId}")
-    public Response getObject(@PathParam("objectId") String templateVar){
+
+	@ApiOperation("Test description")
+	@ApiResponses(@ApiResponse(code = 200, message = "OK"))
+	@GET
+	@Path("{objectId}")
+	public Response getObject(@PathParam("objectId") String templateVar) {
 		return Response.ok().entity(templateVar).build();
 	}
-	
+
 }

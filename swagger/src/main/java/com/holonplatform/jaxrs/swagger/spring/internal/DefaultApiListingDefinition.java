@@ -15,7 +15,10 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -62,15 +65,10 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	 */
 	public DefaultApiListingDefinition(String groupId) {
 		super();
-		this.groupId = groupId;
 		ObjectUtils.argumentNotNull(groupId, "Group id must be not null");
+		this.groupId = groupId;
 	}
 
-	/**
-	 * Init the definition using given configuration properties.
-	 * @param properties Optional configuration properties
-	 * @param groupConfiguration Optional group configuration properties
-	 */
 	public void init(SwaggerConfigurationProperties properties, ApiGroupConfiguration groupConfiguration) {
 		if (properties != null) {
 			setResourcePackage(properties.getResourcePackage());
@@ -128,51 +126,42 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#getGroupId()
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getGroupId()
 	 */
 	@Override
 	public String getGroupId() {
 		return groupId;
 	}
 
-	/**
-	 * Set the package name to scan to detect API endpoints.
-	 * @return Optional package name to scan to detect API endpoints
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getResourcePackage()
 	 */
+	@Override
 	public Optional<String> getResourcePackage() {
 		return Optional.ofNullable(resourcePackage);
 	}
 
-	/**
-	 * Get the package name to scan to detect API endpoints.
-	 * @param resourcePackage the resourcePackage the package name to scan to detect API endpoints
-	 */
 	public void setResourcePackage(String resourcePackage) {
 		this.resourcePackage = resourcePackage;
 	}
 
-	/**
-	 * Get the classes to scan.
-	 * @return the classes to scan, empty if none
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getClassesToScan()
 	 */
+	@Override
 	public Set<Class<?>> getClassesToScan() {
 		return classesToScan;
 	}
 
-	/**
-	 * Set the classes to scan.
-	 * <p>
-	 * If explicit classes to scan are set, the resource package will be ignored.
-	 * </p>
-	 * @param classesToScan the classes to scan set
-	 */
 	public void setClassesToScan(Set<Class<?>> classesToScan) {
 		this.classesToScan = (classesToScan == null) ? Collections.emptySet() : classesToScan;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#getPath()
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getPath()
 	 */
 	@Override
 	public Optional<String> getPath() {
@@ -181,7 +170,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#getEndpointPath()
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getEndpointPath()
 	 */
 	@Override
 	public String getEndpointPath() {
@@ -193,204 +182,162 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		});
 	}
 
-	/**
-	 * Set the API listing path
-	 * @param path the API listing path to set
-	 */
 	public void setPath(String path) {
 		this.path = (path != null && path.trim().equals("")) ? null : path;
 	}
 
-	/**
-	 * Get the supported protocol schemes
-	 * @return the supported protocol schemes
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getSchemes()
 	 */
+	@Override
 	public String[] getSchemes() {
 		return schemes;
 	}
 
-	/**
-	 * Set the supported protocol schemes (e.g. <code>https</code>)
-	 * @param schemes the supported protocol schemes to set
-	 */
 	public void setSchemes(String[] schemes) {
 		this.schemes = schemes;
 	}
 
-	/**
-	 * Get the API title
-	 * @return the API title
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return title;
 	}
 
-	/**
-	 * Set the API title
-	 * @param title the API title to set
-	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	/**
-	 * Get the API version
-	 * @return the API version
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return version;
 	}
 
-	/**
-	 * Set the API version
-	 * @param version the API version to set
-	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
-	/**
-	 * Get the API description
-	 * @return the API description
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * Set the API description
-	 * @param description the API description to set
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	/**
-	 * Get the <em>Terms of service</em> URL
-	 * @return the <em>Terms of service</em> URL
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getTermsOfServiceUrl()
 	 */
+	@Override
 	public String getTermsOfServiceUrl() {
 		return termsOfServiceUrl;
 	}
 
-	/**
-	 * Set the <em>Terms of service</em> URL
-	 * @param termsOfServiceUrl the <em>Terms of service</em> URL to set
-	 */
 	public void setTermsOfServiceUrl(String termsOfServiceUrl) {
 		this.termsOfServiceUrl = termsOfServiceUrl;
 	}
 
-	/**
-	 * Get the contact information
-	 * @return the contact information
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getContact()
 	 */
+	@Override
 	public String getContact() {
 		return contact;
 	}
 
-	/**
-	 * Set the contact information
-	 * @param contact the contact information to set
-	 */
 	public void setContact(String contact) {
 		this.contact = contact;
 	}
 
-	/**
-	 * Get the license information
-	 * @return the license information
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getLicense()
 	 */
+	@Override
 	public String getLicense() {
 		return license;
 	}
 
-	/**
-	 * Set the license information
-	 * @param license the license information to set
-	 */
 	public void setLicense(String license) {
 		this.license = license;
 	}
 
-	/**
-	 * Get the license URL
-	 * @return the license URL
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getLicenseUrl()
 	 */
+	@Override
 	public String getLicenseUrl() {
 		return licenseUrl;
 	}
 
-	/**
-	 * Set the license URL
-	 * @param licenseUrl the license URL to set
-	 */
 	public void setLicenseUrl(String licenseUrl) {
 		this.licenseUrl = licenseUrl;
 	}
 
-	/**
-	 * Get the API host
-	 * @return the API host
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getHost()
 	 */
+	@Override
 	public String getHost() {
 		return host;
 	}
 
-	/**
-	 * Set the API host
-	 * @param host the API host to set
-	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
 
-	/**
-	 * Get whether to <em>pretty</em> format the API listing output
-	 * @return whether to <em>pretty</em> format the API listing output
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#isPrettyPrint()
 	 */
+	@Override
 	public boolean isPrettyPrint() {
 		return prettyPrint;
 	}
 
-	/**
-	 * Set whether to <em>pretty</em> format the API listing output
-	 * @param prettyPrint <code>true</code> to <em>pretty</em> format the API listing output
-	 */
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
 	}
 
-	/**
-	 * Get the authentication schemes to use for API listing endpoint protection.
-	 * @return the authentication scheme names, if only one <code>*</code> scheme is provided, any supported
-	 *         authentication scheme is allowed
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getAuthSchemes()
 	 */
+	@Override
 	public String[] getAuthSchemes() {
 		return authSchemes;
 	}
 
-	/**
-	 * Set the authentication schemes to use for API listing endpoint protection.
-	 * @param authSchemes the authentication scheme names to set, if only one <code>*</code> scheme is provided, any
-	 *        supported authentication scheme is allowed
-	 */
 	public void setAuthSchemes(String[] authSchemes) {
 		this.authSchemes = authSchemes;
 	}
 
-	/**
-	 * Get the security roles to be used for endpoint access control
-	 * @return the security roles
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getSecurityRoles()
 	 */
+	@Override
 	public String[] getSecurityRoles() {
 		return securityRoles;
 	}
 
-	/**
-	 * Set the security roles to be used for endpoint access control
-	 * @param securityRoles the security roles to set
-	 */
 	public void setSecurityRoles(String[] securityRoles) {
 		this.securityRoles = securityRoles;
 	}
@@ -398,7 +345,115 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#configureEndpoints(java.lang.ClassLoader,
+	 * com.holonplatform.jaxrs.swagger.spring.internal.Todo#isMergeable(com.holonplatform.jaxrs.swagger.spring.internal.
+	 * ApiListingDefinition)
+	 */
+	@Override
+	public Optional<ApiListingDefinition> isMergeable(ApiListingDefinition definition) {
+		if (definition != null) {
+
+			if (this == definition) {
+				return Optional.empty();
+			}
+
+			if (getEndpointPath().equals(definition.getEndpointPath())) {
+				if (getResourcePackage().isPresent()) {
+					if (!definition.getResourcePackage().isPresent()
+							|| !getResourcePackage().get().equals(definition.getResourcePackage().orElse(""))) {
+						return Optional.empty();
+					}
+				}
+				if (!getResourcePackage().isPresent() && definition.getResourcePackage().isPresent()) {
+					return Optional.empty();
+				}
+				if (getTitle() != null && !Objects.equals(getTitle(), definition.getTitle())) {
+					return Optional.empty();
+				}
+				if (getDescription() != null && !Objects.equals(getDescription(), definition.getDescription())) {
+					return Optional.empty();
+				}
+				if (getVersion() != null && !Objects.equals(getVersion(), definition.getVersion())) {
+					return Optional.empty();
+				}
+				if (getTermsOfServiceUrl() != null
+						&& !Objects.equals(getTermsOfServiceUrl(), definition.getTermsOfServiceUrl())) {
+					return Optional.empty();
+				}
+				if (getContact() != null && !Objects.equals(getContact(), definition.getContact())) {
+					return Optional.empty();
+				}
+				if (getLicenseUrl() != null && !Objects.equals(getLicense(), definition.getLicense())) {
+					return Optional.empty();
+				}
+				if (getLicenseUrl() != null && !Objects.equals(getLicenseUrl(), definition.getLicenseUrl())) {
+					return Optional.empty();
+				}
+				if (getHost() != null && !Objects.equals(getHost(), definition.getHost())) {
+					return Optional.empty();
+				}
+				if (getSchemes() != null && !arrayEquals(getSchemes(), definition.getSchemes())) {
+					return Optional.empty();
+				}
+				if (getAuthSchemes() != null && !arrayEquals(getAuthSchemes(), definition.getAuthSchemes())) {
+					return Optional.empty();
+				}
+				if (getSecurityRoles() != null && !arrayEquals(getSecurityRoles(), definition.getSecurityRoles())) {
+					return Optional.empty();
+				}
+
+				// merge
+				DefaultApiListingDefinition merged = new DefaultApiListingDefinition(getGroupId());
+				if (getResourcePackage().isPresent()) {
+					merged.setResourcePackage(getResourcePackage().get());
+				} else {
+					Set<Class<?>> classes = new HashSet<>();
+					classes.addAll(getClassesToScan());
+					classes.addAll(definition.getClassesToScan());
+					merged.setClassesToScan(classes);
+				}
+				merged.setPath(getPath().orElse(null));
+				merged.setTitle(getTitle());
+				merged.setSchemes(getSchemes());
+				merged.setVersion(getVersion());
+				merged.setDescription(getDescription());
+				merged.setTermsOfServiceUrl(getTermsOfServiceUrl());
+				merged.setContact(getContact());
+				merged.setLicense(getLicense());
+				merged.setLicenseUrl(getLicenseUrl());
+				merged.setHost(getHost());
+				merged.setAuthSchemes(getAuthSchemes());
+				merged.setSecurityRoles(getSecurityRoles());
+				if (isPrettyPrint() || definition.isPrettyPrint()) {
+					merged.setPrettyPrint(true);
+				}
+				return Optional.of(merged);
+			}
+		}
+		return Optional.empty();
+	}
+
+	private static boolean arrayEquals(String[] a, String[] b) {
+		if (a == null && b == null) {
+			return true;
+		}
+		if (a == null && b != null) {
+			return false;
+		}
+		if (a != null && b == null) {
+			return false;
+		}
+		if (a != null && b != null) {
+			if (a.length != b.length) {
+				return false;
+			}
+			return Arrays.equals(a, b);
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#configureEndpoint(java.lang.ClassLoader,
 	 * java.lang.String)
 	 */
 	@Override
