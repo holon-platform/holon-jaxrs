@@ -37,14 +37,11 @@ public class JerseyApiListingPostProcessor extends SwaggerApiListingPostProcesso
 	 */
 	@Override
 	public void customize(ResourceConfig config) {
-		if (definitions != null && !definitions.isEmpty()) {
-			for (ApiListingDefinition definition : definitions) {
-				definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
-					config.register(e.getResourceClass());
-					LOGGER.info("[Jersey] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
-							+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
-				});
-			}
+		for (ApiListingDefinition definition : getDefinitions()) {
+			final ApiListingEndpoint endpoint = definition.configureEndpoint(getBeanClassLoader(), apiPath);
+			config.register(endpoint.getResourceClass());
+			LOGGER.info("[Jersey] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
+					+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
 		}
 	}
 

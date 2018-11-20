@@ -15,7 +15,11 @@
  */
 package com.holonplatform.jaxrs.swagger;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
+
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 import io.swagger.jaxrs.config.BeanConfig;
 
@@ -26,13 +30,51 @@ import io.swagger.jaxrs.config.BeanConfig;
  */
 public class SwaggerConfiguration extends BeanConfig {
 
+	private Set<Class<?>> classesToScan;
+
+	/**
+	 * Constructor using all the available classes for scanning.
+	 */
+	public SwaggerConfiguration() {
+		this(Collections.emptySet());
+	}
+
+	/**
+	 * Constructor specifiyng the resource package to be used to detect the classes to scan.
+	 * @param resourcePackage the resource package to be used to detect the classes to scan (not null)
+	 */
+	public SwaggerConfiguration(String resourcePackage) {
+		this(Collections.emptySet());
+		ObjectUtils.argumentNotNull(resourcePackage, "Resource package must be not null");
+		setResourcePackage(resourcePackage);
+	}
+
+	/**
+	 * Constructor.
+	 * @param classToScan Explicit class to scan (not null)
+	 */
+	public SwaggerConfiguration(Class<?> classToScan) {
+		this(Collections.singleton(classToScan));
+		ObjectUtils.argumentNotNull(classToScan, "Class to scan must be not null");
+	}
+
+	/**
+	 * Constructor.
+	 * @param classesToScan Explicit classes to scan
+	 */
+	public SwaggerConfiguration(Set<Class<?>> classesToScan) {
+		super();
+		ObjectUtils.argumentNotNull(classesToScan, "Classes to scan must be not null");
+		this.classesToScan = classesToScan;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see io.swagger.jaxrs.config.BeanConfig#classes()
 	 */
 	@Override
 	public Set<Class<?>> classes() {
-		Set<Class<?>> classes = super.classes();
+		final Set<Class<?>> classes = !classesToScan.isEmpty() ? new HashSet<>(classesToScan) : super.classes();
 		classes.add(SwaggerContextListener.class);
 		return classes;
 	}

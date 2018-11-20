@@ -15,11 +15,14 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
@@ -35,7 +38,10 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	private static final long serialVersionUID = 7343286354265897257L;
 
 	private final String groupId;
+
 	private String resourcePackage;
+	private Set<Class<?>> classesToScan = Collections.emptySet();
+
 	private String path;
 	private String[] schemes;
 	private String title;
@@ -50,22 +56,26 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	private String[] authSchemes;
 	private String[] securityRoles;
 
+	/**
+	 * Constructor.
+	 * @param groupId Group id (not null)
+	 */
 	public DefaultApiListingDefinition(String groupId) {
-		this(groupId, null);
+		super();
+		this.groupId = groupId;
+		ObjectUtils.argumentNotNull(groupId, "Group id must be not null");
 	}
 
-	public DefaultApiListingDefinition(String groupId, SwaggerConfigurationProperties properties) {
-		super();
-		this.groupId = (groupId != null && !groupId.trim().equals("")) ? groupId : ApiGroupId.DEFAULT_GROUP_ID;
-
+	/**
+	 * Init the definition using given configuration properties.
+	 * @param properties Optional configuration properties
+	 * @param groupConfiguration Optional group configuration properties
+	 */
+	public void init(SwaggerConfigurationProperties properties, ApiGroupConfiguration groupConfiguration) {
 		if (properties != null) {
-
-			if (properties.getPath() != null && !properties.getPath().trim().equals("")) {
-				setPath(properties.getPath());
-			}
-			if (properties.getSchemes() != null) {
-				setSchemes(properties.getSchemes());
-			}
+			setResourcePackage(properties.getResourcePackage());
+			setPath(properties.getPath());
+			setSchemes(properties.getSchemes());
 			setTitle(properties.getTitle());
 			setDescription(properties.getDescription());
 			setVersion(properties.getVersion());
@@ -77,43 +87,41 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setPrettyPrint(properties.isPrettyPrint());
 			setAuthSchemes(properties.getAuthSchemes());
 			setSecurityRoles(properties.getSecurityRoles());
-
-			ApiGroupConfiguration cfg = SwaggerJaxrsUtils.getApiGroup(properties, this.groupId);
-			if (cfg != null) {
-				setResourcePackage(cfg.getResourcePackage());
-				if (cfg.getPath() != null && !cfg.getPath().trim().equals("")) {
-					setPath(cfg.getPath());
-				}
-				if (cfg.getSchemes() != null && cfg.getSchemes().length > 0) {
-					setSchemes(cfg.getSchemes());
-				}
-				if (cfg.getTitle() != null) {
-					setTitle(cfg.getTitle());
-				}
-				if (cfg.getDescription() != null) {
-					setDescription(cfg.getDescription());
-				}
-				if (cfg.getVersion() != null) {
-					setVersion(cfg.getVersion());
-				}
-				if (cfg.getTermsOfServiceUrl() != null) {
-					setTermsOfServiceUrl(cfg.getTermsOfServiceUrl());
-				}
-				if (cfg.getContact() != null) {
-					setContact(cfg.getContact());
-				}
-				if (cfg.getLicense() != null) {
-					setLicense(cfg.getLicense());
-				}
-				if (cfg.getLicenseUrl() != null) {
-					setLicenseUrl(cfg.getLicenseUrl());
-				}
-				if (cfg.getAuthSchemes() != null && cfg.getAuthSchemes().length > 0) {
-					setAuthSchemes(cfg.getAuthSchemes());
-				}
-				if (cfg.getSecurityRoles() != null && cfg.getSecurityRoles().length > 0) {
-					setSecurityRoles(cfg.getSecurityRoles());
-				}
+		}
+		if (groupConfiguration != null) {
+			setResourcePackage(groupConfiguration.getResourcePackage());
+			if (groupConfiguration.getPath() != null && !groupConfiguration.getPath().trim().equals("")) {
+				setPath(groupConfiguration.getPath());
+			}
+			if (groupConfiguration.getSchemes() != null && groupConfiguration.getSchemes().length > 0) {
+				setSchemes(groupConfiguration.getSchemes());
+			}
+			if (groupConfiguration.getTitle() != null) {
+				setTitle(groupConfiguration.getTitle());
+			}
+			if (groupConfiguration.getDescription() != null) {
+				setDescription(groupConfiguration.getDescription());
+			}
+			if (groupConfiguration.getVersion() != null) {
+				setVersion(groupConfiguration.getVersion());
+			}
+			if (groupConfiguration.getTermsOfServiceUrl() != null) {
+				setTermsOfServiceUrl(groupConfiguration.getTermsOfServiceUrl());
+			}
+			if (groupConfiguration.getContact() != null) {
+				setContact(groupConfiguration.getContact());
+			}
+			if (groupConfiguration.getLicense() != null) {
+				setLicense(groupConfiguration.getLicense());
+			}
+			if (groupConfiguration.getLicenseUrl() != null) {
+				setLicenseUrl(groupConfiguration.getLicenseUrl());
+			}
+			if (groupConfiguration.getAuthSchemes() != null && groupConfiguration.getAuthSchemes().length > 0) {
+				setAuthSchemes(groupConfiguration.getAuthSchemes());
+			}
+			if (groupConfiguration.getSecurityRoles() != null && groupConfiguration.getSecurityRoles().length > 0) {
+				setSecurityRoles(groupConfiguration.getSecurityRoles());
 			}
 		}
 	}
@@ -129,10 +137,10 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 
 	/**
 	 * Set the package name to scan to detect API endpoints.
-	 * @return the resourcePackage the package name to scan to detect API endpoints
+	 * @return Optional package name to scan to detect API endpoints
 	 */
-	public String getResourcePackage() {
-		return resourcePackage;
+	public Optional<String> getResourcePackage() {
+		return Optional.ofNullable(resourcePackage);
 	}
 
 	/**
@@ -144,12 +152,45 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	}
 
 	/**
-	 * Get the API listing path
-	 * @return the API listing path
+	 * Get the classes to scan.
+	 * @return the classes to scan, empty if none
+	 */
+	public Set<Class<?>> getClassesToScan() {
+		return classesToScan;
+	}
+
+	/**
+	 * Set the classes to scan.
+	 * <p>
+	 * If explicit classes to scan are set, the resource package will be ignored.
+	 * </p>
+	 * @param classesToScan the classes to scan set
+	 */
+	public void setClassesToScan(Set<Class<?>> classesToScan) {
+		this.classesToScan = (classesToScan == null) ? Collections.emptySet() : classesToScan;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#getPath()
 	 */
 	@Override
-	public String getPath() {
-		return path;
+	public Optional<String> getPath() {
+		return Optional.ofNullable(path);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition#getEndpointPath()
+	 */
+	@Override
+	public String getEndpointPath() {
+		return getPath().orElseGet(() -> {
+			if (ApiGroupId.DEFAULT_GROUP_ID.equals(getGroupId())) {
+				return SwaggerConfigurationProperties.DEFAULT_PATH;
+			}
+			return SwaggerConfigurationProperties.DEFAULT_PATH + "/" + getGroupId();
+		});
 	}
 
 	/**
@@ -157,7 +198,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	 * @param path the API listing path to set
 	 */
 	public void setPath(String path) {
-		this.path = path;
+		this.path = (path != null && path.trim().equals("")) ? null : path;
 	}
 
 	/**
@@ -361,24 +402,18 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	 * java.lang.String)
 	 */
 	@Override
-	public List<ApiListingEndpoint> configureEndpoints(ClassLoader classLoader, String basePath) {
+	public ApiListingEndpoint configureEndpoint(ClassLoader classLoader, String basePath) {
 
-		final List<ApiListingEndpoint> endpoints = new LinkedList<>();
-
-		String apiListingPath = getPath();
-		String defaultApiListingPath = null;
-		if (apiListingPath == null || apiListingPath.trim().equals("")) {
-			// use default path with appended group id if no path specified
-			apiListingPath = SwaggerConfigurationProperties.DEFAULT_PATH + "/" + getGroupId();
-			if (ApiGroupId.DEFAULT_GROUP_ID.equals(getGroupId())) {
-				defaultApiListingPath = SwaggerConfigurationProperties.DEFAULT_PATH;
-			}
+		if (!getResourcePackage().isPresent() && getClassesToScan().isEmpty()) {
+			throw new SwaggerConfigurationException(
+					"Invalid API listing definition: neither resource package nor classes to scan were configured");
 		}
 
-		SwaggerConfiguration swaggerCfg = new SwaggerConfiguration();
-		if (getResourcePackage() != null) {
-			swaggerCfg.setResourcePackage(getResourcePackage());
-		}
+		final String apiListingPath = getEndpointPath();
+
+		final SwaggerConfiguration swaggerCfg = getClassesToScan().isEmpty()
+				? new SwaggerConfiguration(getResourcePackage().orElse(null))
+				: new SwaggerConfiguration(getClassesToScan());
 		swaggerCfg.setTitle(getTitle());
 		swaggerCfg.setVersion(getVersion());
 		swaggerCfg.setDescription(getDescription());
@@ -402,20 +437,12 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		// scan
 		swaggerCfg.setScan(true);
 
+		// register the Swagger instance
 		SwaggerConfigLocator.getInstance().putSwagger(getGroupId(), swaggerCfg.getSwagger());
 
-		// API listing resource
-		endpoints.add(
-				new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils.buildApiListingEndpoint(
-						classLoader, getGroupId(), apiListingPath, getAuthSchemes(), getSecurityRoles())));
-
-		if (defaultApiListingPath != null) {
-			endpoints.add(new DefaultApiListingEndpoint(getGroupId(), defaultApiListingPath,
-					SwaggerJaxrsUtils.buildApiListingEndpoint(classLoader, getGroupId(), defaultApiListingPath,
-							getAuthSchemes(), getSecurityRoles())));
-		}
-
-		return endpoints;
+		// return th endpoint implementation
+		return new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils.buildApiListingEndpoint(
+				classLoader, getGroupId(), apiListingPath, getAuthSchemes(), getSecurityRoles()));
 	}
 
 }

@@ -16,8 +16,6 @@
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Path;
@@ -26,9 +24,6 @@ import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -82,7 +77,7 @@ public final class SwaggerJaxrsUtils implements Serializable {
 	}
 
 	/**
-	 * Compose a path
+	 * Compose a path.
 	 * @param basePath Base path
 	 * @param path Additinal path
 	 * @return Composed path
@@ -107,73 +102,6 @@ public final class SwaggerJaxrsUtils implements Serializable {
 			}
 		}
 		return ap.toString();
-	}
-
-	/**
-	 * Get the {@link ApiGroupConfiguration} which corresponds to given <code>groupId</code>.
-	 * @param cfg Swagger configuration properties
-	 * @param groupId Group id
-	 * @return the {@link ApiGroupConfiguration} which corresponds to given <code>groupId</code>, <code>null</code> if
-	 *         not found
-	 */
-	public static ApiGroupConfiguration getApiGroup(SwaggerConfigurationProperties cfg, String groupId) {
-		if (groupId != null) {
-			List<ApiGroupConfiguration> groups = cfg.getApiGroups();
-			if (groups != null && !groups.isEmpty()) {
-				for (ApiGroupConfiguration group : groups) {
-					if (groupId.equals(group.getGroupId())) {
-						return group;
-					}
-				}
-				// check default
-				if (ApiGroupId.DEFAULT_GROUP_ID.equals(groupId)) {
-					for (ApiGroupConfiguration group : groups) {
-						if (group.getGroupId() == null) {
-							return group;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Get the {@link ApiListingDefinition}s from given Swagger configuration properties.
-	 * @param cfg Swagger configuration properties
-	 * @return The API listing definitions, an empty list if none
-	 */
-	public static List<ApiListingDefinition> getApiListings(SwaggerConfigurationProperties cfg) {
-		List<ApiListingDefinition> definitions = new LinkedList<>();
-		if (cfg != null) {
-			List<ApiGroupConfiguration> groups = cfg.getApiGroups();
-			if (groups != null && !groups.isEmpty()) {
-				for (ApiGroupConfiguration group : groups) {
-					ApiListingDefinition definition = ApiListingDefinition.create(group.getGroupId(), cfg);
-					ApiListingDefinition exists = getByGroupId(definitions, definition.getGroupId());
-					if (exists != null) {
-						throw new SwaggerConfigurationException("Duplicate API group id: " + exists.getGroupId());
-					}
-					definitions.add(definition);
-				}
-			} else {
-				// default group
-				if (cfg.getResourcePackage() != null && !cfg.getResourcePackage().trim().equals("")) {
-					definitions.add(ApiListingDefinition.createDefault(cfg));
-				}
-			}
-		}
-		return definitions;
-	}
-
-	private static ApiListingDefinition getByGroupId(List<ApiListingDefinition> definitions, String groupId) {
-		String gid = (groupId != null && !groupId.trim().equals("")) ? groupId : ApiGroupId.DEFAULT_GROUP_ID;
-		for (ApiListingDefinition d : definitions) {
-			if (gid.equals(d.getGroupId())) {
-				return d;
-			}
-		}
-		return null;
 	}
 
 }

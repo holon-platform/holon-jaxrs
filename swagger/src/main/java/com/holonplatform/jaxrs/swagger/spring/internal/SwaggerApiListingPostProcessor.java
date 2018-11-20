@@ -16,11 +16,12 @@
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
@@ -33,9 +34,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 
@@ -57,12 +58,12 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 	/**
 	 * Bean class laoder
 	 */
-	protected ClassLoader classLoader;
+	private ClassLoader classLoader;
 
 	/**
 	 * Detected resources
 	 */
-	protected List<ApiListingDefinition> definitions;
+	private List<ApiListingDefinition> definitions;
 
 	/*
 	 * (non-Javadoc)
@@ -73,6 +74,22 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		this.classLoader = classLoader;
 	}
 
+	/**
+	 * Get the bean factory ClassLoader.
+	 * @return the bean factory ClassLoader
+	 */
+	protected ClassLoader getBeanClassLoader() {
+		return classLoader;
+	}
+
+	/**
+	 * Get the detected Swagger API listing definitions.
+	 * @return the wagger API listing definitions
+	 */
+	protected List<ApiListingDefinition> getDefinitions() {
+		return (definitions != null) ? definitions : Collections.emptyList();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -81,27 +98,24 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		LOGGER.debug(() -> "Lookup @Api Swagger resources in bean factory [" + beanFactory + "]");
+		LOGGER.debug(() -> "Lookup Swagger API resources in bean factory [" + beanFactory + "]");
 
 		definitions = new ArrayList<>();
 
-		Map<String, List<Class<?>>> packageClasses = new HashMap<>();
-
+		// detect valid API listing resources
+		final Set<ApiResource> resources = new HashSet<>();
 		for (String name : beanFactory.getBeanDefinitionNames()) {
 			try {
 				BeanDefinition definition = beanFactory.getBeanDefinition(name);
 				if (!definition.isAbstract()) {
-					Class<?> beanClass = BeanRegistryUtils.getBeanClass(name, definition, beanFactory, classLoader);
-					if (beanClass != null && isApiResourceClass(definition, beanClass)) {
-
-						final String packageName = beanClass.getPackage().getName();
-						List<Class<?>> classes = packageClasses.get(packageName);
-						if (classes == null) {
-							classes = new LinkedList<>();
-							packageClasses.put(packageName, classes);
+					final Class<?> beanClass = BeanRegistryUtils.getBeanClass(name, definition, beanFactory,
+							classLoader);
+					// check not hidden
+					if (!getApiAnnotation(beanClass).map(a -> a.hidden()).orElse(false)) {
+						if (beanClass != null && isApiResourceClass(beanClass)) {
+							resources.add(
+									new ApiResource(beanClass, getApiDefinitionAnnotation(beanClass).orElse(null)));
 						}
-						classes.add(beanClass);
-
 					}
 				}
 			} catch (@SuppressWarnings("unused") NoSuchBeanDefinitionException e) {
@@ -109,95 +123,65 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 			}
 		}
 
-		if (!packageClasses.isEmpty()) {
-			for (Entry<String, List<Class<?>>> entry : packageClasses.entrySet()) {
-				if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-					ApiDefinition apiDef = null;
-					if (entry.getValue().get(0).getPackage().isAnnotationPresent(ApiDefinition.class)) {
-						apiDef = entry.getValue().get(0).getPackage().getAnnotation(ApiDefinition.class);
-					}
-					if (apiDef == null) {
-						for (Class<?> cls : entry.getValue()) {
-							if (cls.isAnnotationPresent(ApiDefinition.class)) {
-								apiDef = cls.getAnnotation(ApiDefinition.class);
-								break;
-							}
-						}
-					}
+		// build API listing definitions
+		definitions = resources.stream().map(r -> {
+			final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(
+					r.getResourceClass().getName());
+			definition.setClassesToScan(Collections.singleton(r.getResourceClass()));
+			definition
+					.setPath(r.getApiDefinition().map(d -> d.docsPath()).filter(p -> p != null && !p.trim().equals(""))
+							.orElse(SwaggerConfigurationProperties.DEFAULT_PATH));
+			definition.setTitle(r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.title())).orElse(null));
+			definition.setVersion(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.version())).orElse(null));
+			definition.setDescription(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.description())).orElse(null));
+			definition.setTermsOfServiceUrl(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.termsOfServiceUrl())).orElse(null));
+			definition.setContact(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.contact())).orElse(null));
+			definition.setLicense(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.license())).orElse(null));
+			definition.setLicenseUrl(
+					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.licenseUrl())).orElse(null));
+			definition.setSchemes(r.getApiDefinition().map(d -> d.schemes()).orElse(null));
+			definition.setPrettyPrint(r.getApiDefinition().map(d -> d.prettyPrint()).orElse(false));
+			definition.setHost(r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.host())).orElse(null));
+			return definition;
+		}).collect(Collectors.toList());
 
-					if (packageClasses.size() == 1) {
-						DefaultApiListingDefinition def = new DefaultApiListingDefinition(ApiGroupId.DEFAULT_GROUP_ID);
-						def.setResourcePackage(entry.getKey());
-						configure(def, apiDef);
-						definitions.add(def);
-					} else {
-
-						String path = (apiDef != null) ? AnnotationUtils.getStringValue(apiDef.docsPath()) : null;
-
-						if (hasApiDefinition(path)) {
-							LOGGER.warn("Ignoring Swagger API listing endpoint auto-configuration for package name ["
-									+ entry.getKey() + "]: an API listing endpoint with path [" + getPathOrDefault(path)
-									+ "] is already registered");
-						} else {
-							DefaultApiListingDefinition def = new DefaultApiListingDefinition(
-									(path == null) ? ApiGroupId.DEFAULT_GROUP_ID : entry.getKey());
-							def.setResourcePackage(entry.getKey());
-							configure(def, apiDef);
-							definitions.add(def);
-						}
-					}
-				}
-			}
-		}
+		// TODO check duplicate or semanticaly equal docs api paths
 	}
 
-	private static void configure(DefaultApiListingDefinition definition, ApiDefinition apiDef) {
-		if (apiDef != null) {
-			String path = AnnotationUtils.getStringValue(apiDef.docsPath());
-			if (path != null) {
-				definition.setPath(path);
-			}
-			String value = AnnotationUtils.getStringValue(apiDef.title());
-			if (value != null) {
-				definition.setTitle(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.version());
-			if (value != null) {
-				definition.setVersion(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.description());
-			if (value != null) {
-				definition.setDescription(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.termsOfServiceUrl());
-			if (value != null) {
-				definition.setTermsOfServiceUrl(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.contact());
-			if (value != null) {
-				definition.setContact(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.license());
-			if (value != null) {
-				definition.setLicense(value);
-			}
-			value = AnnotationUtils.getStringValue(apiDef.licenseUrl());
-			if (value != null) {
-				definition.setLicenseUrl(value);
-			}
-			String[] schemes = apiDef.schemes();
-			if (schemes != null) {
-				definition.setSchemes(schemes);
-			}
-			definition.setPrettyPrint(apiDef.prettyPrint());
+	/**
+	 * Get the {@link ApiDefinition} annotation associated to given class or to the class package definition.
+	 * @param resourceClass The resource class
+	 * @return Optional {@link ApiDefinition} annotation
+	 */
+	private static Optional<ApiDefinition> getApiDefinitionAnnotation(Class<?> resourceClass) {
+		if (resourceClass.isAnnotationPresent(ApiDefinition.class)) {
+			return Optional.of(resourceClass.getAnnotation(ApiDefinition.class));
 		}
+		return Optional.ofNullable(resourceClass.getPackage().getAnnotation(ApiDefinition.class));
+	}
+
+	/**
+	 * Get the {@link Api} annotation associated to given class or to the class package definition.
+	 * @param resourceClass The resource class
+	 * @return Optional {@link Api} annotation
+	 */
+	private static Optional<Api> getApiAnnotation(Class<?> resourceClass) {
+		if (resourceClass.isAnnotationPresent(Api.class)) {
+			return Optional.of(resourceClass.getAnnotation(Api.class));
+		}
+		return Optional.ofNullable(resourceClass.getPackage().getAnnotation(Api.class));
 	}
 
 	private boolean hasApiDefinition(String path) {
 		final String docsPath = getPathOrDefault(path);
 		if (definitions != null) {
 			for (ApiListingDefinition d : definitions) {
-				if (docsPath.equalsIgnoreCase(getPathOrDefault(d.getPath()))) {
+				if (docsPath.equalsIgnoreCase(d.getEndpointPath())) {
 					return true;
 				}
 			}
@@ -205,14 +189,46 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		return false;
 	}
 
-	private static boolean isApiResourceClass(@SuppressWarnings("unused") BeanDefinition definition,
-			Class<?> beanClass) {
-		return AnnotationUtils.getClassWithAnnotation(beanClass, Api.class) != null
-				&& AnnotationUtils.getClassWithAnnotation(beanClass, Path.class) != null;
+	/**
+	 * Checks whether the given bean class is to be considered a Swagger API resource class.
+	 * @param beanClass The class to check
+	 * @return whether the given bean class is to be considered a Swagger API resource clas
+	 */
+	private static boolean isApiResourceClass(Class<?> beanClass) {
+		return AnnotationUtils.hasAnnotation(beanClass, Path.class)
+				&& (AnnotationUtils.hasAnnotation(beanClass, Api.class)
+						|| AnnotationUtils.hasAnnotation(beanClass, ApiDefinition.class));
 	}
 
+	/**
+	 * Get the API listing endpoint path.
+	 * @param path The path
+	 * @return The given path or {@link SwaggerConfigurationProperties#DEFAULT_PATH} if path was null or blank
+	 */
 	private static String getPathOrDefault(String path) {
 		return (path != null && !path.trim().equals("")) ? path : SwaggerConfigurationProperties.DEFAULT_PATH;
+	}
+
+	private static class ApiResource {
+
+		private final Class<?> resourceClass;
+		private final ApiDefinition apiDefinition;
+
+		public ApiResource(Class<?> resourceClass, ApiDefinition apiDefinition) {
+			super();
+			ObjectUtils.argumentNotNull(resourceClass, "Resource class must be not null");
+			this.resourceClass = resourceClass;
+			this.apiDefinition = apiDefinition;
+		}
+
+		public Class<?> getResourceClass() {
+			return resourceClass;
+		}
+
+		public Optional<ApiDefinition> getApiDefinition() {
+			return Optional.ofNullable(apiDefinition);
+		}
+
 	}
 
 }

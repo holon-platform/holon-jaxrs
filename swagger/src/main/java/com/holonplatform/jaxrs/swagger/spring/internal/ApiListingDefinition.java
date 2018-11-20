@@ -16,10 +16,10 @@
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Optional;
 
-import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
 /**
  * Swagger API listing definition.
@@ -29,16 +29,22 @@ import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 public interface ApiListingDefinition extends Serializable {
 
 	/**
-	 * Get the API group id
-	 * @return Group id
+	 * Get the API group id.
+	 * @return The group id
 	 */
 	String getGroupId();
 
 	/**
-	 * Get the API listing path
-	 * @return the API listing path
+	 * Get the API listing path.
+	 * @return Optional API listing path
 	 */
-	String getPath();
+	Optional<String> getPath();
+
+	/**
+	 * Get the API listing endpoint path, using the default path if {@link #getPath()} is not available.
+	 * @return the API listing endpoint path
+	 */
+	String getEndpointPath();
 
 	/**
 	 * Configure the JAX-RS API listing endpoint using this definition.
@@ -46,39 +52,40 @@ public interface ApiListingDefinition extends Serializable {
 	 * @param basePath Base JAX-RS path
 	 * @return API listing endpoints
 	 */
-	List<ApiListingEndpoint> configureEndpoints(ClassLoader classLoader, String basePath);
+	ApiListingEndpoint configureEndpoint(ClassLoader classLoader, String basePath);
 
 	/**
 	 * Create a new {@link ApiListingDefinition}.
-	 * @param groupId API group id
+	 * @param groupId API group id (not null)
+	 * @return A new {@link ApiListingDefinition} instance
+	 */
+	static ApiListingDefinition create(String groupId) {
+		return new DefaultApiListingDefinition(groupId);
+	}
+
+	/**
+	 * Create a new {@link ApiListingDefinition}.
+	 * @param groupId API group id (not null)
 	 * @param properties Swagger configuration properties
 	 * @return A new {@link ApiListingDefinition} instance
 	 */
 	static ApiListingDefinition create(String groupId, SwaggerConfigurationProperties properties) {
-		return new DefaultApiListingDefinition(groupId, properties);
+		final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(groupId);
+		definition.init(properties, null);
+		return definition;
 	}
 
 	/**
-	 * Create the default api group definition.
+	 * Create a new {@link ApiListingDefinition}.
+	 * @param groupId API group id (not null)
 	 * @param properties Swagger configuration properties
-	 * @return Default group {@link ApiListingDefinition} instance
+	 * @param groupConfiguration Optional group configuration properties
+	 * @return A new {@link ApiListingDefinition} instance
 	 */
-	static ApiListingDefinition createDefault(SwaggerConfigurationProperties properties) {
-		DefaultApiListingDefinition definition = new DefaultApiListingDefinition(ApiGroupId.DEFAULT_GROUP_ID);
-		definition.setResourcePackage(properties.getResourcePackage());
-		definition.setPath(properties.getPath());
-		definition.setSchemes(properties.getSchemes());
-		definition.setTitle(properties.getTitle());
-		definition.setDescription(properties.getDescription());
-		definition.setVersion(properties.getVersion());
-		definition.setTermsOfServiceUrl(properties.getTermsOfServiceUrl());
-		definition.setContact(properties.getContact());
-		definition.setLicense(properties.getLicense());
-		definition.setLicenseUrl(properties.getLicenseUrl());
-		definition.setHost(properties.getHost());
-		definition.setPrettyPrint(properties.isPrettyPrint());
-		definition.setSecurityRoles(properties.getSecurityRoles());
-		definition.setAuthSchemes(properties.getAuthSchemes());
+	static ApiListingDefinition create(String groupId, SwaggerConfigurationProperties properties,
+			ApiGroupConfiguration groupConfiguration) {
+		final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(groupId);
+		definition.init(properties, groupConfiguration);
 		return definition;
 	}
 

@@ -15,8 +15,6 @@
  */
 package com.holonplatform.jaxrs.swagger.spring;
 
-import java.util.List;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
+import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingEndpoint;
 import com.holonplatform.jaxrs.swagger.spring.internal.JerseyApiListingPostProcessor;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerApiAutoDetectCondition;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
@@ -47,7 +46,7 @@ import io.swagger.models.Swagger;
 @ConditionalOnClass(Swagger.class)
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
-public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, ResourceConfigCustomizer {
+public class SwaggerJerseyAutoConfiguration extends AbstractSwaggerAutoConfiguration implements BeanClassLoaderAware, ResourceConfigCustomizer {
 
 	private final static Logger LOGGER = SwaggerLogger.create();
 
@@ -56,11 +55,8 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, Res
 	@Value("${spring.jersey.application-path:/}")
 	private String apiPath;
 
-	private final SwaggerConfigurationProperties configurationProperties;
-
 	public SwaggerJerseyAutoConfiguration(SwaggerConfigurationProperties configurationProperties) {
-		super();
-		this.configurationProperties = configurationProperties;
+		super(configurationProperties);
 	}
 
 	/*
@@ -80,23 +76,21 @@ public class SwaggerJerseyAutoConfiguration implements BeanClassLoaderAware, Res
 	 */
 	@Override
 	public void customize(ResourceConfig config) {
-		if (configurationProperties.isEnabled()) {
+		if (isEnabled()) {
 			// Serializers
 			if (!config.isRegistered(SwaggerSerializers.class)) {
 				config.register(SwaggerSerializers.class, Integer.MIN_VALUE - 100);
 			}
 			// check configuration
-			if (configurationProperties.isPrettyPrint()) {
+			if (isPrettyPrint()) {
 				SwaggerSerializers.setPrettyPrint(true);
 			}
 			// API listings
-			final List<ApiListingDefinition> definitions = SwaggerJaxrsUtils.getApiListings(configurationProperties);
-			for (ApiListingDefinition definition : definitions) {
-				definition.configureEndpoints(classLoader, apiPath).forEach(e -> {
-					config.register(e.getResourceClass());
-					LOGGER.info("[Jersey] [" + e.getGroupId() + "] Swagger API listing configured - Path: "
-							+ SwaggerJaxrsUtils.composePath(apiPath, e.getPath()));
-				});
+			for (ApiListingDefinition definition : getApiListings()) {
+				final ApiListingEndpoint endpoint = definition.configureEndpoint(classLoader, apiPath);
+				config.register(endpoint.getResourceClass());
+				LOGGER.info("[Jersey] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
+						+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
 			}
 		}
 	}

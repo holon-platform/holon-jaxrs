@@ -92,4 +92,10 @@ public @interface ApiDefinition {
 	 */
 	boolean prettyPrint() default false;
 
+	/**
+	 * API host name.
+	 * @return the host name
+	 */
+	String host() default "";
+
 }
