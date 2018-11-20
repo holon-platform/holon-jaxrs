@@ -50,12 +50,12 @@ public class SwaggerApiAutoDetectCondition extends SpringBootCondition {
 					.because("holon.swagger.enabled is false"));
 		}
 
-		if (Binder.get(context.getEnvironment()).bind("resource-package", String.class).isBound()) {
+		if (Binder.get(context.getEnvironment()).bind("holon.swagger.resource-package", String.class).isBound()) {
 			return ConditionOutcome.noMatch(
 					ConditionMessage.forCondition("SwaggerApiAutoDetectCondition").available("resourcePackage"));
 		}
 
-		if (Binder.get(context.getEnvironment()).bind("api-groups", Bindable.listOf(ApiGroupConfiguration.class))
+		if (Binder.get(context.getEnvironment()).bind("holon.swagger.api-groups", Bindable.listOf(ApiGroupConfiguration.class))
 				.map(groups -> (groups == null) ? 0 : groups.size()).orElse(0) > 0) {
 			return ConditionOutcome
 					.noMatch(ConditionMessage.forCondition("SwaggerApiAutoDetectCondition").available("apiGroups"));
