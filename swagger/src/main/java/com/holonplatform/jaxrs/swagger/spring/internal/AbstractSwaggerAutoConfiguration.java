@@ -13,22 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.spring;
+package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.holonplatform.jaxrs.swagger.exceptions.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
-import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
 
 /**
  * Base Swagger API listing resources auto configuration class.
  *
  * @since 5.2.0
  */
-public class AbstractSwaggerAutoConfiguration {
+public class AbstractSwaggerAutoConfiguration extends AbstractSwaggerConfigurator {
 
 	private final SwaggerConfigurationProperties configurationProperties;
 

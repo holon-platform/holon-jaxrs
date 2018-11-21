@@ -28,11 +28,11 @@ import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.spring.internal.AbstractSwaggerAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingEndpoint;
 import com.holonplatform.jaxrs.swagger.spring.internal.JerseyApiListingPostProcessor;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerApiAutoDetectCondition;
-import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
 
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Swagger;
@@ -46,7 +46,8 @@ import io.swagger.models.Swagger;
 @ConditionalOnClass(Swagger.class)
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
-public class SwaggerJerseyAutoConfiguration extends AbstractSwaggerAutoConfiguration implements BeanClassLoaderAware, ResourceConfigCustomizer {
+public class SwaggerJerseyAutoConfiguration extends AbstractSwaggerAutoConfiguration
+		implements BeanClassLoaderAware, ResourceConfigCustomizer {
 
 	private final static Logger LOGGER = SwaggerLogger.create();
 
@@ -90,7 +91,7 @@ public class SwaggerJerseyAutoConfiguration extends AbstractSwaggerAutoConfigura
 				final ApiListingEndpoint endpoint = definition.configureEndpoint(classLoader, apiPath);
 				config.register(endpoint.getResourceClass());
 				LOGGER.info("[Jersey] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
-						+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
+						+ composePath(apiPath, endpoint.getPath()));
 			}
 		}
 	}

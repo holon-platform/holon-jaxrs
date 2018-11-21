@@ -31,8 +31,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "holon.swagger")
 public class SwaggerConfigurationProperties {
 
-	public static final String DEFAULT_PATH = "/api-docs";
-
 	/**
 	 * Whether to enable Swagger API listing endpoint configuration. Defaults to <code>true</code>.
 	 */
@@ -99,22 +97,6 @@ public class SwaggerConfigurationProperties {
 	 * Whether to <em>pretty</em> format API listing output.
 	 */
 	private boolean prettyPrint;
-
-	/**
-	 * Enable authentication for the API listing endpoints using the
-	 * <code>com.holonplatform.auth.annotations.Authenticate</code> annotation behaviour, specifying the allowed
-	 * authentication schemes.
-	 * <p>
-	 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
-	 * allowed.
-	 * </p>
-	 */
-	private String[] authSchemes;
-
-	/**
-	 * Set of security roles to use for API listing resource access control
-	 */
-	private String[] securityRoles;
 
 	private final List<ApiGroupConfiguration> apiGroups = new LinkedList<>();
 
@@ -222,22 +204,6 @@ public class SwaggerConfigurationProperties {
 		this.prettyPrint = prettyPrint;
 	}
 
-	public String[] getAuthSchemes() {
-		return authSchemes;
-	}
-
-	public void setAuthSchemes(String[] authSchemes) {
-		this.authSchemes = authSchemes;
-	}
-
-	public String[] getSecurityRoles() {
-		return securityRoles;
-	}
-
-	public void setSecurityRoles(String[] securityRoles) {
-		this.securityRoles = securityRoles;
-	}
-
 	public List<ApiGroupConfiguration> getApiGroups() {
 		return apiGroups;
 	}
@@ -301,22 +267,6 @@ public class SwaggerConfigurationProperties {
 		 * API group license URL
 		 */
 		private String licenseUrl;
-
-		/**
-		 * Enable authentication for this API listing endpoint using the
-		 * <code>com.holonplatform.auth.annotations.Authenticate</code> annotation behaviour, specifying the allowed
-		 * authentication schemes.
-		 * <p>
-		 * If this property is configured with a single <code>*</code> scheme, any supported authentication scheme is
-		 * allowed.
-		 * </p>
-		 */
-		private String[] authSchemes;
-
-		/**
-		 * Set of security roles to use for API listing resource access control
-		 */
-		private String[] securityRoles;
 
 		public String getGroupId() {
 			return groupId;
@@ -404,22 +354,6 @@ public class SwaggerConfigurationProperties {
 
 		public void setLicenseUrl(String licenseUrl) {
 			this.licenseUrl = licenseUrl;
-		}
-
-		public String[] getSecurityRoles() {
-			return securityRoles;
-		}
-
-		public void setSecurityRoles(String[] securityRoles) {
-			this.securityRoles = securityRoles;
-		}
-
-		public String[] getAuthSchemes() {
-			return authSchemes;
-		}
-
-		public void setAuthSchemes(String[] authSchemes) {
-			this.authSchemes = authSchemes;
 		}
 
 	}

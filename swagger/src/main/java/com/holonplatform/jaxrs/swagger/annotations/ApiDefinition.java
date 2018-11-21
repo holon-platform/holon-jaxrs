@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation which can be used for Swagger API listing auto-configuration to specify the Swagger API definition
- * properties for a package or a JAX-RS endpoint class.
+ * Annotation which can be used for Swagger API listing endpoints auto-configuration, to specify the Swagger API
+ * definition properties for JAX-RS endpoint classes.
  * 
  * @since 5.0.0
  */
@@ -33,9 +33,25 @@ import java.lang.annotation.Target;
 public @interface ApiDefinition {
 
 	/**
-	 * Get the path of the JAX-RS Swagger API listing endpoint.
-	 * @return Swagger API listing endpoint path
+	 * Default Swagger API listing endpoint path.
 	 */
+	public static final String DEFAULT_PATH = "/api-docs";
+
+	/**
+	 * Get the Swagger API listing endpoint JAX-RS path from which the API documentation will be available.
+	 * <p>
+	 * The default path is {@link #DEFAULT_PATH}.
+	 * </p>
+	 * @return the Swagger API listing endpoint path
+	 */
+	String value() default DEFAULT_PATH;
+
+	/**
+	 * Get the Swagger API listing endpoint JAX-RS path from which the API documentation will be available.
+	 * @return the Swagger API listing endpoint path
+	 * @deprecated Use {@link #value()}
+	 */
+	@Deprecated
 	String docsPath() default "";
 
 	/**
@@ -87,15 +103,15 @@ public @interface ApiDefinition {
 	String licenseUrl() default "";
 
 	/**
-	 * Whether to <em>pretty</em> format the Swagger output
-	 * @return <code>true</code> to <em>pretty</em> format the Swagger output
-	 */
-	boolean prettyPrint() default false;
-
-	/**
 	 * API host name.
 	 * @return the host name
 	 */
 	String host() default "";
+
+	/**
+	 * Whether to <em>pretty</em> format the Swagger output
+	 * @return <code>true</code> to <em>pretty</em> format the Swagger output
+	 */
+	boolean prettyPrint() default false;
 
 }

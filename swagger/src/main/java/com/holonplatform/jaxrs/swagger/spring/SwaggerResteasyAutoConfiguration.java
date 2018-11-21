@@ -28,11 +28,11 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.spring.internal.AbstractSwaggerAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingDefinition;
 import com.holonplatform.jaxrs.swagger.spring.internal.ApiListingEndpoint;
 import com.holonplatform.jaxrs.swagger.spring.internal.ResteasyApiListingPostProcessor;
 import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerApiAutoDetectCondition;
-import com.holonplatform.jaxrs.swagger.spring.internal.SwaggerJaxrsUtils;
 
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Swagger;
@@ -97,7 +97,7 @@ public class SwaggerResteasyAutoConfiguration {
 					final ApiListingEndpoint endpoint = definition.configureEndpoint(classLoader, apiPath);
 					config.register(endpoint.getResourceClass());
 					LOGGER.info("[Resteasy] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
-							+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
+							+ composePath(apiPath, endpoint.getPath()));
 				}
 			}
 		}

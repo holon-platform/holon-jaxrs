@@ -152,12 +152,6 @@ Two API groups are defined:
 |_holon.swagger._ *pretty-print*
 |Whether to _pretty_ format API listing output (`true` or `false`)
 
-|_holon.swagger._ *auth-schemes*
-|Enable authentication for the API listing endpoints using the `@Authenticate` annotation behaviour, specifying the allowed authentication schemes. If only one scheme with the `*` value is provided, any supported authentication scheme is allowed for authentication.
-
-|_holon.swagger._ *security-roles*
-|A list of security roles for API listing access control using the JAX-RS `SecurityContext` and the `@RolesAllowed` annotation
-
 |_holon.swagger._ *api-groups*
 |Optional API groups. Each group can be configured using the properties listed below.
 |===
@@ -198,12 +192,6 @@ Two API groups are defined:
 
 |_holon.swagger.api-groups._ *licenseUrl*
 |License URL
-
-|_holon.swagger.api-groups._ *auth-schemes*
-|Enable authentication for the API group listing using the `@Authenticate` annotation behaviour, specifying the allowed authentication schemes. If only one scheme with the `*` value is provided, any supported authentication scheme is allowed for authentication.
-
-|_holon.swagger.api-groups._ *security-roles*
-|A list of security roles for API group listing access control using the JAX-RS `SecurityContext` and the `@RolesAllowed` annotation
 |===
 
 ==== Swagger API documentation endpoints auto-configuration

@@ -41,7 +41,7 @@ public class JerseyApiListingPostProcessor extends SwaggerApiListingPostProcesso
 			final ApiListingEndpoint endpoint = definition.configureEndpoint(getBeanClassLoader(), apiPath);
 			config.register(endpoint.getResourceClass());
 			LOGGER.info("[Jersey] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
-					+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
+					+ composePath(apiPath, endpoint.getPath()));
 		}
 	}
 

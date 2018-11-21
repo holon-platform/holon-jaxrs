@@ -15,21 +15,27 @@
  */
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.ws.rs.Path;
+
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
+import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
+import com.holonplatform.jaxrs.swagger.exceptions.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
 import io.swagger.jaxrs.config.SwaggerConfigLocator;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 /**
  * Default {@link ApiListingDefinition} implementation.
@@ -56,8 +62,6 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	private String licenseUrl;
 	private String host;
 	private boolean prettyPrint;
-	private String[] authSchemes;
-	private String[] securityRoles;
 
 	/**
 	 * Constructor.
@@ -83,8 +87,6 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setLicenseUrl(properties.getLicenseUrl());
 			setHost(properties.getHost());
 			setPrettyPrint(properties.isPrettyPrint());
-			setAuthSchemes(properties.getAuthSchemes());
-			setSecurityRoles(properties.getSecurityRoles());
 		}
 		if (groupConfiguration != null) {
 			setResourcePackage(groupConfiguration.getResourcePackage());
@@ -114,12 +116,6 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			}
 			if (groupConfiguration.getLicenseUrl() != null) {
 				setLicenseUrl(groupConfiguration.getLicenseUrl());
-			}
-			if (groupConfiguration.getAuthSchemes() != null && groupConfiguration.getAuthSchemes().length > 0) {
-				setAuthSchemes(groupConfiguration.getAuthSchemes());
-			}
-			if (groupConfiguration.getSecurityRoles() != null && groupConfiguration.getSecurityRoles().length > 0) {
-				setSecurityRoles(groupConfiguration.getSecurityRoles());
 			}
 		}
 	}
@@ -161,25 +157,17 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getPath()
-	 */
-	@Override
-	public Optional<String> getPath() {
-		return Optional.ofNullable(path);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getEndpointPath()
 	 */
 	@Override
-	public String getEndpointPath() {
-		return getPath().orElseGet(() -> {
+	public String getPath() {
+		if (path == null || path.trim().equals("")) {
 			if (ApiGroupId.DEFAULT_GROUP_ID.equals(getGroupId())) {
-				return SwaggerConfigurationProperties.DEFAULT_PATH;
+				return ApiDefinition.DEFAULT_PATH;
 			}
-			return SwaggerConfigurationProperties.DEFAULT_PATH + "/" + getGroupId();
-		});
+			return ApiDefinition.DEFAULT_PATH + "/" + getGroupId();
+		}
+		return path;
 	}
 
 	public void setPath(String path) {
@@ -318,141 +306,6 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getAuthSchemes()
-	 */
-	@Override
-	public String[] getAuthSchemes() {
-		return authSchemes;
-	}
-
-	public void setAuthSchemes(String[] authSchemes) {
-		this.authSchemes = authSchemes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#getSecurityRoles()
-	 */
-	@Override
-	public String[] getSecurityRoles() {
-		return securityRoles;
-	}
-
-	public void setSecurityRoles(String[] securityRoles) {
-		this.securityRoles = securityRoles;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.spring.internal.Todo#isMergeable(com.holonplatform.jaxrs.swagger.spring.internal.
-	 * ApiListingDefinition)
-	 */
-	@Override
-	public Optional<ApiListingDefinition> isMergeable(ApiListingDefinition definition) {
-		if (definition != null) {
-
-			if (this == definition) {
-				return Optional.empty();
-			}
-
-			if (getEndpointPath().equals(definition.getEndpointPath())) {
-				if (getResourcePackage().isPresent()) {
-					if (!definition.getResourcePackage().isPresent()
-							|| !getResourcePackage().get().equals(definition.getResourcePackage().orElse(""))) {
-						return Optional.empty();
-					}
-				}
-				if (!getResourcePackage().isPresent() && definition.getResourcePackage().isPresent()) {
-					return Optional.empty();
-				}
-				if (getTitle() != null && !Objects.equals(getTitle(), definition.getTitle())) {
-					return Optional.empty();
-				}
-				if (getDescription() != null && !Objects.equals(getDescription(), definition.getDescription())) {
-					return Optional.empty();
-				}
-				if (getVersion() != null && !Objects.equals(getVersion(), definition.getVersion())) {
-					return Optional.empty();
-				}
-				if (getTermsOfServiceUrl() != null
-						&& !Objects.equals(getTermsOfServiceUrl(), definition.getTermsOfServiceUrl())) {
-					return Optional.empty();
-				}
-				if (getContact() != null && !Objects.equals(getContact(), definition.getContact())) {
-					return Optional.empty();
-				}
-				if (getLicenseUrl() != null && !Objects.equals(getLicense(), definition.getLicense())) {
-					return Optional.empty();
-				}
-				if (getLicenseUrl() != null && !Objects.equals(getLicenseUrl(), definition.getLicenseUrl())) {
-					return Optional.empty();
-				}
-				if (getHost() != null && !Objects.equals(getHost(), definition.getHost())) {
-					return Optional.empty();
-				}
-				if (getSchemes() != null && !arrayEquals(getSchemes(), definition.getSchemes())) {
-					return Optional.empty();
-				}
-				if (getAuthSchemes() != null && !arrayEquals(getAuthSchemes(), definition.getAuthSchemes())) {
-					return Optional.empty();
-				}
-				if (getSecurityRoles() != null && !arrayEquals(getSecurityRoles(), definition.getSecurityRoles())) {
-					return Optional.empty();
-				}
-
-				// merge
-				DefaultApiListingDefinition merged = new DefaultApiListingDefinition(getGroupId());
-				if (getResourcePackage().isPresent()) {
-					merged.setResourcePackage(getResourcePackage().get());
-				} else {
-					Set<Class<?>> classes = new HashSet<>();
-					classes.addAll(getClassesToScan());
-					classes.addAll(definition.getClassesToScan());
-					merged.setClassesToScan(classes);
-				}
-				merged.setPath(getPath().orElse(null));
-				merged.setTitle(getTitle());
-				merged.setSchemes(getSchemes());
-				merged.setVersion(getVersion());
-				merged.setDescription(getDescription());
-				merged.setTermsOfServiceUrl(getTermsOfServiceUrl());
-				merged.setContact(getContact());
-				merged.setLicense(getLicense());
-				merged.setLicenseUrl(getLicenseUrl());
-				merged.setHost(getHost());
-				merged.setAuthSchemes(getAuthSchemes());
-				merged.setSecurityRoles(getSecurityRoles());
-				if (isPrettyPrint() || definition.isPrettyPrint()) {
-					merged.setPrettyPrint(true);
-				}
-				return Optional.of(merged);
-			}
-		}
-		return Optional.empty();
-	}
-
-	private static boolean arrayEquals(String[] a, String[] b) {
-		if (a == null && b == null) {
-			return true;
-		}
-		if (a == null && b != null) {
-			return false;
-		}
-		if (a != null && b == null) {
-			return false;
-		}
-		if (a != null && b != null) {
-			if (a.length != b.length) {
-				return false;
-			}
-			return Arrays.equals(a, b);
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.holonplatform.jaxrs.swagger.spring.internal.Todo#configureEndpoint(java.lang.ClassLoader,
 	 * java.lang.String)
 	 */
@@ -464,7 +317,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 					"Invalid API listing definition: neither resource package nor classes to scan were configured");
 		}
 
-		final String apiListingPath = getEndpointPath();
+		final String apiListingPath = getPath();
 
 		final SwaggerConfiguration swaggerCfg = getClassesToScan().isEmpty()
 				? new SwaggerConfiguration(getResourcePackage().orElse(null))
@@ -496,8 +349,30 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 		SwaggerConfigLocator.getInstance().putSwagger(getGroupId(), swaggerCfg.getSwagger());
 
 		// return th endpoint implementation
-		return new DefaultApiListingEndpoint(getGroupId(), apiListingPath, SwaggerJaxrsUtils.buildApiListingEndpoint(
-				classLoader, getGroupId(), apiListingPath, getAuthSchemes(), getSecurityRoles()));
+		return new DefaultApiListingEndpoint(getGroupId(), apiListingPath,
+				buildApiListingEndpoint(classLoader, getGroupId(), apiListingPath));
+	}
+
+	/**
+	 * Build a Swagger API listing JAX-RS endpoint class, binding it to given <code>path</code> using standard JAX-RS
+	 * {@link Path} annotation.
+	 * @param classLoader ClassLoader to use to create the class proxy
+	 * @param apiGroupId API group id (not null)
+	 * @param path Endpoint path (not null)
+	 * @param authSchemes Authenticatiob schemes
+	 * @param rolesAllowed Optional security roles for endpoint authorization
+	 * @return The Swagger API listing JAX-RS endpoint class proxy
+	 */
+	private static Class<?> buildApiListingEndpoint(ClassLoader classLoader, String apiGroupId, String path) {
+		ObjectUtils.argumentNotNull(apiGroupId, "API group id must be not null");
+		ObjectUtils.argumentNotNull(path, "Path must be not null");
+		final ClassLoader cl = (classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader();
+		DynamicType.Builder<SwaggerApiListingResource> builder = new ByteBuddy()
+				.subclass(SwaggerApiListingResource.class)
+				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
+				.annotateType(
+						AnnotationDescription.Builder.ofType(ApiGroupId.class).define("value", apiGroupId).build());
+		return builder.make().load(cl, ClassLoadingStrategy.Default.INJECTION).getLoaded();
 	}
 
 }

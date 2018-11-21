@@ -43,7 +43,7 @@ public class ResteasyApiListingPostProcessor extends SwaggerApiListingPostProces
 			final ApiListingEndpoint endpoint = definition.configureEndpoint(getBeanClassLoader(), apiPath);
 			config.register(endpoint.getResourceClass());
 			LOGGER.info("[Resteasy] [" + endpoint.getGroupId() + "] Swagger API listing configured - Path: "
-					+ SwaggerJaxrsUtils.composePath(apiPath, endpoint.getPath()));
+					+ composePath(apiPath, endpoint.getPath()));
 		}
 	}
 

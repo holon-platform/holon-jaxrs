@@ -25,14 +25,13 @@ import javax.ws.rs.core.Response;
 import org.springframework.stereotype.Component;
 
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@ApiDefinition(docsPath = SwaggerConfigurationProperties.DEFAULT_PATH, title = "Test", version = "v1", prettyPrint = true)
+@ApiDefinition(value = ApiDefinition.DEFAULT_PATH, title = "Test", version = "v1", prettyPrint = true)
 @Api
 @Component
 @Path("object")

@@ -16,11 +16,16 @@
 package com.holonplatform.jaxrs.swagger.spring.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
@@ -36,9 +41,9 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
+import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
+import com.holonplatform.jaxrs.swagger.exceptions.SwaggerConfigurationException;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 
 import io.swagger.annotations.Api;
@@ -49,7 +54,8 @@ import io.swagger.annotations.Api;
  * 
  * @since 5.0.0
  */
-public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostProcessor, BeanClassLoaderAware {
+public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConfigurator
+		implements BeanFactoryPostProcessor, BeanClassLoaderAware {
 
 	/**
 	 * Logger
@@ -104,7 +110,7 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 		definitions = new ArrayList<>();
 
 		// detect valid API listing resources
-		final Set<ApiResource> resources = new HashSet<>();
+		final Map<String, Set<ApiResource>> resources = new HashMap<>();
 		for (String name : beanFactory.getBeanDefinitionNames()) {
 			try {
 				BeanDefinition definition = beanFactory.getBeanDefinition(name);
@@ -114,8 +120,9 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 					// check not hidden
 					if (!getApiAnnotation(beanClass).map(a -> a.hidden()).orElse(false)) {
 						if (beanClass != null && isApiResourceClass(beanClass)) {
-							resources.add(
-									new ApiResource(beanClass, getApiDefinitionAnnotation(beanClass).orElse(null)));
+							final ApiResource apiResource = new ApiResource(beanClass.getName(), beanClass,
+									getApiDefinitionAnnotation(beanClass).orElse(null));
+							resources.computeIfAbsent(apiResource.getPath(), path -> new HashSet<>()).add(apiResource);
 						}
 					}
 				}
@@ -124,89 +131,116 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 			}
 		}
 
+		// validate and reduce
+		final List<ApiResource> mergedResources = new ArrayList<>(resources.size());
+		int groupCount = 0;
+		for (Entry<String, Set<ApiResource>> entry : resources.entrySet()) {
+			validateAndMergeResources(
+					SwaggerConfiguration.class.getPackage().getName() + ".api_definition_" + groupCount, entry.getKey(),
+					entry.getValue()).ifPresent(r -> mergedResources.add(r));
+		}
+
 		// build API listing definitions
-		List<ApiListingDefinition> initialDefinitions = resources.stream().map(r -> {
-			final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(
-					r.getResourceClass().getName());
-			definition.setClassesToScan(Collections.singleton(r.getResourceClass()));
-			definition
-					.setPath(r.getApiDefinition().map(d -> d.docsPath()).filter(p -> p != null && !p.trim().equals(""))
-							.orElse(SwaggerConfigurationProperties.DEFAULT_PATH));
-			definition.setTitle(r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.title())).orElse(null));
-			definition.setVersion(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.version())).orElse(null));
-			definition.setDescription(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.description())).orElse(null));
-			definition.setTermsOfServiceUrl(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.termsOfServiceUrl())).orElse(null));
-			definition.setContact(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.contact())).orElse(null));
-			definition.setLicense(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.license())).orElse(null));
-			definition.setLicenseUrl(
-					r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.licenseUrl())).orElse(null));
-			definition.setSchemes(r.getApiDefinition().map(d -> d.schemes()).orElse(null));
-			definition.setPrettyPrint(r.getApiDefinition().map(d -> d.prettyPrint()).orElse(false));
-			definition.setHost(r.getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.host())).orElse(null));
+		definitions = mergedResources.stream().map(r -> {
+			final DefaultApiListingDefinition definition = new DefaultApiListingDefinition(r.getGroupId());
+			definition.setClassesToScan(r.getClassesToScan());
+			definition.setPath(r.getPath());
+			definition.setTitle(AnnotationUtils.getStringValue(r.getTitle()));
+			definition.setVersion(AnnotationUtils.getStringValue(r.getVersion()));
+			definition.setDescription(AnnotationUtils.getStringValue(r.getDescription()));
+			definition.setTermsOfServiceUrl(AnnotationUtils.getStringValue(r.getTermsOfServiceUrl()));
+			definition.setContact(AnnotationUtils.getStringValue(r.getContact()));
+			definition.setLicense(AnnotationUtils.getStringValue(r.getLicense()));
+			definition.setLicenseUrl(AnnotationUtils.getStringValue(r.getLicenseUrl()));
+			definition.setHost(AnnotationUtils.getStringValue(r.getHost()));
+			definition.setSchemes(r.getSchemes());
+			definition.setPrettyPrint(r.isPrettyPrint());
 			return definition;
 		}).collect(Collectors.toList());
-
-		// try to merge consistent definitions
-		List<ApiListingDefinition> mergedDefinitions = new ArrayList<>(initialDefinitions);
-
-		if (!initialDefinitions.isEmpty()) {
-			List<ApiListingDefinition> currentDefinitions = new ArrayList<>(initialDefinitions);
-			ApiListingDefinition merged = null;
-			do {
-				for (ApiListingDefinition definition : currentDefinitions) {
-					merged = mergeDefinition(definition, mergedDefinitions);
-					if (merged != null) {
-						break;
-					}
-				}
-				if (merged != null) {
-					currentDefinitions = mergedDefinitions;
-				}
-			} while (merged != null);
-
-			// check duplicate or semanticaly equal docs api paths
-			for (ApiListingDefinition definition : mergedDefinitions) {
-				// get definition with same or overlapping path
-				final String path = definition.getEndpointPath();
-				Optional<String> found = mergedDefinitions.stream().filter(d -> definition != d).filter(d -> {
-					if (path.equals(d.getEndpointPath())) {
-						return true;
-					}
-					return false;
-				}).map(d -> d.getEndpointPath()).findFirst();
-				if (found.isPresent()) {
-					throw new SwaggerConfigurationException(
-							"More than one Swagger API listing definition path is in conflict. Path: [" + path
-									+ "] - conflicting path: [" + found.get() + "]");
-				}
-			}
-		}
-
-		this.definitions = mergedDefinitions;
 	}
 
-	private static ApiListingDefinition mergeDefinition(ApiListingDefinition definition,
-			List<ApiListingDefinition> definitions) {
-		ApiListingDefinition merged = null;
-		ApiListingDefinition source = null;
-		for (ApiListingDefinition d : definitions) {
-			merged = definition.isMergeable(d).orElse(null);
-			if (merged != null) {
-				source = d;
-				break;
+	/**
+	 * Validate given API resource set and merge it into a single definition.
+	 * @param apiGroupId API group id
+	 * @param path API listing path
+	 * @param resources Resource to validate and merge
+	 * @return Merged resource
+	 * @throws SwaggerConfigurationException If the resources are not mergeable
+	 */
+	private static Optional<ApiResource> validateAndMergeResources(String apiGroupId, String path,
+			Set<ApiResource> resources) {
+		if (resources == null || resources.isEmpty()) {
+			return Optional.empty();
+		}
+
+		String[] schemes = null;
+		String title = null;
+		String version = null;
+		String description = null;
+		String termsOfServiceUrl = null;
+		String contact = null;
+		String license = null;
+		String licenseUrl = null;
+		String host = null;
+		boolean prettyPrint = false;
+
+		for (ApiResource r : resources) {
+			schemes = checkDefinitionValue(path, "schemes", schemes, () -> r.getSchemes());
+			title = checkDefinitionValue(path, "title", title, () -> r.getTitle());
+			version = checkDefinitionValue(path, "version", version, () -> r.getVersion());
+			description = checkDefinitionValue(path, "description", description, () -> r.getDescription());
+			termsOfServiceUrl = checkDefinitionValue(path, "termsOfServiceUrl", termsOfServiceUrl,
+					() -> r.getTermsOfServiceUrl());
+			contact = checkDefinitionValue(path, "contact", contact, () -> r.getContact());
+			license = checkDefinitionValue(path, "license", license, () -> r.getLicense());
+			licenseUrl = checkDefinitionValue(path, "licenseUrl", licenseUrl, () -> r.getLicenseUrl());
+			host = checkDefinitionValue(path, "host", host, () -> r.getHost());
+			if (r.isPrettyPrint()) {
+				prettyPrint = true;
 			}
 		}
-		if (merged != null) {
-			definitions.remove(definition);
-			definitions.remove(source);
-			definitions.add(merged);
+		// merge
+		final Set<Class<?>> classes = new HashSet<>();
+		for (ApiResource r : resources) {
+			classes.addAll(r.getClassesToScan());
 		}
-		return merged;
+		final ApiResource r = new ApiResource(apiGroupId, classes, path);
+		r.setSchemes(schemes);
+		r.setTitle(title);
+		r.setVersion(version);
+		r.setDescription(description);
+		r.setTermsOfServiceUrl(termsOfServiceUrl);
+		r.setContact(contact);
+		r.setLicense(licenseUrl);
+		r.setLicenseUrl(licenseUrl);
+		r.setHost(host);
+		r.setPrettyPrint(prettyPrint);
+		return Optional.of(r);
+	}
+
+	private static String[] checkDefinitionValue(String path, String message, String[] value,
+			Supplier<String[]> definition) {
+		if (value == null) {
+			return definition.get();
+		} else {
+			if (definition.get() != null && !Arrays.equals(value, definition.get())) {
+				throw new SwaggerConfigurationException("Invalid Api definitions for the same path [" + path
+						+ "], different " + message + " declarations: [" + value + "] - [" + definition.get() + "]");
+			}
+		}
+		return value;
+	}
+
+	private static String checkDefinitionValue(String path, String message, String value, Supplier<String> definition) {
+		if (value == null) {
+			return definition.get();
+		} else {
+			if (definition.get() != null && !value.equals(definition.get())) {
+				throw new SwaggerConfigurationException("Invalid Api definitions for the same path [" + path
+						+ "], different " + message + " declarations: [" + value + "] - [" + definition.get() + "]");
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -240,28 +274,176 @@ public abstract class SwaggerApiListingPostProcessor implements BeanFactoryPostP
 	 */
 	private static boolean isApiResourceClass(Class<?> beanClass) {
 		return AnnotationUtils.hasAnnotation(beanClass, Path.class)
-				&& (AnnotationUtils.hasAnnotation(beanClass, Api.class)
-						|| AnnotationUtils.hasAnnotation(beanClass, ApiDefinition.class));
+				&& AnnotationUtils.hasAnnotation(beanClass, Api.class);
 	}
 
-	private static class ApiResource {
+	private static class ApiResource implements ApiListingConfiguration {
 
-		private final Class<?> resourceClass;
+		private static final long serialVersionUID = -7421981485721651139L;
+
+		private final String apiGroupId;
+		private final Set<Class<?>> resourceClasses;
 		private final ApiDefinition apiDefinition;
+		private final String path;
 
-		public ApiResource(Class<?> resourceClass, ApiDefinition apiDefinition) {
-			super();
+		private String[] schemes;
+		private String title;
+		private String version;
+		private String description;
+		private String termsOfServiceUrl;
+		private String contact;
+		private String license;
+		private String licenseUrl;
+		private String host;
+		private boolean prettyPrint;
+
+		public ApiResource(String apiGroupId, Class<?> resourceClass, ApiDefinition apiDefinition) {
+			this(apiGroupId, Collections.singleton(resourceClass), null, apiDefinition);
 			ObjectUtils.argumentNotNull(resourceClass, "Resource class must be not null");
-			this.resourceClass = resourceClass;
+		}
+
+		public ApiResource(String apiGroupId, Set<Class<?>> resourceClasses, String path) {
+			this(apiGroupId, resourceClasses, path, null);
+		}
+
+		public ApiResource(String apiGroupId, Set<Class<?>> resourceClasses, String path, ApiDefinition apiDefinition) {
+			super();
+			ObjectUtils.argumentNotNull(apiGroupId, "API group id must be not null");
+			ObjectUtils.argumentNotNull(resourceClasses, "Resource classes must be not null");
+			this.apiGroupId = apiGroupId;
+			this.resourceClasses = resourceClasses;
 			this.apiDefinition = apiDefinition;
+			this.path = (path != null) ? path : getPath(apiDefinition);
 		}
 
-		public Class<?> getResourceClass() {
-			return resourceClass;
+		@Override
+		public String getGroupId() {
+			return apiGroupId;
 		}
 
-		public Optional<ApiDefinition> getApiDefinition() {
+		@Override
+		public Set<Class<?>> getClassesToScan() {
+			return resourceClasses;
+		}
+
+		@Override
+		public String getPath() {
+			return path;
+		}
+
+		@Override
+		public Optional<String> getResourcePackage() {
+			return Optional.empty();
+		}
+
+		@Override
+		public String[] getSchemes() {
+			return getApiDefinition().map(d -> d.schemes()).orElse(schemes);
+		}
+
+		@Override
+		public String getTitle() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.title())).orElse(title);
+		}
+
+		@Override
+		public String getVersion() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.version())).orElse(version);
+		}
+
+		@Override
+		public String getDescription() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.description())).orElse(description);
+		}
+
+		@Override
+		public String getTermsOfServiceUrl() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.termsOfServiceUrl()))
+					.orElse(termsOfServiceUrl);
+		}
+
+		@Override
+		public String getContact() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.contact())).orElse(contact);
+		}
+
+		@Override
+		public String getLicense() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.license())).orElse(license);
+		}
+
+		@Override
+		public String getLicenseUrl() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.licenseUrl())).orElse(licenseUrl);
+		}
+
+		@Override
+		public String getHost() {
+			return getApiDefinition().map(d -> AnnotationUtils.getStringValue(d.host())).orElse(host);
+		}
+
+		@Override
+		public boolean isPrettyPrint() {
+			return getApiDefinition().map(d -> d.prettyPrint()).orElse(prettyPrint);
+		}
+
+		public void setSchemes(String[] schemes) {
+			this.schemes = schemes;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public void setTermsOfServiceUrl(String termsOfServiceUrl) {
+			this.termsOfServiceUrl = termsOfServiceUrl;
+		}
+
+		public void setContact(String contact) {
+			this.contact = contact;
+		}
+
+		public void setLicense(String license) {
+			this.license = license;
+		}
+
+		public void setLicenseUrl(String licenseUrl) {
+			this.licenseUrl = licenseUrl;
+		}
+
+		public void setHost(String host) {
+			this.host = host;
+		}
+
+		public void setPrettyPrint(boolean prettyPrint) {
+			this.prettyPrint = prettyPrint;
+		}
+
+		private Optional<ApiDefinition> getApiDefinition() {
 			return Optional.ofNullable(apiDefinition);
+		}
+
+		@SuppressWarnings("deprecation")
+		private static String getPath(ApiDefinition apiDefinition) {
+			if (apiDefinition != null) {
+				String docsPath = AnnotationUtils.getStringValue(apiDefinition.docsPath());
+				if (docsPath != null && !docsPath.trim().equals("")) {
+					return docsPath;
+				}
+				String path = AnnotationUtils.getStringValue(apiDefinition.value());
+				if (path != null && !path.trim().equals("")) {
+					return path;
+				}
+			}
+			return ApiDefinition.DEFAULT_PATH;
 		}
 
 	}

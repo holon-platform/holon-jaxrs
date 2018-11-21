@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
+import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.test.resources6.TestEndpoint6a;
 
@@ -68,7 +68,7 @@ public class TestSwaggerJerseyAutoConfigurationMerge {
 	@Test
 	public void testSwaggerJson() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + SwaggerConfigurationProperties.DEFAULT_PATH);
+		WebTarget target = client.target("http://localhost:" + port + ApiDefinition.DEFAULT_PATH);
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());

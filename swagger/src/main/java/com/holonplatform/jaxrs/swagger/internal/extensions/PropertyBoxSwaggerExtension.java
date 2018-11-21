@@ -42,10 +42,10 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.exceptions.SwaggerConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerContext;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerPropertyFactory;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationException;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
