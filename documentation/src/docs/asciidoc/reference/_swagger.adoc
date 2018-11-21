@@ -198,10 +198,55 @@ Two API groups are defined:
 
 If the `holon.swagger.resourcePackage` configuration property is not provided and no API groups are defined using the `holon.swagger.apiGroups.*` configuration properties, the Holon Swagger integration module will try to auto-configure the Swagger API listing endpoints, relying on the Swagger `@Api` annotation.
 
-Any JAX-RS `@Path` resource declared as a Spring bean which is annotated with the Swagger `@Api` annotation will be auto-detected and used to obtain the package name to use as Swagger API listing endpoint source.
+IMPORTANT: Any JAX-RS `@Path` resource declared as a Spring bean which is annotated with the Swagger `@Api` annotation will be auto-detected and used to obtain the package name to use as Swagger API listing endpoint source.
 
 The default `/api-docs` path is used as the Swagger API listing mapping.
 
-To configure the API listing path and the API information properties, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiDefinition.html[ApiDefinition^] annotation can be used. The `@ApiDefinition` annotation can be used at package level (annotating a standard `package-info.java` class) or at resource class level, when a single JAX-RS `@Api` resource class is present.
+To configure the API listing path and the API information properties, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiDefinition.html[ApiDefinition^] annotation can be used. The `@ApiDefinition` annotation can be used at package level (annotating a standard `package-info.java` class) or at resource class level.
 
-When more than one package which contains valid JAX-RS `@Api` classes is present, the Swagger API listings path must be different for each package, so the `@ApiDefinition` annotation is required to specify the API documentation path for each package.
+The `@ApiDefinition` allows to setup the Swagger API documentation general informations, providing attributes to set the same information which can be configured using the <<SwaggerConfigurationProperties>> property set.
+
+For example, given the following endpoint class:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger1,indent=0]
+----
+<1> Standard Swagger `@Api` annotation to scan and include the endopoint class in the API documentation
+<2> The API documentation _title_ is defined using the `@ApiDefinition` annotation
+<3> Declare the endpoint as a Spring bean
+<3> Standard Swagger annotations for the API documentation generation.
+
+A Swagger API listing endpoint will be automatic configured and mapped to the default JAX-RS path: `/api-docs`.
+
+To provide a different API listing endpoint mapping path, the `@ApiDefinition` annotation `value` can be used:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger2,indent=0]
+----
+<1> Map the Swagger API listing endpoint to the `/docs` path
+
+===== Multiple JAX-RS endpoint resources auto-configuration
+
+When more than one JAX-RS endpoint is auto-configured for Swagger API documentation, you must pay attention to the declared Swagger API listing endpoint **paths** declared using the `@ApiDefinition` annotation.
+
+All the JAX-RS endpoint classes bound to the same Swagger API documentation **path** will be merged into a **single Swagger API documentation configuration**. The API documentation configuration properties, if any, will be obtained form the available `@ApiDefinition` annotations which refer to the same path.
+
+WARNING: When the `@ApiDefinition` annotations attributes declared for the same path are not consistent, a configuration exception will be thrown at application startup. For example, if two JAX-RS endpoint classes are annotated with `@ApiDefinition(value="/docs", title = "Title1")` and `@ApiDefinition(value="/docs", title = "Title2")` a configuration exception will be thrown, since a unique API title for the path `/docs` cannot be determined.
+
+For example, given the following JAX-RS endpoints:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger3,indent=0]
+----
+<1> Set the API listing path to `/docs1` and the API title to `Title 1`
+<2> Set the API listing path to `/docs1`
+<3> Set the API listing path to `/docs2` and the API title to `Title 2`
+
+Two Swagger API listing endpoints will be auto-configured:
+
+* One mapped to the `/docs1` path, which will provide the documentation for both `ExampleEndpoint3a` and `ExampleEndpoint3b` operations. The configured API title will be `Title 1`.
+
+* Another mapped to the `/docs2` path, which will only provide the documentation for the `ExampleEndpoint3c` operations. The configured API title will be `Title 2`.
