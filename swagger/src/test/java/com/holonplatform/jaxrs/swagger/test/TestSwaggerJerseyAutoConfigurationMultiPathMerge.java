@@ -74,7 +74,7 @@ public class TestSwaggerJerseyAutoConfigurationMultiPathMerge {
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
 			String json = response.readEntity(String.class);
-			assertTrue(json.contains("\"title\":\"title1\""));
+			assertTrue(json.contains("title1"));
 		}
 		target = client.target("http://localhost:" + port + "/docs2");
 		try (Response response = target.request().get()) {
@@ -82,7 +82,7 @@ public class TestSwaggerJerseyAutoConfigurationMultiPathMerge {
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
 			String json = response.readEntity(String.class);
-			assertTrue(json.contains("\"title\":\"title2\""));
+			assertTrue(json.contains("title2"));
 			assertTrue((json.contains("/test2/ping")));
 			assertTrue((json.contains("/test2b/ping")));
 		}
