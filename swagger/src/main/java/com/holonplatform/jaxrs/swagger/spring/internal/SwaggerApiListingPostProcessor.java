@@ -138,6 +138,7 @@ public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConf
 			validateAndMergeResources(
 					SwaggerConfiguration.class.getPackage().getName() + ".api_definition_" + groupCount, entry.getKey(),
 					entry.getValue()).ifPresent(r -> mergedResources.add(r));
+			groupCount++;
 		}
 
 		// build API listing definitions
