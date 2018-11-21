@@ -39,3 +39,81 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleRestClient.java[t
 <8> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`
 <9> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`
 <10> Post a `PropertyBox` type instance using JSON
+
+[[JaxrsAsyncRestClient]]
+== JAX-RS `AsyncRestClient` implementation
+
+The `holon-jaxrs-client` artifact makes also available an *asynchronous* JAX-RS implementation of the Holon Platform link:holon-core.html#RestClient[RestClient] API, a Java client API to deal with _RESTful web services_ using the `HTTP` protocol.
+
+The asynchronous REST client API is represented by the `AsyncRestClient` interface, which provides a fluent _builder_ to compose and execute _RESTful web services_ invocations, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
+
+The standard JVM `CompletionStage` API is used to asynchronously handle the operation responses.
+
+The `AsyncRestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data type  out-of-the-box.
+
+=== Getting started
+
+To obtain a JAX-RS `AsyncRestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/JaxrsAsyncRestClient.html[JaxrsAsyncRestClient^] interface can be used, either specifying the concrete JAX-RS `javax.ws.rs.client.Client` instance to use or relying on the default JAX-RS  `Client` provided by the `javax.ws.rs.client.ClientBuilder` class.
+
+Furthermore, a `AsyncRestClientFactory` is automatically registered to provide a `JaxrsAsyncRestClient` implementation using the default `AsyncRestClient` creation methods.
+
+TIP: See the link:holon-core.html#AsyncRestClientFactory[AsyncRestClient factory] section of the core documentation for more information about `AsyncRestClient` factories.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleAsyncRestClient.java[tag=restclient,indent=0]
+----
+<1> Create a JAX-RS `AsyncRestClient` API using the default JAX-RS `Client`
+<2> Setup a _default target_, i.e. the base `URI` which will be used for all the invocations made with this `AsyncRestClient` instance
+<3> Create a `AsyncRestClient` API specifying the `JaxrsAsyncRestClient` type, to ensure a JAX-RS implementation of the `AsyncRestClient` API is provided
+<4> Create a `AsyncRestClient` API using the default `AsyncRestClientFactory` lookup strategy
+<5> Create a `AsyncRestClient` API using the default `AsyncRestClientFactory` lookup strategy and set a default base URI
+<6> Get a generic JSON response using a _template_ variable and map it into a `TestData` type bean. A `CompletionStage` type result is returned and can be used to asynchronously handle the operation response.
+<7> Get a `PropertyBox` type JSON response entity content using given `PROPERTY_SET`. A `CompletionStage` type result is returned and can be used to asynchronously handle the operation response.
+<8> Get a `PropertyBox` type JSON response using given `PROPERTY_SET`. A `CompletionStage` type result is returned and can be used to asynchronously handle the operation response.
+<9> Get a `List` of `PropertyBox` JSON response entity content using given `PROPERTY_SET`. A `CompletionStage` type result is returned and can be used to asynchronously handle the operation response.
+<10> Post a `PropertyBox` type instance using JSON
+
+[[JaxrsReactiveRestClient]]
+== JAX-RS `ReactiveRestClient` implementation
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-client-reactor</artifactId>
+<version>{revnumber}</version>
+----
+
+This artifact makes available a *reactive* JAX-RS implementation of the Holon Platform REST client API, using the link:holon-reactor.html#ReactiveRestClient[ReactiveRestClient] API.
+
+The `ReactiveRestClient` uses the link:https://projectreactor.io[Project Reactor^] `Mono` and `Flux` types as REST operation results representation, dependently on the result cardinality.
+
+The `ReactiveRestClient` interface provides a fluent _builder_ to compose and execute _RESTful web services_ invocations, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
+
+The `ReactiveRestClient` API ensures support for the link:holon-core.html#PropertyBox[PropertyBox] data type  out-of-the-box.
+
+TIP: See the link:holon-reactor.html#ReactiveRestClient[ReactiveRestClient API documentation] for information about the `ReactiveRestClient` configuration and available operations.
+
+=== Getting started
+
+To obtain a JAX-RS `ReactiveRestClient` builder, the `create()` method of the link:{apidir}/com/holonplatform/jaxrs/client/reactor/JaxrsReactiveRestClient.html[JaxrsReactiveRestClient^] interface can be used, either specifying the concrete JAX-RS `javax.ws.rs.client.Client` instance to use or relying on the default JAX-RS  `Client` provided by the `javax.ws.rs.client.ClientBuilder` class.
+
+Furthermore, a `ReactiveRestClientFactory` is automatically registered to provide a `JaxrsReactiveRestClient` implementation using the default `ReactiveRestClient` creation methods.
+
+TIP: See the link:holon-reactor.html#ReactiveRestClientFactory[ReactiveRestClient factory] section of the reactor module documentation for more information about the `ReactiveRestClient` factories.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleReactiveRestClient.java[tag=restclient,indent=0]
+----
+<1> Create a JAX-RS `ReactiveRestClient` API using the default JAX-RS `Client`
+<2> Setup a _default target_, i.e. the base `URI` which will be used for all the invocations made with this `ReactiveRestClient` instance
+<3> Create a `ReactiveRestClient` API specifying the `JaxrsReactiveRestClient` type, to ensure a JAX-RS implementation of the `ReactiveRestClient` API is provided
+<4> Create a `ReactiveRestClient` API using the default `ReactiveRestClientFactory` lookup strategy
+<5> Create a `ReactiveRestClient` API using the default `ReactiveRestClientFactory` lookup strategy and set a default base URI
+<6> Get a `Mono` type JSON response using a _template_ variable and map it into a `TestData` type bean
+<7> Get the `Mono` type `PropertyBox` JSON response entity content using given `PROPERTY_SET`
+<8> Get the `Mono` type `PropertyBox` JSON response using given `PROPERTY_SET`
+<9> Get a `Flux` of `PropertyBox` type JSON response entities using given `PROPERTY_SET`
+<10> Post a `PropertyBox` type instance using JSON

@@ -65,6 +65,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
+			<artifactId>holon-jaxrs-client-reactor</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>

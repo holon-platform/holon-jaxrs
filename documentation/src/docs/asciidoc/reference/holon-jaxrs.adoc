@@ -78,6 +78,19 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+[[WhatsNew52x]]
+== What's new in version 5.2.x
+
+* A new JAX-RS `AsyncRestClient` implementation to provide asynchronous REST API operations handling, using the standard JVM `CompletionStage` API to handle the operation responses. See <<JaxrsAsyncRestClient>>.
+
+* A new `holon-jaxrs-client-reactor` artifact which provides a *reactive* version of the JAX-RS `RestClient`, using the `Mono` and `Flux` Project Reactor types to handle the REST operations response. See <<JaxrsReactiveRestClient>>.
+
+* Improved *Swagger* API documentation listing endpoints *auto-configuration* when using the _Spring Boot_ integration. The JAX-RS `@Path` endpoint classes annotated with the Swagger `@Api` annotation are automatically detected and included in the Swagger API documentation listing endpoints. See <<SwaggerAPIEndpointAutoConfiguration>>.
+
+* Support for JDK 9+ module system using `Automatic-Module-Name`.
+
+* Support for JAX-RS API version *2.1*.
+
 [[WhatsNew51x]]
 == What's new in version 5.1.x
 

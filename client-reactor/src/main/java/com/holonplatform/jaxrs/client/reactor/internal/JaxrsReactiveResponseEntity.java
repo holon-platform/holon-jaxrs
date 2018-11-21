@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.client.reactor.internal;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -74,6 +75,15 @@ public class JaxrsReactiveResponseEntity<T> extends JaxrsResponseEntity<T> imple
 	public <E> Flux<E> asFlux(Class<E> entityType) {
 		final ResponseType<List<E>> rt = ResponseType.of(entityType, List.class);
 		return as(rt).map(r -> Flux.fromIterable(r)).orElse(Flux.empty());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.reactor.http.ReactiveResponseEntity#asInputStream()
+	 */
+	@Override
+	public Mono<InputStream> asInputStream() {
+		return Mono.justOrEmpty(getResponse().readEntity(InputStream.class));
 	}
 
 }

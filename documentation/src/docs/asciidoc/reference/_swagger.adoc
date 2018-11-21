@@ -194,6 +194,7 @@ Two API groups are defined:
 |License URL
 |===
 
+[[SwaggerAPIEndpointAutoConfiguration]]
 ==== Swagger API documentation endpoints auto-configuration
 
 If the `holon.swagger.resourcePackage` configuration property is not provided and no API groups are defined using the `holon.swagger.apiGroups.*` configuration properties, the Holon Swagger integration module will try to auto-configure the Swagger API listing endpoints, relying on the Swagger `@Api` annotation.
