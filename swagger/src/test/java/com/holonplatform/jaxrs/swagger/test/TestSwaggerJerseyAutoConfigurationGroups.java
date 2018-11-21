@@ -31,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
@@ -39,6 +40,7 @@ import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 import com.holonplatform.jaxrs.swagger.test.resources2.TestEndpoint2;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@DirtiesContext
 @ActiveProfiles("groups")
 public class TestSwaggerJerseyAutoConfigurationGroups {
 
