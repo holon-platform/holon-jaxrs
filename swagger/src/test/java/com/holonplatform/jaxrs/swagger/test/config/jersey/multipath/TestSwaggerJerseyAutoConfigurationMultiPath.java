@@ -13,11 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.test;
+package com.holonplatform.jaxrs.swagger.test.config.jersey.multipath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -35,18 +34,18 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources8.TestEndpoint8a;
+import com.holonplatform.jaxrs.swagger.test.resources7.TestEndpoint7a;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = TestSwaggerJerseyAutoConfigurationMultiPath.Config.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSwaggerJerseyAutoConfigurationMultiPathMerge {
+public class TestSwaggerJerseyAutoConfigurationMultiPath {
 
 	@LocalServerPort
 	private int port;
 
 	@Configuration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
-	@ComponentScan(basePackageClasses = TestEndpoint8a.class)
+	@ComponentScan(basePackageClasses = TestEndpoint7a.class)
 	static class Config {
 
 	}
@@ -61,32 +60,27 @@ public class TestSwaggerJerseyAutoConfigurationMultiPathMerge {
 		target = client.target("http://localhost:" + port + "/test2").path("ping");
 		response = target.request().get(String.class);
 		assertEquals("pong", response);
-
-		target = client.target("http://localhost:" + port + "/test2b").path("ping");
-		response = target.request().get(String.class);
-		assertEquals("pong", response);
 	}
 
 	@Test
 	public void testSwaggerJson() {
 		final Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs1");
+		WebTarget target = client.target("http://localhost:" + port + "/docs7a");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
-			String json = response.readEntity(String.class);
-			assertTrue(json.contains("title1"));
+			/* String json = response.readEntity(String.class);
+			assertTrue(json.contains("title1")); */
+
 		}
-		target = client.target("http://localhost:" + port + "/docs2");
+		target = client.target("http://localhost:" + port + "/docs7b");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
-			String json = response.readEntity(String.class);
-			assertTrue(json.contains("title2"));
-			assertTrue((json.contains("/test2/ping")));
-			assertTrue((json.contains("/test2b/ping")));
+			/* String json = response.readEntity(String.class);
+			assertTrue(json.contains("title2")); */
 		}
 	}
 

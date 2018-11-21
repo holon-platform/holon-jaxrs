@@ -26,7 +26,7 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
 
 import io.swagger.annotations.Api;
 
-@ApiDefinition(value="/docs1", title="title1")
+@ApiDefinition(value="/docs7a", title="title1")
 @Api
 @Component
 @Path("test1")

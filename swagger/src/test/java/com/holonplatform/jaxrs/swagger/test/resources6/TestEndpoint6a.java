@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@ApiDefinition(value = ApiDefinition.DEFAULT_PATH, title = "Test", version = "v1", prettyPrint = true)
+@ApiDefinition(value = "/docs6", title = "Test", version = "v1", prettyPrint = true)
 @Api
 @Component
 @Path("object")

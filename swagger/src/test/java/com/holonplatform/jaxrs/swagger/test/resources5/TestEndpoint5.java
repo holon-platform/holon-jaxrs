@@ -28,7 +28,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @Api("Test API")
-@ApiDefinition(value = "/docs")
+@ApiDefinition(value = "/docs5")
 @Path("test5")
 @Component
 public class TestEndpoint5 {

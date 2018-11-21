@@ -21,11 +21,14 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Component;
 
+import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+@ApiDefinition("/docs6")
 @Api
 @Component
 @Path("test2")

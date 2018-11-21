@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.test;
+package com.holonplatform.jaxrs.swagger.test.config.resteasy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,45 +24,36 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerJerseyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
+import com.holonplatform.jaxrs.swagger.test.resources2.TestEndpoint2;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext
 @ActiveProfiles("dft")
-public class TestSwaggerResteasyAutoConfiguration {
+public class TestSwaggerResteasyAutoConfigurationResource {
 
 	@LocalServerPort
 	private int port;
 
-	@Configuration
+	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { JerseyAutoConfiguration.class, SwaggerJerseyAutoConfiguration.class })
+	@ComponentScan(basePackageClasses = TestEndpoint2.class)
 	static class Config {
-
-		@Bean
-		public ResteasyConfig applicationConfig() {
-			ResteasyConfig cfg = new ResteasyConfig();
-			cfg.register(TestEndpoint.class);
-			return cfg;
-		}
 
 	}
 
 	@Test
 	public void testEndpoint() {
 		Client client = new ResteasyClientBuilder().build();
-		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test2").path("ping");
 		String response = target.request().get(String.class);
 		assertEquals("pong", response);
 	}

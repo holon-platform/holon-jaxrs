@@ -13,75 +13,79 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.test;
+package com.holonplatform.jaxrs.swagger.test.config.jersey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources7.TestEndpoint7a;
+import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-public class TestSwaggerJerseyAutoConfigurationMultiPath {
+@ActiveProfiles("dft")
+public class TestSwaggerJerseyAutoConfiguration {
 
 	@LocalServerPort
 	private int port;
 
-	@Configuration
+	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
-	@ComponentScan(basePackageClasses = TestEndpoint7a.class)
 	static class Config {
+
+		@Bean
+		public ResourceConfig applicationConfig() {
+			ResourceConfig cfg = new ResourceConfig();
+			cfg.register(TestEndpoint.class);
+			return cfg;
+		}
 
 	}
 
 	@Test
-	public void testEndpoints() {
+	public void testEndpoint() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/test1").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
-		assertEquals("pong", response);
-
-		target = client.target("http://localhost:" + port + "/test2").path("ping");
-		response = target.request().get(String.class);
 		assertEquals("pong", response);
 	}
 
 	@Test
 	public void testSwaggerJson() {
-		final Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs1");
+		Client client = JerseyClientBuilder.createClient();
+		WebTarget target = client.target("http://localhost:" + port + "/docs");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
 			assertEquals("application/json", response.getMediaType().toString());
-			String json = response.readEntity(String.class);
-			assertTrue(json.contains("title1"));
-
 		}
-		target = client.target("http://localhost:" + port + "/docs2");
+	}
+
+	@Test
+	public void testSwaggerYaml() {
+		Client client = JerseyClientBuilder.createClient();
+		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
-			assertEquals("application/json", response.getMediaType().toString());
-			String json = response.readEntity(String.class);
-			assertTrue(json.contains("title2"));
+			assertEquals("application/yaml", response.getMediaType().toString());
 		}
 	}
 

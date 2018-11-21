@@ -24,12 +24,12 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -45,7 +45,7 @@ public class TestSwaggerDisabled {
 	@LocalServerPort
 	private int port;
 
-	@Configuration
+	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
 	static class Config {
 

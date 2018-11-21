@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.test;
+package com.holonplatform.jaxrs.swagger.test.config.resteasy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,60 +22,67 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources5.TestEndpoint5;
+import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerJerseyAutoConfiguration;
+import com.holonplatform.jaxrs.swagger.test.resources.TestEndpoint;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext
-public class TestSwaggerJerseyAutoDetectCfg {
+@ActiveProfiles("dft")
+public class TestSwaggerResteasyAutoConfiguration {
 
 	@LocalServerPort
 	private int port;
 
-	@Configuration
-	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
-	@ComponentScan(basePackageClasses = TestEndpoint5.class)
+	@SpringBootConfiguration
+	@EnableAutoConfiguration(exclude = { JerseyAutoConfiguration.class, SwaggerJerseyAutoConfiguration.class })
 	static class Config {
+
+		@Bean
+		public ResteasyConfig applicationConfig() {
+			ResteasyConfig cfg = new ResteasyConfig();
+			cfg.register(TestEndpoint.class);
+			return cfg;
+		}
 
 	}
 
 	@Test
 	public void testEndpoint() {
-		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/test5").path("ping");
+		Client client = new ResteasyClientBuilder().build();
+		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
 		assertEquals("pong", response);
 	}
 
 	@Test
 	public void testSwaggerJson() {
-		Client client = JerseyClientBuilder.createClient();
+		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/docs");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
-			assertNotNull(response.getEntity());
+			assertNotNull(response.readEntity(String.class));
 			assertEquals("application/json", response.getMediaType().toString());
 		}
 	}
 
 	@Test
 	public void testSwaggerYaml() {
-		Client client = JerseyClientBuilder.createClient();
+		Client client = new ResteasyClientBuilder().build();
 		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
-			assertNotNull(response.getEntity());
+			assertNotNull(response.readEntity(String.class));
 			assertEquals("application/yaml", response.getMediaType().toString());
 		}
 	}

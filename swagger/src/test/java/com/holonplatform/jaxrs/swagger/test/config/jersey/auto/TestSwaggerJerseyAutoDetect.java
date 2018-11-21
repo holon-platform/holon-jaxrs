@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.test;
+package com.holonplatform.jaxrs.swagger.test.config.jersey.auto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,30 +24,28 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerResteasyAutoConfiguration;
-import com.holonplatform.jaxrs.swagger.test.resources2.TestEndpoint2;
+import com.holonplatform.jaxrs.swagger.test.resources3.TestEndpoint3;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@ActiveProfiles("filter")
-public class TestSwaggerJerseyAutoConfigurationFilter {
+public class TestSwaggerJerseyAutoDetect {
 
 	@LocalServerPort
 	private int port;
 
-	@Configuration
+	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, SwaggerResteasyAutoConfiguration.class })
-	@ComponentScan(basePackageClasses = TestEndpoint2.class)
+	@ComponentScan(basePackageClasses = TestEndpoint3.class)
 	static class Config {
 
 	}
@@ -55,7 +53,7 @@ public class TestSwaggerJerseyAutoConfigurationFilter {
 	@Test
 	public void testEndpoint() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/test2").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test3").path("ping");
 		String response = target.request().get(String.class);
 		assertEquals("pong", response);
 	}
@@ -63,7 +61,7 @@ public class TestSwaggerJerseyAutoConfigurationFilter {
 	@Test
 	public void testSwaggerJson() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs");
+		WebTarget target = client.target("http://localhost:" + port + "/api-docs");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
@@ -74,7 +72,7 @@ public class TestSwaggerJerseyAutoConfigurationFilter {
 	@Test
 	public void testSwaggerYaml() {
 		Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/docs").queryParam("type", "yaml");
+		WebTarget target = client.target("http://localhost:" + port + "/api-docs").queryParam("type", "yaml");
 		try (Response response = target.request().get()) {
 			assertEquals(200, response.getStatus());
 			assertNotNull(response.getEntity());
