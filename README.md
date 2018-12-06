@@ -143,7 +143,7 @@ ResponseEntity<Void> postResponse = client.request().path("postbox")
 	.post(RequestEntity.json(PropertyBox.builder(SUBJECT).set(ID, 1).set(NAME, "Test").build()));
 ```
 
-_JAX-RS Asynchronous RestClient:_
+_JAX-RS Asynchronous RestClient (since version 5.2):_
 ```java
 AsyncRestClient client = AsyncRestClient.forTarget("https://host/api");
 		
@@ -163,7 +163,7 @@ CompletionStage<ResponseEntity<Void>> postResponse = client.request().path("post
 	.post(RequestEntity.json(PropertyBox.builder(SUBJECT).set(ID, 1).set(NAME, "Test").build()));
 ```
 
-_JAX-RS Reactive RestClient:_
+_JAX-RS Reactive RestClient (since version 5.2):_
 ```java
 ReactiveRestClient client = ReactiveRestClient.forTarget("https://host/api");
 		
