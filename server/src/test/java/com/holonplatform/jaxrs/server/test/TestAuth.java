@@ -166,16 +166,16 @@ public class TestAuth extends JerseyTest5 {
 			Account account = null;
 			if ("a1".equals(id)) {
 				account = Account.builder(id).credentials(Credentials.builder().secret("p1").build()).enabled(true)
-						.permission("R1").permission("R2").build();
+						.withPermission("R1").withPermission("R2").build();
 			} else if ("a2".equals(id)) {
 				account = Account.builder(id).credentials(Credentials.builder().secret("p2").build()).enabled(true)
-						.permission("R1").permission("R3").build();
+						.withPermission("R1").withPermission("R3").build();
 			}
 			return Optional.ofNullable(account);
 		};
 
-		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBasicResolver())
-				.authenticator(Account.authenticator(provider)).withDefaultAuthorizer().build();
+		final Realm realm = Realm.builder().withResolver(AuthenticationToken.httpBasicResolver())
+				.withAuthenticator(Account.authenticator(provider)).withDefaultAuthorizer().build();
 
 		return new ResourceConfig()// .register(AuthenticationFeature.class) // using auto-config
 				.register(RolesAllowedDynamicFeature.class).register(new ContextResolver<Realm>() {

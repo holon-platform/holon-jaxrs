@@ -57,9 +57,9 @@ public class TestJerseyAuthAutoConfiguration {
 		public Realm realm() {
 			return Realm.builder()
 					// HTTP Basic authorization schema resolver
-					.resolver(AuthenticationToken.httpBasicResolver())
+					.withResolver(AuthenticationToken.httpBasicResolver())
 					// authenticator
-					.authenticator(Account.authenticator(id -> {
+					.withAuthenticator(Account.authenticator(id -> {
 						if ("test".equals(id)) {
 							return Optional.of(Account.builder(id)
 									.credentials(Credentials.builder().secret("test").build()).build());

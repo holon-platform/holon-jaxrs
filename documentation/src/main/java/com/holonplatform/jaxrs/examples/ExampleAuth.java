@@ -82,8 +82,8 @@ public class ExampleAuth {
 		};
 
 		Realm realm = Realm.builder() // <6>
-				.resolver(AuthenticationToken.httpBasicResolver()) // <7>
-				.authenticator(Account.authenticator(provider)) // <8>
+				.withResolver(AuthenticationToken.httpBasicResolver()) // <7>
+				.withAuthenticator(Account.authenticator(provider)) // <8>
 				.withDefaultAuthorizer().build();
 
 		ContextResolver<Realm> realmContextResolver = new ContextResolver<Realm>() { // <9>
@@ -104,8 +104,8 @@ public class ExampleAuth {
 		@Override
 		public Realm getContext(Class<?> type) {
 			return Realm.builder() //
-					.resolver(AuthenticationToken.httpBasicResolver()) // <1>
-					.authenticator(Account.authenticator(getAccountProvider())) // <2>
+					.withResolver(AuthenticationToken.httpBasicResolver()) // <1>
+					.withAuthenticator(Account.authenticator(getAccountProvider())) // <2>
 					.withDefaultAuthorizer() // <3>
 					.build();
 		}
@@ -116,8 +116,10 @@ public class ExampleAuth {
 	public void contextResourceRealm() {
 		// tag::realm2[]
 		Context.get().classLoaderScope() // <1>
-				.map(s -> s.put(Realm.CONTEXT_KEY, Realm.builder().resolver(AuthenticationToken.httpBasicResolver())
-						.authenticator(Account.authenticator(getAccountProvider())).withDefaultAuthorizer().build()));
+				.map(s -> s.put(Realm.CONTEXT_KEY,
+						Realm.builder().withResolver(AuthenticationToken.httpBasicResolver())
+								.withAuthenticator(Account.authenticator(getAccountProvider())).withDefaultAuthorizer()
+								.build()));
 		// end::realm2[]
 	}
 

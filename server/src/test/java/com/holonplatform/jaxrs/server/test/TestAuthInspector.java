@@ -59,14 +59,14 @@ public class TestAuthInspector {
 			public Authentication authenticate(AccountCredentialsToken authenticationToken)
 					throws AuthenticationException {
 				if ("usr".equals(authenticationToken.getPrincipal())) {
-					return Authentication.builder("usr").permission(p1).permission(p2).build();
+					return Authentication.builder("usr").withPermission(p1).withPermission(p2).build();
 				}
 				throw new UnknownAccountException("usr");
 			}
 		};
 
 		final AuthContext ctx = AuthContext
-				.create(Realm.builder().authenticator(authenticator).withDefaultAuthorizer().build());
+				.create(Realm.builder().withAuthenticator(authenticator).withDefaultAuthorizer().build());
 
 		final SecurityContext sc = new AuthSecurityContext(ctx, false);
 

@@ -184,10 +184,10 @@ public class TestAuthJwt extends JerseyTest5 {
 			Account account = null;
 			if ("a1".equals(id)) {
 				account = Account.builder(id).credentials(Credentials.builder().secret("p1").build()).enabled(true)
-						.permission("R1").permission("R2").build();
+						.withPermission("R1").withPermission("R2").build();
 			} else if ("a2".equals(id)) {
 				account = Account.builder(id).credentials(Credentials.builder().secret("p2").build()).enabled(true)
-						.permission("R1").permission("R3").build();
+						.withPermission("R1").withPermission("R3").build();
 			}
 			return Optional.ofNullable(account);
 		};
@@ -198,9 +198,9 @@ public class TestAuthJwt extends JerseyTest5 {
 				.includePermissions(true).signatureAlgorithm(JwtSignatureAlgorithm.HS256).sharedKey(key.getEncoded())
 				.build();
 
-		final Realm realm = Realm.builder().resolver(AuthenticationToken.httpBearerResolver())
-				.authenticator(Account.authenticator(provider))
-				.authenticator(JwtAuthenticator.builder().configuration(cfg).issuer("AuthIssuer").build())
+		final Realm realm = Realm.builder().withResolver(AuthenticationToken.httpBearerResolver())
+				.withAuthenticator(Account.authenticator(provider))
+				.withAuthenticator(JwtAuthenticator.builder().configuration(cfg).issuer("AuthIssuer").build())
 				.withDefaultAuthorizer().build();
 
 		return new ResourceConfig().register(AuthenticationFeature.class).register(RolesAllowedDynamicFeature.class)
