@@ -57,8 +57,9 @@ public class SubjectEndpoint {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSubject(@PathParam("id") Long id) {
-		return datastore.query().target(TARGET).filter(ID.eq(id)).findOne(SUBJECT).map(p -> Response.ok(p).build())
-					.orElse(Response.status(Status.NOT_FOUND).build());
+		return datastore.query().target(TARGET).filter(ID.eq(id)).findOne(SUBJECT)
+		.map(p -> Response.ok(p).build())
+		.orElse(Response.status(Status.NOT_FOUND).build());
 	}
 
 	@POST
@@ -79,21 +80,19 @@ _JAX-RS API documentation using Swagger:_
 @Path("example")
 @Component
 public class Endpoint {
-
 	/* operations omitted */
-
 }
 ```
 
 _JAX-RS authentication using JWT and Spring Boot:_
-```
+```java
 // application.yml
 holon:
-	jwt:
-		signature-algorithm: HS256
-		sharedkey-base64: eWGZLlCrUjtBZwxgzcLPnA
-		expire-hours: 1
-		issuer: example-issuer
+  jwt:
+    signature-algorithm: HS256
+    sharedkey-base64: eWGZLlCrUjtBZwxgzcLPnA
+    expire-hours: 1
+    issuer: example-issuer
 		
 // Ream with JWT authentication support
 @Bean
