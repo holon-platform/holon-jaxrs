@@ -20,7 +20,171 @@ See the module [documentation](https://docs.holon-platform.com/current/reference
 
 Just like any other platform module, this artifact is part of the [Holon Platform](https://holon-platform.com) ecosystem, but can be also used as a _stand-alone_ library.
 
-See the [platform documentation](https://docs.holon-platform.com/current/reference) for further details.
+See [Getting started](#getting-started) and the [platform documentation](https://docs.holon-platform.com/current/reference) for further details.
+
+## At-a-glance overview
+
+_JAX-RS Property model support:_
+```java
+// Property model
+public interface Subject {
+		
+	static final NumericProperty<Long> ID = NumericProperty.longType("id");
+	static final StringProperty NAME = StringProperty.create("name");
+	static final StringProperty SURNAME = StringProperty.create("surname");
+
+	static final PropertySet<?> SUBJECT = PropertySet.of(ID, NAME, SURNAME);
+		
+	static final DataTarget<?> TARGET = DataTarget.named("subjects");
+
+}
+
+// JAX-RS endpoint
+@Path("/subjects")
+public class SubjectEndpoint {
+
+	@Inject
+	private Datastore datastore;
+		
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<PropertyBox> getSubjects() {
+		return datastore.query().target(TARGET).list(SUBJECT);
+	}
+
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSubject(@PathParam("id") Long id) {
+		return datastore.query().target(TARGET).filter(ID.eq(id)).findOne(SUBJECT).map(p -> Response.ok(p).build())
+					.orElse(Response.status(Status.NOT_FOUND).build());
+	}
+
+	@POST
+	@Path("/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addSubject(@PropertySetRef(Subject.class) PropertyBox subject) {
+		datastore.save(TARGET, subject, DefaultWriteOption.BRING_BACK_GENERATED_IDS);
+		return Response.created(URI.create("/api/subjects/" + subject.getValue(ID))).build();
+	}
+
+}
+```
+
+_JAX-RS API documentation using Swagger:_
+```java
+@ApiDefinition(value = "/api-docs", title = "API Documentation title", version="1.0")
+@Api
+@Path("example")
+@Component
+public class Endpoint {
+
+	/* operations omitted */
+
+}
+```
+
+_JAX-RS authentication using JWT and Spring Boot:_
+```
+// application.yml
+holon:
+	jwt:
+		signature-algorithm: HS256
+		sharedkey-base64: eWGZLlCrUjtBZwxgzcLPnA
+		expire-hours: 1
+		issuer: example-issuer
+		
+// Ream with JWT authentication support
+@Bean
+public Realm realm(JwtConfiguration jwtConfiguration) {
+  return Realm.builder().resolver(AuthenticationToken.httpBearerResolver())
+  	.authenticator(JwtAuthenticator.builder().configuration(jwtConfiguration).build())
+  	.withDefaultAuthorizer().build();
+}
+
+// Protected JAX-RS endpoint
+@Authenticate
+@Path("/api/protected")
+public class ApiEndpoint {
+
+	@RolesAllowed("ROLE1")
+	@GET
+	@Path("/operation")
+	public Response userOperation(@Context SecurityContext securityContext) {
+
+		// principal name
+		String principalName = securityContext.getUserPrincipal().getName();
+		// authentication from JSON Web Token
+		Authentication auth = (Authentication) securityContext.getUserPrincipal();
+
+		return Response.ok(principalName).build();
+	}
+
+}
+```
+
+_JAX-RS RestClient:_
+```java
+RestClient client = RestClient.forTarget("https://host/api");
+		
+Optional<TestData> data = client.request().path("data/{id}").resolve("id", 1)
+	.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
+
+Optional<PropertyBox> value = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).getForEntity(PropertyBox.class);
+
+ResponseEntity<PropertyBox> response = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).get(PropertyBox.class);
+
+List<PropertyBox> values = client.request().path("get_property_boxes_json")
+	.propertySet(SUBJECT).getAsList(PropertyBox.class);
+
+ResponseEntity<Void> postResponse = client.request().path("postbox")
+	.post(RequestEntity.json(PropertyBox.builder(SUBJECT).set(ID, 1).set(NAME, "Test").build()));
+```
+
+_JAX-RS Asynchronous RestClient:_
+```java
+AsyncRestClient client = AsyncRestClient.forTarget("https://host/api");
+		
+CompletionStage<Optional<TestData>> data = client.request().path("data/{id}").resolve("id", 1)
+	.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
+
+CompletionStage<Optional<PropertyBox>> value = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).getForEntity(PropertyBox.class);
+
+CompletionStage<ResponseEntity<PropertyBox>> response = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).get(PropertyBox.class);
+
+CompletionStage<List<PropertyBox>> values = client.request().path("get_property_boxes_json")
+	.propertySet(SUBJECT).getAsList(PropertyBox.class);
+
+CompletionStage<ResponseEntity<Void>> postResponse = client.request().path("postbox")
+	.post(RequestEntity.json(PropertyBox.builder(SUBJECT).set(ID, 1).set(NAME, "Test").build()));
+```
+
+_JAX-RS Reactive RestClient:_
+```java
+ReactiveRestClient client = ReactiveRestClient.forTarget("https://host/api");
+		
+Mono<TestData> data = client.request().path("data/{id}").resolve("id", 1)
+	.accept(MediaType.APPLICATION_JSON).getForEntity(TestData.class);
+
+Mono<PropertyBox> value = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).getForEntity(PropertyBox.class);
+
+Mono<ReactiveResponseEntity<PropertyBox>> response = client.request().path("get_property_box_json")
+	.propertySet(SUBJECT).get(PropertyBox.class);
+
+Flux<PropertyBox> values = client.request().path("get_property_boxes_json")
+	.propertySet(SUBJECT).getAsList(PropertyBox.class);
+
+Mono<ReactiveResponseEntity<Void>> postResponse = client.request().path("postbox")
+	.post(RequestEntity.json(PropertyBox.builder(SUBJECT).set(ID, 1).set(NAME, "Test").build()));
+```
+
+See the [module documentation](https://docs.holon-platform.com/current/reference/holon-jaxrs.html) for the user guide and a full set of examples.
 
 ## Code structure
 
