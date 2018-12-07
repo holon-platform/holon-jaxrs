@@ -9,11 +9,11 @@
 		<version>5.2.0-beta1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>holon-jaxrs-swagger</artifactId>
+	<artifactId>holon-jaxrs-swagger-v3</artifactId>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon JAX-RS Swagger integration</description>
+	<description>Holon JAX-RS Swagger V3 integration</description>
 
 	<url>https://holon-platform.com</url>
 
@@ -49,11 +49,18 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- Holon auth -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-auth</artifactId>
+			<version>${holon.core.version}</version>
+		</dependency>
+
 		<!-- Swagger jax-rs -->
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jaxrs</artifactId>
-			<version>${swagger.version}</version>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2</artifactId>
+			<version>${swagger.v3.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.ws.rs</groupId>
@@ -189,14 +196,12 @@
 			<version>${resteasy.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-spring-boot-jersey</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
@@ -215,7 +220,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>com.holonplatform.jaxrs.swagger</Automatic-Module-Name>
+							<Automatic-Module-Name>com.holonplatform.jaxrs.swagger.v3</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>

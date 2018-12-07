@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -77,6 +79,8 @@
 
 		<!-- Swagger -->
 		<swagger.version>1.5.21</swagger.version>
+		<!-- Swagger V3 -->
+		<swagger.v3.version>2.0.6</swagger.v3.version>
 
 		<!-- ByteBuddy -->
 		<bytebuddy.version>1.9.5</bytebuddy.version>
@@ -92,7 +96,9 @@
 		<module>client-reactor</module>
 		<module>server</module>
 		<module>spring-security</module>
+		<module>swagger-core</module>
 		<module>swagger</module>
+		<module>swagger-v3</module>
 		<module>spring-boot-client</module>
 		<module>spring-boot-jersey</module>
 		<module>spring-boot-resteasy</module>
