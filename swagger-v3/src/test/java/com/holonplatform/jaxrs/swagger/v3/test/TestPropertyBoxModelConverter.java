@@ -18,6 +18,7 @@ package com.holonplatform.jaxrs.swagger.v3.test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.jaxrs.swagger.v3.OpenAPIContextListener;
 import com.holonplatform.jaxrs.swagger.v3.test.TestJerseyPropertyBoxModelConverter.Config;
 
 import io.swagger.v3.core.util.Yaml;
@@ -119,16 +121,17 @@ public class TestPropertyBoxModelConverter {
 
 		final SwaggerConfiguration configuration = new SwaggerConfiguration();
 		configuration.setOpenAPI(new OpenAPI().info(new Info().title("Test PropertyBox")));
-		// configuration.setModelConverterClassess(Collections.singleton(PropertyBoxModelConverter.class.getName()));
-
-		// ModelConverters.getInstance().addConverter(new PropertyBoxModelConverter());
-
+		
+		Set<Class<?>> classes = new HashSet<>();
+		classes.add(TestResource1.class);
+		classes.add(OpenAPIContextListener.class);
+		
 		Reader reader = new Reader(new SwaggerConfiguration());
-		OpenAPI openAPI = reader.read(TestResource1.class);
+		OpenAPI openAPI = reader.read(classes);
 
 		assertNotNull(openAPI);
 
-		System.err.println(Yaml.mapper().writeValueAsString(openAPI));
+		//System.err.println(Yaml.mapper().writeValueAsString(openAPI));
 
 	}
 

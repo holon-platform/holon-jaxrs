@@ -15,8 +15,9 @@
  */
 package com.holonplatform.jaxrs.swagger.v3;
 
-import com.holonplatform.jaxrs.swagger.v3.internal.DefaultOpenAPIContextListener;
+import com.holonplatform.jaxrs.swagger.v3.internal.OpenAPIResolutionContext;
 
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.ReaderListener;
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -25,14 +26,25 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * @since 5.2.0
  */
-public interface OpenAPIContextListener extends ReaderListener {
+public class OpenAPIContextListener implements ReaderListener {
 
-	/**
-	 * Get the default {@link OpenAPIContextListener}.
-	 * @return the default {@link OpenAPIContextListener}
+	/*
+	 * (non-Javadoc)
+	 * @see io.swagger.v3.jaxrs2.ReaderListener#beforeScan(io.swagger.v3.jaxrs2.Reader,
+	 * io.swagger.v3.oas.models.OpenAPI)
 	 */
-	static OpenAPIContextListener getDefault() {
-		return new DefaultOpenAPIContextListener();
+	@Override
+	public void beforeScan(Reader reader, OpenAPI openAPI) {
+		OpenAPIResolutionContext.setOpenAPI(openAPI);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see io.swagger.v3.jaxrs2.ReaderListener#afterScan(io.swagger.v3.jaxrs2.Reader, io.swagger.v3.oas.models.OpenAPI)
+	 */
+	@Override
+	public void afterScan(Reader reader, OpenAPI openAPI) {
+		OpenAPIResolutionContext.setOpenAPI(null);
 	}
 
 }
