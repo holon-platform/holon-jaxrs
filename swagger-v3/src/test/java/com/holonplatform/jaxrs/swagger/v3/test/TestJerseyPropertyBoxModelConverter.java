@@ -15,27 +15,23 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.core.property.NumericProperty;
-import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.jaxrs.LogConfig;
+import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.test.JerseyTest5;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -56,24 +52,8 @@ public class TestJerseyPropertyBoxModelConverter extends JerseyTest5 {
 		client = JerseyClientBuilder.createClient();
 	}
 
-	public static class Config {
-
-		public static final NumericProperty<Integer> ID = NumericProperty.integerType("id");
-		public static final StringProperty NAME = StringProperty.create("name");
-
-		public static final PropertySet<?> PROPERTIES = PropertySet.of(ID, NAME);
-
-	}
-
 	@Path("resource1")
-	public static class TestResource1 {
-
-		@GET
-		@Path("test")
-		@Produces(MediaType.APPLICATION_JSON)
-		public PropertyBox test() {
-			return PropertyBox.builder(Config.PROPERTIES).set(Config.ID, 1).build();
-		}
+	static class TestResource1 extends AbstractTestResource {
 
 	}
 
@@ -108,15 +88,15 @@ public class TestJerseyPropertyBoxModelConverter extends JerseyTest5 {
 
 		return config;
 	}
-	
+
 	@Override
 	protected Client getClient() {
 		return client;
 	}
-	
+
 	@Test
 	public void testPropertyBoxModel() {
-		
+		assertNotNull(getClient());
 	}
 
 }
