@@ -37,7 +37,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeResolver;
+import com.holonplatform.jaxrs.swagger.v3.internal.types.SwaggerTypeUtils;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -62,7 +62,7 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 
 	public PropertyModelOpenAPIExtension() {
 		super();
-		// register PropertyBox model converter
+		// register model converters
 		ModelConverters.getInstance().addConverter(new PropertyBoxModelConverter());
 	}
 
@@ -214,7 +214,7 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 			return true;
 		}
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
-			return getReturnTypeArgument(method).flatMap(t -> PropertyBoxTypeResolver.getClassFromType(t))
+			return getReturnTypeArgument(method).flatMap(t -> SwaggerTypeUtils.getClassFromType(t))
 					.map(t -> PropertyBox.class.isAssignableFrom(t)).orElse(false);
 		}
 		if (Response.class.isAssignableFrom(method.getReturnType())) {

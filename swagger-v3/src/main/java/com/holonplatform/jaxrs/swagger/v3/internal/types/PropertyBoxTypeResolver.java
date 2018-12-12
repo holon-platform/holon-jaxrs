@@ -16,7 +16,6 @@
 package com.holonplatform.jaxrs.swagger.v3.internal.types;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +24,8 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.ArrayType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 
 /**
  * Resolver for {@link PropertyBox} types.
@@ -38,8 +35,6 @@ import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 public final class PropertyBoxTypeResolver implements Serializable {
 
 	private static final long serialVersionUID = 2742561717417145267L;
-
-	private static final Logger LOGGER = SwaggerLogger.create();
 
 	/**
 	 * Whether Jackson databind is available from classpath of current ClassLoader
@@ -79,13 +74,13 @@ public final class PropertyBoxTypeResolver implements Serializable {
 		}
 		// single
 		if (PropertyBox.class == type) {
-			Class<?> cls = getClassFromType(type).orElse(null);
+			Class<?> cls = SwaggerTypeUtils.getClassFromType(type).orElse(null);
 			if (cls != null) {
 				// check container
 				Class<?> elementType = null;
 				if (List.class.isAssignableFrom(cls) || Set.class.isAssignableFrom(cls)
 						|| Optional.class.isAssignableFrom(cls)) {
-					elementType = getParametrizedType(cls).orElse(null);
+					elementType = SwaggerTypeUtils.getParametrizedType(cls).orElse(null);
 				}
 				if (elementType != null && PropertyBox.class.isAssignableFrom(elementType)) {
 					if (List.class.isAssignableFrom(cls)) {
@@ -150,51 +145,6 @@ public final class PropertyBoxTypeResolver implements Serializable {
 				javaType.getRawClass().getAnnotations();
 				return Optional.of(i);
 			}
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Try to obtain the generic type argument, if given class is a parametrized type.
-	 * @param cls The class
-	 * @return Optional generic type argument
-	 */
-	public static Optional<Class<?>> getParametrizedType(Class<?> cls) {
-		try {
-			for (Type gt : cls.getGenericInterfaces()) {
-				if (gt instanceof ParameterizedType) {
-					final Type[] types = ((ParameterizedType) gt).getActualTypeArguments();
-					if (types != null && types.length > 0) {
-						return getClassFromType(types[0]);
-					}
-				}
-			}
-			if (cls.getGenericSuperclass() instanceof ParameterizedType) {
-				final Type[] types = ((ParameterizedType) cls.getGenericSuperclass()).getActualTypeArguments();
-				if (types != null && types.length > 0) {
-					return getClassFromType(types[0]);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.warn("Failed to detect parametrized type for class [" + cls + "]", e);
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Get the Class which corresponds to given type, if available.
-	 * @param type The type
-	 * @return Optional type class
-	 */
-	public static Optional<Class<?>> getClassFromType(Type type) {
-		if (type instanceof Class<?>) {
-			return Optional.of((Class<?>) type);
-		}
-		try {
-			return Optional.ofNullable(Class.forName(type.getTypeName()));
-		} catch (Exception e) {
-			LOGGER.warn("Failed to obtain a Class from Type name [" + type.getTypeName() + "]: " + e.getMessage());
 		}
 		return Optional.empty();
 	}

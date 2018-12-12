@@ -69,7 +69,7 @@ public class TestPropertyBoxModelConverter {
 
 		assertNotNull(api);
 		assertNotNull(api.getPaths());
-		assertEquals(17, api.getPaths().size());
+		assertEquals(23, api.getPaths().size());
 
 		validateModel1(validateOperationResponse(api, "/resource1/test1"));
 		validateModel1(validateOperationBody(api, "/resource1/test2"));

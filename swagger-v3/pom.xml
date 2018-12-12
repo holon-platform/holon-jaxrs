@@ -56,6 +56,13 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
+		<!-- Holon JSON -->
+		<dependency>
+			<groupId>com.holon-platform.json</groupId>
+			<artifactId>holon-json</artifactId>
+			<version>${holon.json.version}</version>
+		</dependency>
+
 		<!-- Swagger jax-rs -->
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
