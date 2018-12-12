@@ -29,11 +29,10 @@ import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.jaxrs.swagger.v3.internal.OpenAPIContextAdapter;
+import com.holonplatform.jaxrs.swagger.v3.internal.DefaultOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.model.EnumValue;
 
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -62,8 +61,7 @@ public class TestOpenAPIContextAdapter {
 		ResourceConfig config = new ResourceConfig();
 		config.register(TestResource1.class);
 
-		OpenApiContext openApiContext = new OpenAPIContextAdapter(
-				new JaxrsOpenApiContextBuilder<>().application(config).buildContext(false)).init();
+		OpenApiContext openApiContext = new DefaultOpenApiContextBuilder().application(config).buildContext(true);
 
 		OpenAPI api = openApiContext.read();
 		validateApi(api);
