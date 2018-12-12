@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,9 +25,14 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.i18n.LocalizationContext;
+import com.holonplatform.core.internal.BuiltinValidator;
 import com.holonplatform.core.internal.Logger;
+import com.holonplatform.core.internal.ValidatorDescriptor;
 import com.holonplatform.core.internal.property.PropertySetRefIntrospector;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
+import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.property.CollectionProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -124,9 +130,9 @@ public class PropertyBoxModelConverter implements ModelConverter {
 						final String name = apiModel.value().trim();
 						// check defined
 						if (!context.getDefinedModels().containsKey(name)) {
-							Schema<Object> schema = buildPropertyBoxSchema(propertySet, resolver, false);
 							// define model
-							schema.setName(name);
+							Schema<Object> schema = buildPropertyBoxSchema(propertySet, resolver, false);
+							schema.setTitle(name);
 							if (AnnotationUtils.getStringValue(apiModel.description()) != null) {
 								schema.setDescription(apiModel.description());
 							}
@@ -182,13 +188,14 @@ public class PropertyBoxModelConverter implements ModelConverter {
 
 	/**
 	 * Resolve the Schema properties for given {@link PropertySet}.
+	 * @param parent Parent Schema
 	 * @param propertySet The property set
 	 * @param resolver The property type resolver
 	 * @param includeReadOnly Whether to include read-only properties in schema
 	 * @return The resolved schema properties
 	 */
 	@SuppressWarnings("rawtypes")
-	private static Map<String, Schema> resolveSchemaProperties(PropertySet<?> propertySet,
+	private static Map<String, Schema> resolveSchemaProperties(Schema<?> parent, PropertySet<?> propertySet,
 			Function<AnnotatedType, Schema<?>> resolver, boolean includeReadOnly) {
 		Map<String, Schema> properties = new LinkedHashMap<>();
 		for (Property<?> property : propertySet) {
@@ -199,7 +206,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 							.propertyName(name).skipOverride(true).skipSchemaName(true);
 					Schema<?> schema = resolver.apply(type);
 					if (schema != null) {
-						properties.put(name, schema);
+						properties.put(name, configureProperty(parent, schema, property, name));
 					} else {
 						LOGGER.warn("Failed to resolve Schema for PropertySet property [" + property + "]");
 					}
@@ -208,6 +215,65 @@ public class PropertyBoxModelConverter implements ModelConverter {
 
 		}
 		return properties;
+	}
+
+	private static Schema<?> configureProperty(Schema<?> parent, Schema<?> schema, Property<?> property, String name) {
+		// read only
+		if (property.isReadOnly()) {
+			schema.setReadOnly(Boolean.TRUE);
+		}
+		// title
+		String message = LocalizationContext.translate(property, true);
+		if (message != null) {
+			schema.setTitle(message);
+		}
+		// validators
+		property.getValidators().forEach(v -> {
+			if (v instanceof BuiltinValidator) {
+				((BuiltinValidator<?>) v).getDescriptor().ifPresent(d -> {
+					configurePropertyValidation(parent, schema, property, name, d);
+				});
+			}
+		});
+		return schema;
+	}
+
+	private static void configurePropertyValidation(Schema<?> parent, Schema<?> schema, Property<?> property,
+			String name, ValidatorDescriptor d) {
+		// required
+		if (d.isRequired() && parent != null) {
+			parent.addRequiredItem(name);
+		}
+		// min
+		if (d.getMin() != null) {
+			if (TypeUtils.isNumber(property.getType())) {
+				schema.setMinimum(new BigDecimal(d.getMin().doubleValue()));
+				schema.setExclusiveMinimum(d.isExclusiveMin());
+			} else if (TypeUtils.isString(property.getType())) {
+				schema.setMinLength(d.isExclusiveMin() ? d.getMin().intValue() + 1 : d.getMin().intValue());
+			} else if (CollectionProperty.class.isAssignableFrom(property.getClass())) {
+				schema.setMinItems(d.isExclusiveMin() ? d.getMin().intValue() + 1 : d.getMin().intValue());
+			}
+		}
+		// max
+		if (d.getMax() != null) {
+			if (TypeUtils.isNumber(property.getType())) {
+				schema.setMaximum(new BigDecimal(d.getMax().doubleValue()));
+				schema.setExclusiveMaximum(d.isExclusiveMax());
+			} else if (TypeUtils.isString(property.getType())) {
+				schema.setMaxLength(d.isExclusiveMax() ? d.getMax().intValue() - 1 : d.getMax().intValue());
+			} else if (CollectionProperty.class.isAssignableFrom(property.getClass())) {
+				schema.setMaxItems(d.isExclusiveMax() ? d.getMax().intValue() - 1 : d.getMax().intValue());
+			}
+		}
+		// pattern
+		if (d.getPattern() != null) {
+			schema.setPattern(d.getPattern());
+		}
+		// email
+		if (d.isEmail()) {
+			schema.setFormat("email");
+		}
 	}
 
 	/**
@@ -222,7 +288,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 		final Schema<Object> model = new Schema<>();
 		model.setType("object");
 		model.setTitle("PropertyBox");
-		model.setProperties(resolveSchemaProperties(propertySet, resolver, includeReadOnly));
+		model.setProperties(resolveSchemaProperties(model, propertySet, resolver, includeReadOnly));
 		return model;
 	}
 

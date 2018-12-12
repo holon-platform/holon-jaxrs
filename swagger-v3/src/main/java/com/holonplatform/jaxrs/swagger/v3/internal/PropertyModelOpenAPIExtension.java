@@ -18,12 +18,16 @@ package com.holonplatform.jaxrs.swagger.v3.internal;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
+
+import javax.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.property.PropertySetRefIntrospector;
@@ -33,12 +37,12 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeResolver;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -73,23 +77,26 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 		final ApiResponses responses = operation.getResponses();
 		if (responses != null) {
 			if (responses.getDefault() != null || !responses.isEmpty()) {
-				// get the property set
-				final PropertySet<?> propertySet = getResponsePropertySet(method)
-						.map(ref -> PropertySetRefIntrospector.get().getPropertySet(ref)).orElse(null);
-				if (propertySet != null) {
-					final Optional<ApiPropertySetModel> apiModel = getResponsePropertySetModel(method);
-					if (responses.getDefault() != null) {
-						parseResponse(propertySet, apiModel, responses.getDefault());
-					}
-					responses.values().forEach(response -> {
-						if (response != null) {
-							parseResponse(propertySet, apiModel, response);
+				// check type
+				if (isPropertyBoxResponseType(method)) {
+					// get the property set
+					final PropertySet<?> propertySet = getResponsePropertySet(method)
+							.map(ref -> PropertySetRefIntrospector.get().getPropertySet(ref)).orElse(null);
+					if (propertySet != null) {
+						final Optional<ApiPropertySetModel> apiModel = getResponsePropertySetModel(method);
+						if (responses.getDefault() != null) {
+							parseResponse(propertySet, apiModel, responses.getDefault());
 						}
-					});
-				} else {
-					LOGGER.warn("Failed to obtain a PropertySet to build the PropertyBox Schema for method ["
-							+ method.getName() + "] response in class [" + method.getDeclaringClass().getName()
-							+ "]. Please check the @PropertySetRef annotation.");
+						responses.values().forEach(response -> {
+							if (response != null) {
+								parseResponse(propertySet, apiModel, response);
+							}
+						});
+					} else {
+						LOGGER.warn("Failed to obtain a PropertySet to build the PropertyBox Schema for method ["
+								+ method.getName() + "] response in class [" + method.getDeclaringClass().getName()
+								+ "]. Please check the @PropertySetRef annotation.");
+					}
 				}
 			}
 		}
@@ -164,11 +171,16 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 				// build and define
 				Schema<Object> schema = PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver,
 						includeReadOnly);
-				schema.setName(name);
+				schema.setTitle(name);
 				if (description != null) {
 					schema.setDescription(description);
 				}
-				defineSchema(openAPI, schema);
+				// add schema to include
+				OpenAPIResolutionContext.getSchemas().ifPresent(schemas -> {
+					if (!schemas.containsKey(name)) {
+						schemas.put(name, schema);
+					}
+				});
 			}
 			return true;
 		}).orElse(false);
@@ -190,20 +202,41 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 	}
 
 	/**
-	 * Add given schema definition to the provided OpenAPI instance.
-	 * @param openAPI The OpenAPI instance
-	 * @param schema The schema to add
+	 * Checks whether to method return type should be parsed as a {@link PropertyBox} type.
+	 * @param method The method
+	 * @return <code>true</code> if is a {@link PropertyBox} response type
 	 */
-	private static void defineSchema(OpenAPI openAPI, Schema<?> schema) {
-		if (openAPI != null && schema != null) {
-			if (openAPI.getComponents() == null) {
-				openAPI.setComponents(new Components());
-			}
-			if (openAPI.getComponents().getSchemas() == null) {
-				openAPI.getComponents().setSchemas(new LinkedHashMap<>());
-			}
-			openAPI.getComponents().getSchemas().put(schema.getName(), schema);
+	private static boolean isPropertyBoxResponseType(Method method) {
+		if (PropertyBox.class.isAssignableFrom(method.getReturnType())) {
+			return true;
 		}
+		if (PropertyBox[].class.isAssignableFrom(method.getReturnType())) {
+			return true;
+		}
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			return getReturnTypeArgument(method).flatMap(t -> PropertyBoxTypeResolver.getClassFromType(t))
+					.map(t -> PropertyBox.class.isAssignableFrom(t)).orElse(false);
+		}
+		if (Response.class.isAssignableFrom(method.getReturnType())) {
+			return getAnnotation(method.getAnnotatedReturnType(), PropertySetRef.class).isPresent();
+		}
+		return false;
+	}
+
+	/**
+	 * Get the first type argument of the method return type, if present.
+	 * @param method The method
+	 * @return Optional first type argument of the method return type
+	 */
+	private static Optional<Type> getReturnTypeArgument(Method method) {
+		Type returnType = method.getGenericReturnType();
+		if (returnType != null && returnType instanceof ParameterizedType) {
+			Type[] typeArguments = ((ParameterizedType) returnType).getActualTypeArguments();
+			if (typeArguments != null && typeArguments.length > 0) {
+				return Optional.ofNullable(typeArguments[0]);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**

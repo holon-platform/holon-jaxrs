@@ -15,9 +15,13 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Current OpenAPI resolution context.
@@ -27,6 +31,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 public final class OpenAPIResolutionContext {
 
 	private static final ThreadLocal<OpenAPI> _openAPI = new ThreadLocal<>();
+	private static final ThreadLocal<Map<String, Schema<?>>> _schemas = new ThreadLocal<>();
 
 	private OpenAPIResolutionContext() {
 	}
@@ -40,11 +45,48 @@ public final class OpenAPIResolutionContext {
 	}
 
 	/**
+	 * Get the current schemas.
+	 * @return Optional current schemas
+	 */
+	public static Optional<Map<String, Schema<?>>> getSchemas() {
+		return Optional.ofNullable(_schemas.get());
+	}
+
+	/**
 	 * Set the current {@link OpenAPI} instance.
 	 * @param openAPI The {@link OpenAPI} instance to set
 	 */
 	public static void setOpenAPI(OpenAPI openAPI) {
 		_openAPI.set(openAPI);
+		_schemas.set(new LinkedHashMap<>());
+	}
+
+	/**
+	 * Removes the current {@link OpenAPI} instance.
+	 */
+	public static void removeOpenAPI() {
+		_openAPI.set(null);
+		_schemas.set(new LinkedHashMap<>());
+	}
+
+	/**
+	 * Include current schemas in current OpenAPI, if any
+	 */
+	public static void includeSchemas() {
+		getOpenAPI().ifPresent(openAPI -> {
+			getSchemas().ifPresent(schemas -> {
+				if (openAPI.getComponents() != null) {
+					if (openAPI.getComponents().getSchemas() == null) {
+						openAPI.getComponents().setSchemas(new LinkedHashMap<>());
+					}
+					for (Entry<String, Schema<?>> entry : schemas.entrySet()) {
+						if (!openAPI.getComponents().getSchemas().containsKey(entry.getKey())) {
+							openAPI.getComponents().getSchemas().put(entry.getKey(), entry.getValue());
+						}
+					}
+				}
+			});
+		});
 	}
 
 }

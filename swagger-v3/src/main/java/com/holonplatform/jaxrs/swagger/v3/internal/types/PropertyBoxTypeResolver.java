@@ -159,23 +159,24 @@ public final class PropertyBoxTypeResolver implements Serializable {
 	 * @param cls The class
 	 * @return Optional generic type argument
 	 */
-	private static Optional<Class<?>> getParametrizedType(Class<?> cls) {
+	public static Optional<Class<?>> getParametrizedType(Class<?> cls) {
 		try {
 			for (Type gt : cls.getGenericInterfaces()) {
 				if (gt instanceof ParameterizedType) {
 					final Type[] types = ((ParameterizedType) gt).getActualTypeArguments();
 					if (types != null && types.length > 0) {
-						return Optional.of((Class<?>) types[0]);
+						return getClassFromType(types[0]);
 					}
 				}
 			}
 			if (cls.getGenericSuperclass() instanceof ParameterizedType) {
 				final Type[] types = ((ParameterizedType) cls.getGenericSuperclass()).getActualTypeArguments();
 				if (types != null && types.length > 0) {
-					return Optional.of((Class<?>) types[0]);
+					return getClassFromType(types[0]);
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.warn("Failed to detect parametrized type for class [" + cls + "]", e);
 		}
 		return Optional.empty();
@@ -186,7 +187,10 @@ public final class PropertyBoxTypeResolver implements Serializable {
 	 * @param type The type
 	 * @return Optional type class
 	 */
-	private static Optional<Class<?>> getClassFromType(Type type) {
+	public static Optional<Class<?>> getClassFromType(Type type) {
+		if (type instanceof Class<?>) {
+			return Optional.of((Class<?>) type);
+		}
 		try {
 			return Optional.ofNullable(Class.forName(type.getTypeName()));
 		} catch (Exception e) {

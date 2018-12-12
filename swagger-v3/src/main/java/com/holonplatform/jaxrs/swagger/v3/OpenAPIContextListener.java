@@ -44,7 +44,8 @@ public class OpenAPIContextListener implements ReaderListener {
 	 */
 	@Override
 	public void afterScan(Reader reader, OpenAPI openAPI) {
-		OpenAPIResolutionContext.setOpenAPI(null);
+		OpenAPIResolutionContext.includeSchemas();
+		OpenAPIResolutionContext.removeOpenAPI();
 	}
 
 }
