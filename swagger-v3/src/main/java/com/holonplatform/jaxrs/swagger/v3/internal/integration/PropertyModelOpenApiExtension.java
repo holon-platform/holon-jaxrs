@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal;
+package com.holonplatform.jaxrs.swagger.v3.internal.integration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedArrayType;
@@ -37,6 +37,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiResolutionContext;
 import com.holonplatform.jaxrs.swagger.v3.internal.types.SwaggerTypeUtils;
 
@@ -57,11 +58,11 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
  * 
  * @since 5.2.0
  */
-public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
+public class PropertyModelOpenApiExtension extends AbstractOpenAPIExtension {
 
 	private static final Logger LOGGER = SwaggerLogger.create();
 
-	public PropertyModelOpenAPIExtension() {
+	public PropertyModelOpenApiExtension() {
 		super();
 		// register model converters
 		ModelConverters.getInstance().addConverter(new PropertyBoxModelConverter());

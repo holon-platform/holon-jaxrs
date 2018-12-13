@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal;
+package com.holonplatform.jaxrs.swagger.v3.internal.integration;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -41,6 +41,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.internal.resolver.SwaggerPropertySetSerializationTreeResolver;
 import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeResolver;
@@ -108,7 +109,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	}
 
 	/**
-	 * Get the Schema to use to delegate the actual resolution to the {@link PropertyModelOpenAPIExtension}.
+	 * Get the Schema to use to delegate the actual resolution to the {@link PropertyModelOpenApiExtension}.
 	 * @return Delgate resolution schema
 	 */
 	private static Schema<Object> delegateToExtensionResolution() {
