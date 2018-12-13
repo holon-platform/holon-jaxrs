@@ -47,10 +47,10 @@ public class TestOpenApiContextAdapter {
 		final SwaggerConfiguration configuration = new SwaggerConfiguration();
 		configuration.setOpenAPI(new OpenAPI().info(new Info().title("Title of " + id).version("1")));
 
-		ResourceConfig application = new ResourceConfig();
+		final ResourceConfig application = new ResourceConfig();
 		application.register(TestResource1.class);
 
-		OpenApiContext openApiContext = OpenApi.adapt(new JaxrsOpenApiContextBuilder<>().application(application)
+		final OpenApiContext openApiContext = OpenApi.adapt(new JaxrsOpenApiContextBuilder<>().application(application)
 				.openApiConfiguration(configuration).ctxId(id).buildContext(true));
 
 		assertTrue(OpenApi.getOpenApiContext(id).isPresent());
@@ -68,11 +68,11 @@ public class TestOpenApiContextAdapter {
 		final SwaggerConfiguration configuration = new SwaggerConfiguration();
 		configuration.setOpenAPI(new OpenAPI().info(new Info().title("Title of " + id).version("1")));
 
-		ResourceConfig application = new ResourceConfig();
+		final ResourceConfig application = new ResourceConfig();
 		application.register(TestResource1.class);
 
-		OpenApiContext openApiContext = OpenApi.contextBuilder().application(application).configuration(configuration)
-				.contextId(id).build(true);
+		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application)
+				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		TestPropertyBoxModelConverter.validateApi(api, "Title of " + id);
