@@ -17,6 +17,7 @@ package com.holonplatform.jaxrs.swagger.v3.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
@@ -64,13 +65,23 @@ public class TestPropertyBoxModelConverter {
 
 		Reader reader = new Reader(configuration);
 		OpenAPI api = reader.read(classes);
-		validateApi(api);
+		validateApi(api, "Test PropertyBox");
 
 	}
 
-	public static void validateApi(OpenAPI api) {
+	public static void validateApi(OpenAPI api, String title) {
 
 		assertNotNull(api);
+
+		if (title == null) {
+			if (api.getInfo() != null) {
+				assertNull(api.getInfo().getTitle());
+			}
+		} else {
+			assertNotNull(api.getInfo());
+			assertEquals(title, api.getInfo().getTitle());
+		}
+
 		assertNotNull(api.getPaths());
 		assertEquals(23, api.getPaths().size());
 
@@ -100,7 +111,7 @@ public class TestPropertyBoxModelConverter {
 
 	}
 
-	private static Schema<?> validateOperationResponse(OpenAPI api, String path) {
+	public static Schema<?> validateOperationResponse(OpenAPI api, String path) {
 		assertTrue(api.getPaths().containsKey(path));
 		PathItem item = api.getPaths().get(path);
 		assertNotNull(item);
@@ -117,7 +128,7 @@ public class TestPropertyBoxModelConverter {
 		return mt.getSchema();
 	}
 
-	private static Schema<?> validateOperationResponseArray(OpenAPI api, String path, boolean uniqueItems) {
+	public static Schema<?> validateOperationResponseArray(OpenAPI api, String path, boolean uniqueItems) {
 		assertTrue(api.getPaths().containsKey(path));
 		PathItem item = api.getPaths().get(path);
 		assertNotNull(item);
@@ -140,7 +151,7 @@ public class TestPropertyBoxModelConverter {
 		return ((ArraySchema) array).getItems();
 	}
 
-	private static Schema<?> validateOperationBody(OpenAPI api, String path) {
+	public static Schema<?> validateOperationBody(OpenAPI api, String path) {
 		assertTrue(api.getPaths().containsKey(path));
 		PathItem item = api.getPaths().get(path);
 		assertNotNull(item);
@@ -155,7 +166,7 @@ public class TestPropertyBoxModelConverter {
 		return mt.getSchema();
 	}
 
-	private static void validateStringPlainResponse(OpenAPI api, String path) {
+	public static void validateStringPlainResponse(OpenAPI api, String path) {
 		assertTrue(api.getPaths().containsKey(path));
 		PathItem item = api.getPaths().get(path);
 		assertNotNull(item);
@@ -180,7 +191,7 @@ public class TestPropertyBoxModelConverter {
 		assertTrue(schema.get$ref().endsWith("TestData"));
 	}
 
-	private static void validateModel1(Schema<?> schema) {
+	public static void validateModel1(Schema<?> schema) {
 		validateModel1(schema, "PropertyBox");
 	}
 
@@ -200,7 +211,7 @@ public class TestPropertyBoxModelConverter {
 		assertEquals("string", property.getType());
 	}
 
-	private static void validateModel2(Schema<?> schema) {
+	public static void validateModel2(Schema<?> schema) {
 		validateModel2(schema, "PropertyBox");
 	}
 

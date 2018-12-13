@@ -17,13 +17,51 @@
 
 	<url>https://holon-platform.com</url>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- Holon core platform -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-bom-platform</artifactId>
+				<version>${holon.core.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- Holon JSON platform -->
+			<dependency>
+				<groupId>com.holon-platform.json</groupId>
+				<artifactId>holon-json-bom-platform</artifactId>
+				<version>${holon.json.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+
 		<!-- Holon core -->
 		<dependency>
 			<groupId>com.holon-platform.core</groupId>
 			<artifactId>holon-core</artifactId>
 			<version>${holon.core.version}</version>
 		</dependency>
+
+		<!-- ByteBuddy -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>${bytebuddy.version}</version>
+		</dependency>
+
+		<!-- Optional Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
 	</dependencies>
 
 	<build>

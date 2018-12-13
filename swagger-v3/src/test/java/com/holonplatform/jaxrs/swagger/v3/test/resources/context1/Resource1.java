@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Axioma srl.
+ * Copyright 2016-2018 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,26 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.internal;
+package com.holonplatform.jaxrs.swagger.v3.test.resources.context1;
 
-import com.holonplatform.core.internal.Logger;
-import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
+import javax.ws.rs.Path;
 
-/**
- * Swagger integration {@link Logger}.
- *
- * @since 5.0.0
- */
-public interface SwaggerLogger {
+import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 
-	final static String NAME = SwaggerExtensions.class.getPackage().getName();
-
-	/**
-	 * Get a {@link Logger} bound to {@link #NAME}.
-	 * @return Logger
-	 */
-	static Logger create() {
-		return Logger.create(NAME);
-	}
+@Path("resource1")
+public class Resource1 extends AbstractTestResource {
 
 }

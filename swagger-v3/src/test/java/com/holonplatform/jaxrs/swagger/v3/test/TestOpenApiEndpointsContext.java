@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.swagger.v3.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
@@ -32,13 +33,12 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.AcceptHeaderOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.QueryParamOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 import com.holonplatform.test.JerseyTest5;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
-public class TestOpenApiEndpoints extends JerseyTest5 {
+public class TestOpenApiEndpointsContext extends JerseyTest5 {
 
 	private static Client client;
 
@@ -48,23 +48,19 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		client = JerseyClientBuilder.createClient();
 	}
 
-	@Path("resource1")
-	static class Resource1 extends AbstractTestResource {
-
-	}
-
+	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpointsContext.1", configLocation = "test_openapi_config_3.yml")
 	@Path("openapi/query")
 	static class QueryOpenApiEndpoint extends QueryParamOpenApiEndpoint {
 
 	}
 
-	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.1", configLocation = "test_openapi_config_1.yml")
+	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpointsContext.2", configLocation = "test_openapi_config_4.yml")
 	@Path("/openapi.{type:json|yaml}")
 	static class PathOpenApiEndpoint extends PathParamOpenApiEndpoint {
 
 	}
 
-	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.2", configLocation = "test_openapi_config_2.yml")
+	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpointsContext.3", configLocation = "test_openapi_config_5.yml")
 	@Path("openapi/accept")
 	static class AcceptOpenApiEndpoint extends AcceptHeaderOpenApiEndpoint {
 
@@ -72,19 +68,15 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 
 	@Override
 	protected Application configure() {
-		return new ResourceConfig().register(Resource1.class).register(QueryOpenApiEndpoint.class)
-				.register(PathOpenApiEndpoint.class).register(AcceptOpenApiEndpoint.class);
+		return new ResourceConfig()
+				// .register(Resource1.class).register(Resource2.class).register(Resource3.class)
+				.register(QueryOpenApiEndpoint.class).register(PathOpenApiEndpoint.class)
+				.register(AcceptOpenApiEndpoint.class);
 	}
 
 	@Override
 	protected Client getClient() {
 		return client;
-	}
-
-	@Test
-	public void testResource() {
-		String value = target("/resource1/test10").request().get(String.class);
-		assertEquals("test", value);
 	}
 
 	@SuppressWarnings("resource")
@@ -93,15 +85,15 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// dft
 		Response response = target("/openapi/query").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		TestPropertyBoxModelConverter.validateApi(api, "Test file config 3");
 		// json
 		response = target("/openapi/query").queryParam("type", "json").request().get();
 		api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		TestPropertyBoxModelConverter.validateApi(api, "Test file config 3");
 		// yaml
 		response = target("/openapi/query").queryParam("type", "yaml").request().get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		TestPropertyBoxModelConverter.validateApi(api, "Test file config 3");
 	}
 
 	@SuppressWarnings("resource")
@@ -110,11 +102,11 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// json
 		Response response = target("/openapi.json").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 1");
+		validateContextApi(api, "/resource2/test21", "Test file config 4");
 		// yaml
 		response = target("/openapi.yaml").request().get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 1");
+		validateContextApi(api, "/resource2/test21", "Test file config 4");
 	}
 
 	@SuppressWarnings("resource")
@@ -123,11 +115,23 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// json
 		Response response = target("/openapi/accept").request().accept("application/json").get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 2");
+		validateContextApi(api, "/resource3/test31", "Test file config 5");
 		// yaml
 		response = target("/openapi/accept").request().accept("application/yaml").get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 2");
+		validateContextApi(api, "/resource3/test31", "Test file config 5");
+	}
+
+	private static void validateContextApi(OpenAPI api, String path, String title) {
+		assertNotNull(api);
+		assertNotNull(api.getInfo());
+		assertEquals(title, api.getInfo().getTitle());
+
+		assertNotNull(api.getPaths());
+		assertEquals(1, api.getPaths().size());
+
+		TestPropertyBoxModelConverter
+				.validateModel1(TestPropertyBoxModelConverter.validateOperationResponse(api, path));
 	}
 
 }

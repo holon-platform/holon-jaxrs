@@ -20,8 +20,8 @@ import java.util.Set;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
-import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.oas.integration.GenericOpenApiContext;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 Holon TDCN.
+ * Copyright 2016-2017 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,32 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger;
+package com.holonplatform.jaxrs.swagger.internal;
+
+import com.holonplatform.core.internal.Logger;
+import com.holonplatform.jaxrs.swagger.ApiContext;
 
 /**
- * Enumeration of Swagger extension properties.
- * 
+ * Swagger integration {@link Logger}.
+ *
  * @since 5.0.0
  */
-public enum SwaggerExtensions {
+public interface SwaggerLogger {
+
+	final static String NAME = ApiContext.class.getPackage().getName();
 
 	/**
-	 * Model object type
+	 * Get a {@link Logger} bound to {@link #NAME}.
+	 * @return Logger
 	 */
-	MODEL_TYPE("x-holon-model-type");
-
-	private final String extensionName;
-
-	private SwaggerExtensions(String extensionName) {
-		this.extensionName = extensionName;
-	}
-
-	/**
-	 * Get the extension name.
-	 * @return the extension name
-	 */
-	public String getExtensionName() {
-		return extensionName;
+	static Logger create() {
+		return Logger.create(NAME);
 	}
 
 }

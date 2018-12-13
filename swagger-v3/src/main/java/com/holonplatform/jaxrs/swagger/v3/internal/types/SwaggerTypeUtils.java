@@ -21,7 +21,7 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 import com.holonplatform.core.internal.Logger;
-import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 
 /**
  * Type handling utility class.

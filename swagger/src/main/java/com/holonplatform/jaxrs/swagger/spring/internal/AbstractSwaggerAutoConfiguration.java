@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.holonplatform.jaxrs.swagger.exceptions.SwaggerConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
@@ -75,12 +75,12 @@ public class AbstractSwaggerAutoConfiguration extends AbstractSwaggerConfigurato
 					}
 					// check duplicate group id
 					if (isGroupIdPresent(definitions, groupId)) {
-						throw new SwaggerConfigurationException("Duplicate API group id: " + groupId
+						throw new ApiContextConfigurationException("Duplicate API group id: " + groupId
 								+ ". Check the application configuration properties.");
 					}
 					// check valid configuration
 					if (group.getResourcePackage() == null || group.getResourcePackage().trim().equals("")) {
-						throw new SwaggerConfigurationException("Invalid API group definition [" + groupId
+						throw new ApiContextConfigurationException("Invalid API group definition [" + groupId
 								+ "]: missing resource-package declaration. Check the application configuration properties.");
 					}
 					definitions.add(ApiListingDefinition.create(groupId, configurationProperties, group));

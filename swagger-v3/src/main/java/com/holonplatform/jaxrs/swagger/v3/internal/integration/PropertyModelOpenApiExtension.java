@@ -35,9 +35,9 @@ import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
-import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiResolutionContext;
 import com.holonplatform.jaxrs.swagger.v3.internal.types.SwaggerTypeUtils;
 

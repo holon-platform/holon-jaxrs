@@ -1,0 +1,7 @@
+resourcePackages:
+- com.holonplatform.jaxrs.swagger.v3.test.resources.context2
+openAPI:
+  info:
+    version: '1.0'
+    title: 'Test file config 4'
+ 

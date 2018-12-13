@@ -15,12 +15,18 @@
  */
 package com.holonplatform.jaxrs.swagger.v3;
 
+import java.util.Optional;
+
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
+import com.holonplatform.jaxrs.swagger.v3.internal.builders.DefaultJaxrsOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextAdapter;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextListener;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiReaderAdapter;
 
 import io.swagger.v3.jaxrs2.ReaderListener;
+import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.integration.api.OpenApiReader;
 
@@ -60,6 +66,35 @@ public interface OpenApi {
 	 */
 	static OpenApiContext adapt(OpenApiContext context) {
 		return new OpenApiContextAdapter(context);
+	}
+
+	/**
+	 * Get a builder to create and configure an {@link OpenApiContext}.
+	 * @return A new {@link JaxrsOpenApiContextBuilder}
+	 */
+	static JaxrsOpenApiContextBuilder contextBuilder() {
+		return new DefaultJaxrsOpenApiContextBuilder();
+	}
+
+	/**
+	 * Get the {@link OpenApiContext} with given context id, if available from current context locator.
+	 * @param contextId The context id (not null)
+	 * @return Optional {@link OpenApiContext} with given context id
+	 */
+	static Optional<OpenApiContext> getOpenApiContext(String contextId) {
+		ObjectUtils.argumentNotNull(contextId, "Context id must be not null");
+		return Optional.ofNullable(OpenApiContextLocator.getInstance().getOpenApiContext(contextId));
+	}
+
+	/**
+	 * Set the {@link OpenApiContext} for given context id, using current context locator.
+	 * @param contextId The context id (not null)
+	 * @param context The context to set (not null)
+	 */
+	static void setOpenApiContext(String contextId, OpenApiContext context) {
+		ObjectUtils.argumentNotNull(contextId, "Context id must be not null");
+		ObjectUtils.argumentNotNull(context, "Context must be not null");
+		OpenApiContextLocator.getInstance().putOpenApiContext(contextId, context);
 	}
 
 }

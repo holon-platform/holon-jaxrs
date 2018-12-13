@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 Holon TDCN.
+ * Copyright 2016-2018 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,19 +16,22 @@
 package com.holonplatform.jaxrs.swagger.exceptions;
 
 /**
- * Exception related to Swagger configuration errors.
+ * Exception used to notify API context configuration errors.
+ * <p>
+ * Note that this is a runtime (unchecked) exception.
+ * </p>
  * 
- * @since 5.0.0
+ * @since 5.2.0
  */
-public class SwaggerConfigurationException extends RuntimeException {
+public class ApiContextConfigurationException extends RuntimeException {
 
-	private static final long serialVersionUID = -8967770894565415208L;
+	private static final long serialVersionUID = -8177866905469601637L;
 
 	/**
 	 * Constructor with error message
 	 * @param message Error message
 	 */
-	public SwaggerConfigurationException(String message) {
+	public ApiContextConfigurationException(String message) {
 		super(message);
 	}
 
@@ -36,7 +39,7 @@ public class SwaggerConfigurationException extends RuntimeException {
 	 * Constructor with nested exception
 	 * @param cause Nested exception
 	 */
-	public SwaggerConfigurationException(Throwable cause) {
+	public ApiContextConfigurationException(Throwable cause) {
 		super(cause);
 	}
 
@@ -45,7 +48,7 @@ public class SwaggerConfigurationException extends RuntimeException {
 	 * @param message Error message
 	 * @param cause Nested exception
 	 */
-	public SwaggerConfigurationException(String message, Throwable cause) {
+	public ApiContextConfigurationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
