@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.annotations;
+package com.holonplatform.jaxrs.swagger.v3.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,7 +22,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 
+import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
+
+/**
+ * Annotation which can be used on OpenAPI listing endpoints to declare a context id and to setup the OpenAPI context.
+ * 
+ * @since 5.2.0
+ */
 @Target({ ElementType.TYPE, ElementType.PACKAGE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -43,5 +51,11 @@ public @interface ApiEndpoint {
 	 * @return The API configuration file location
 	 */
 	String configLocation() default "";
+
+	/**
+	 * Get the {@link JaxrsOpenApiScanner} scanner type to use to configure the API context for this endpoint.
+	 * @return the {@link JaxrsOpenApiScanner} scanner type
+	 */
+	JaxrsScannerType scannerType() default JaxrsScannerType.DEFAULT;
 
 }

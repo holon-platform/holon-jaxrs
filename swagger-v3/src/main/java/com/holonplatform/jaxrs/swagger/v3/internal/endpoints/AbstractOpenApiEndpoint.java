@@ -16,7 +16,6 @@
 package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -34,10 +32,11 @@ import org.apache.commons.lang3.StringUtils;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
-import com.holonplatform.jaxrs.swagger.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
 
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
@@ -64,8 +63,17 @@ public abstract class AbstractOpenApiEndpoint {
 		// build context
 		final OpenApiContext openApiContext;
 		try {
-			openApiContext = OpenApi.contextBuilder().contextId(contextId).application(application)
-					.configLocation(getConfigLocation().orElse(null)).build(true);
+			openApiContext = OpenApi.contextBuilder()
+					// context id
+					.contextId(contextId)
+					// JAX-RS Application
+					.application(application)
+					// config location
+					.configLocation(getConfigLocation().orElse(null))
+					// scanner type
+					.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
+					// build and init
+					.build(true);
 		} catch (ApiContextConfigurationException ce) {
 			LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -95,8 +103,8 @@ public abstract class AbstractOpenApiEndpoint {
 				OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class
 						.forName(openApiContext.getOpenApiConfiguration().getFilterClass()).newInstance();
 				SpecFilter f = new SpecFilter();
-				oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
-						getHeaders(headers));
+				oas = f.filter(oas, filterImpl, Collections.unmodifiableMap(uriInfo.getQueryParameters()),
+						getCookies(headers), Collections.unmodifiableMap(headers.getRequestHeaders()));
 			} catch (Exception e) {
 				LOGGER.error("failed to load filter", e);
 			}
@@ -155,22 +163,31 @@ public abstract class AbstractOpenApiEndpoint {
 		return Optional.empty();
 	}
 
-	// ------- helpers
-
-	private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
-		return Collections.unmodifiableMap(params);
+	/**
+	 * Get the {@link JaxrsScannerType} to use for this endpoint, if available.
+	 * <p>
+	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
+	 * </p>
+	 * @return Optional {@link JaxrsScannerType}
+	 */
+	protected Optional<JaxrsScannerType> getJaxrsScannerType() {
+		if (getClass().isAnnotationPresent(ApiEndpoint.class)) {
+			return Optional.ofNullable(getClass().getAnnotation(ApiEndpoint.class).scannerType());
+		}
+		return Optional.empty();
 	}
 
+	/**
+	 * Get a cookie name-value map.
+	 * @param headers The headers
+	 * @return Cookie name-value map
+	 */
 	private static Map<String, String> getCookies(HttpHeaders headers) {
 		if (headers != null) {
 			return headers.getCookies().entrySet().stream()
 					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getValue()));
 		}
 		return Collections.emptyMap();
-	}
-
-	private static Map<String, List<String>> getHeaders(HttpHeaders headers) {
-		return Collections.unmodifiableMap(headers.getRequestHeaders());
 	}
 
 }

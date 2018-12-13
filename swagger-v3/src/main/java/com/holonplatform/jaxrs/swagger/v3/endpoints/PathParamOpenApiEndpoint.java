@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
+package com.holonplatform.jaxrs.swagger.v3.endpoints;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PathParam;
@@ -24,6 +24,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.AbstractOpenApiEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
 

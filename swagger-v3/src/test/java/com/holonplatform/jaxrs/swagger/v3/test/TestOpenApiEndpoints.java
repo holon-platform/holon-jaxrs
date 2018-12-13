@@ -28,10 +28,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
-import com.holonplatform.jaxrs.swagger.annotations.ApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.AcceptHeaderOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.PathParamOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.QueryParamOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 import com.holonplatform.test.JerseyTest5;
@@ -58,13 +59,13 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 
 	}
 
-	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.1", configLocation = "test_openapi_config_1.yml")
+	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.1", configLocation = "test_openapi_config_1.yml", scannerType = JaxrsScannerType.APPLICATION)
 	@Path("/openapi.{type:json|yaml}")
 	static class PathOpenApiEndpoint extends PathParamOpenApiEndpoint {
 
 	}
 
-	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.2", configLocation = "test_openapi_config_2.yml")
+	@ApiEndpoint(value = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiEndpoints.2", configLocation = "test_openapi_config_2.yml", scannerType = JaxrsScannerType.APPLICATION)
 	@Path("openapi/accept")
 	static class AcceptOpenApiEndpoint extends AcceptHeaderOpenApiEndpoint {
 
