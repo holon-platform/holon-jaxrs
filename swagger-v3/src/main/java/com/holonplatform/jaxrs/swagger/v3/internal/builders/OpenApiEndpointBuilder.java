@@ -26,8 +26,10 @@ import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
 import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
@@ -57,7 +59,8 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 	 * ApiEndpointConfiguration)
 	 */
 	@Override
-	public Class<?> build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration) {
+	public Class<?> build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration)
+			throws ApiContextConfigurationException {
 		ObjectUtils.argumentNotNull(configuration, "ApiEndpointConfiguration must be not null");
 		// type
 		final Class<?> endpointClass;
@@ -74,23 +77,40 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 			break;
 		}
 		// context id
-		Optional<String> contextId = configuration.getContextId();
-		if (!contextId.isPresent()) {
+		Optional<String> ctxId = configuration.getContextId();
+		if (!ctxId.isPresent()) {
 			// check option
-			contextId = getConfigurationOption(configuration, ApiContext.CONFIGURATION_OPTION_CONTEXT_ID);
-			if (!contextId.isPresent()) {
+			ctxId = getConfigurationOption(configuration, ApiContext.CONFIGURATION_OPTION_CONTEXT_ID);
+			if (!ctxId.isPresent()) {
 				// check swagger id
-				contextId = getSwaggerConfigurationContextId(configuration);
+				ctxId = getSwaggerConfigurationContextId(configuration);
 			}
 		}
+		final String contextId = ctxId.orElse(ApiContext.DEFAULT_CONTEXT_ID);
 		// path
 		String path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
+
+		// build API context
+		configuration.getConfiguration().ifPresent(cfg -> {
+			configuration.getApplication().ifPresent(application -> {
+				OpenApi.contextBuilder()
+						// context id
+						.contextId(contextId)
+						// JAX-RS Application
+						.application(application)
+						// config location
+						.configLocation(configuration.getConfigurationLocation().orElse(null))
+						// scanner type
+						.scannerType(JaxrsScannerType.APPLICATION)
+						// build and init
+						.build(true);
+			});
+		});
 
 		// build endpoint class
 		DynamicType.Builder<?> builder = new ByteBuddy().subclass(endpointClass)
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
-				.annotateType(AnnotationDescription.Builder.ofType(ApiEndpoint.class)
-						.define("value", contextId.orElse(ApiContext.DEFAULT_CONTEXT_ID))
+				.annotateType(AnnotationDescription.Builder.ofType(ApiEndpoint.class).define("value", contextId)
 						.define("configLocation", configuration.getConfigurationLocation().orElse(""))
 						.define("scannerType", JaxrsScannerType.APPLICATION).build());
 		return builder.make().load(configuration.getClassLoader().orElseGet(() -> ClassUtils.getDefaultClassLoader()),

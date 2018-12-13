@@ -18,6 +18,8 @@ package com.holonplatform.jaxrs.swagger;
 import java.io.Serializable;
 import java.util.Optional;
 
+import javax.ws.rs.core.Application;
+
 /**
  * API listing endpoint configuration.
  *
@@ -32,6 +34,12 @@ public interface ApiEndpointConfiguration<C> extends Serializable {
 	 * @return Optional ClassLoader
 	 */
 	Optional<ClassLoader> getClassLoader();
+
+	/**
+	 * Get the JAX-RS application.
+	 * @return Optional JAX-RS application
+	 */
+	Optional<Application> getApplication();
 
 	/**
 	 * Get the API endpoint type.
