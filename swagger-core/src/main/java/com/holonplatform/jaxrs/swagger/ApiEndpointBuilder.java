@@ -16,30 +16,19 @@
 package com.holonplatform.jaxrs.swagger;
 
 /**
- * API definitions context attributes.
+ * API listing endpoint builder.
+ *
+ * @param <C> API configuration type
  *
  * @since 5.2.0
  */
-public interface ApiContext {
+public interface ApiEndpointBuilder<C> {
 
 	/**
-	 * Default context id.
+	 * Build a JAX-RS API listing endpoint using given <code>configuration</code>.
+	 * @param configuration The API endpoint configuration (not null)
+	 * @return The JAX-RS API listing endpoint class
 	 */
-	public static final String DEFAULT_CONTEXT_ID = "openapi.context.id.default";
-
-	/**
-	 * Default API endpoint JAX-RS path.
-	 */
-	public static final String DEFAULT_API_ENDPOINT_PATH = "/api-docs";
-
-	/**
-	 * API configuration option to declare the API context id.
-	 */
-	public static final String CONFIGURATION_OPTION_CONTEXT_ID = ApiContext.class.getName() + ".option.contextId";
-
-	/**
-	 * API configuration option to declare the JAX-RS API endpoint path.
-	 */
-	public static final String CONFIGURATION_OPTION_PATH = ApiContext.class.getName() + ".option.path";
+	Class<?> build(ApiEndpointConfiguration<? extends C> configuration);
 
 }
