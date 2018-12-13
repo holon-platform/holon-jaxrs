@@ -68,7 +68,7 @@ public class TestPropertyBoxModelConverter {
 
 	}
 
-	private static void validateApi(OpenAPI api) {
+	public static void validateApi(OpenAPI api) {
 
 		assertNotNull(api);
 		assertNotNull(api.getPaths());
