@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
+import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
@@ -119,10 +120,10 @@ public abstract class AbstractOpenApiEndpoint {
 	 * <p>
 	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
 	 * </p>
-	 * @return the context id, or the default {@link OpenApiContext#OPENAPI_CONTEXT_ID_DEFAULT} value if not available
+	 * @return the context id, or the default {@link ApiContext#DEFAULT_CONTEXT_ID} value if not available
 	 */
 	protected String getContextIdOrDefault() {
-		return getContextId().orElse(OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT);
+		return getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
 	}
 
 	/**

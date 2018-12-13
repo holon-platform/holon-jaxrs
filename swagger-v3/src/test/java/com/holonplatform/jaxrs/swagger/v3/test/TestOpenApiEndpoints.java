@@ -28,6 +28,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.AcceptHeaderOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.QueryParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
@@ -50,14 +52,25 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 
 	}
 
-	@Path("openapi")
-	static class OpenApiEndpoint extends QueryParamOpenApiEndpoint {
+	@Path("openapi/query")
+	static class QueryOpenApiEndpoint extends QueryParamOpenApiEndpoint {
+
+	}
+
+	@Path("/openapi.{type:json|yaml}")
+	static class PathOpenApiEndpoint extends PathParamOpenApiEndpoint {
+
+	}
+
+	@Path("openapi/accept")
+	static class AcceptOpenApiEndpoint extends AcceptHeaderOpenApiEndpoint {
 
 	}
 
 	@Override
 	protected Application configure() {
-		return new ResourceConfig().register(Resource1.class).register(OpenApiEndpoint.class);
+		return new ResourceConfig().register(Resource1.class).register(QueryOpenApiEndpoint.class)
+				.register(PathOpenApiEndpoint.class).register(AcceptOpenApiEndpoint.class);
 	}
 
 	@Override
@@ -73,17 +86,43 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void testOpenApi() {
+	public void testOpenApiQueryParam() {
 		// dft
-		Response response = target("/openapi").request().get();
+		Response response = target("/openapi/query").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
 		TestPropertyBoxModelConverter.validateApi(api);
 		// json
-		response = target("/openapi").queryParam("type", "json").request().get();
+		response = target("/openapi/query").queryParam("type", "json").request().get();
 		api = OpenAPIEndpointUtils.readAsJson(response);
 		TestPropertyBoxModelConverter.validateApi(api);
 		// yaml
-		response = target("/openapi").queryParam("type", "yaml").request().get();
+		response = target("/openapi/query").queryParam("type", "yaml").request().get();
+		api = OpenAPIEndpointUtils.readAsYaml(response);
+		TestPropertyBoxModelConverter.validateApi(api);
+	}
+
+	@SuppressWarnings("resource")
+	@Test
+	public void testOpenApiPathParam() {
+		// json
+		Response response = target("/openapi.json").request().get();
+		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
+		TestPropertyBoxModelConverter.validateApi(api);
+		// yaml
+		response = target("/openapi.yaml").request().get();
+		api = OpenAPIEndpointUtils.readAsYaml(response);
+		TestPropertyBoxModelConverter.validateApi(api);
+	}
+
+	@SuppressWarnings("resource")
+	@Test
+	public void testOpenApiAcceptHeader() {
+		// json
+		Response response = target("/openapi/accept").request().accept("application/json").get();
+		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
+		TestPropertyBoxModelConverter.validateApi(api);
+		// yaml
+		response = target("/openapi/accept").request().accept("application/yaml").get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
 		TestPropertyBoxModelConverter.validateApi(api);
 	}
