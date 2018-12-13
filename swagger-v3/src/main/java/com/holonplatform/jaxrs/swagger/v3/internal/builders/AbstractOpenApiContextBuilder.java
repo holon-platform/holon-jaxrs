@@ -145,11 +145,12 @@ public abstract class AbstractOpenApiContextBuilder<B extends OpenApiContextBuil
 	@Override
 	public OpenApiContext build(boolean initialize) throws ApiContextConfigurationException {
 		try {
-			OpenApiContext context = contextBuilder.buildContext(false);
+			OpenApiContext context = configure(contextBuilder.buildContext(false));
 			if (reader != null) {
 				context.setOpenApiReader(reader);
 			}
 			if (scanner != null) {
+				scanner.setConfiguration(contextBuilder.getOpenApiConfiguration());
 				context.setOpenApiScanner(scanner);
 			}
 			if (initialize) {
@@ -159,6 +160,10 @@ public abstract class AbstractOpenApiContextBuilder<B extends OpenApiContextBuil
 		} catch (OpenApiConfigurationException e) {
 			throw new ApiContextConfigurationException("Failed to initialize OpenAPI context", e);
 		}
+	}
+
+	protected OpenApiContext configure(OpenApiContext context) {
+		return context;
 	}
 
 }

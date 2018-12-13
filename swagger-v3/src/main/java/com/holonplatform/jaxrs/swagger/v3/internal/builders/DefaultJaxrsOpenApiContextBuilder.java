@@ -17,7 +17,12 @@ package com.holonplatform.jaxrs.swagger.v3.internal.builders;
 
 import javax.ws.rs.core.Application;
 
+import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
+
+import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 
 /**
  * Default {@link JaxrsOpenApiContextBuilder} implementation.
@@ -50,6 +55,38 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 	public JaxrsOpenApiContextBuilder application(Application application) {
 		getContextBuilder().application(application);
 		return getBuilder();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder#scannerType(com.holonplatform.jaxrs.
+	 * swagger.v3.JaxrsScannerType)
+	 */
+	@Override
+	public JaxrsOpenApiContextBuilder scannerType(JaxrsScannerType scannerType) {
+		final JaxrsScannerType type = (scannerType != null) ? scannerType : JaxrsScannerType.DEFAULT;
+		return type.getScannerClass().map(sc -> {
+			try {
+				return scanner(sc.newInstance());
+			} catch (Exception e) {
+				throw new ApiContextConfigurationException(
+						"Failed to instantiate the scanner class [" + sc.getName() + "]", e);
+			}
+		}).orElseGet(() -> getBuilder());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.v3.internal.builders.AbstractOpenApiContextBuilder#configure(io.swagger.v3.oas.
+	 * integration.api.OpenApiContext)
+	 */
+	@Override
+	protected OpenApiContext configure(OpenApiContext context) {
+		if (scanner != null && scanner instanceof JaxrsOpenApiScanner) {
+			((JaxrsOpenApiScanner) scanner).setApplication(getContextBuilder().getApplication());
+		}
+		return context;
 	}
 
 }

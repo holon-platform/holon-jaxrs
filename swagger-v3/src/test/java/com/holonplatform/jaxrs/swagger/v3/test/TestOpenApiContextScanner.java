@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsApplicationResourcesScanner;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
@@ -98,7 +99,7 @@ public class TestOpenApiContextScanner {
 		validateApi(api, "Title of " + id, 24);
 
 	}
-	
+
 	@Test
 	public void testApplicationScannerConfigPackages() {
 
@@ -127,7 +128,7 @@ public class TestOpenApiContextScanner {
 		validateApi(api, "Title of " + id, 1);
 
 	}
-	
+
 	@Test
 	public void testApplicationScannerConfigPackagesMulti() {
 
@@ -158,7 +159,28 @@ public class TestOpenApiContextScanner {
 
 	}
 
-	public static void validateApi(OpenAPI api, String title, int pathsCount) {
+	@Test
+	public void testScannerType() {
+
+		final String id = TestOpenApiContextScanner.class.getName() + "_5";
+
+		final SwaggerConfiguration configuration = new SwaggerConfiguration();
+		configuration.setOpenAPI(new OpenAPI().info(new Info().title("Title of " + id).version("1")));
+
+		final ResourceConfig application = new ResourceConfig();
+		application.register(TestResource1.class);
+		application.register(Resource2.class);
+		application.register(Resource3.class);
+
+		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application)
+				.configuration(configuration).contextId(id).scannerType(JaxrsScannerType.APPLICATION).build(true);
+
+		OpenAPI api = openApiContext.read();
+		validateApi(api, "Title of " + id, 25);
+
+	}
+
+	private static void validateApi(OpenAPI api, String title, int pathsCount) {
 
 		assertNotNull(api);
 

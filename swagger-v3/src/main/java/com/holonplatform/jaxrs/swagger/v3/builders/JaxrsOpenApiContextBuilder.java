@@ -17,6 +17,8 @@ package com.holonplatform.jaxrs.swagger.v3.builders;
 
 import javax.ws.rs.core.Application;
 
+import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+
 /**
  * JAX-RS {@link OpenApiContextBuilder}.
  *
@@ -30,5 +32,12 @@ public interface JaxrsOpenApiContextBuilder extends OpenApiContextBuilder<JaxrsO
 	 * @return this
 	 */
 	JaxrsOpenApiContextBuilder application(Application application);
+
+	/**
+	 * Set the scanner type to use.
+	 * @param scannerType The scanner type to set
+	 * @return this
+	 */
+	JaxrsOpenApiContextBuilder scannerType(JaxrsScannerType scannerType);
 
 }
