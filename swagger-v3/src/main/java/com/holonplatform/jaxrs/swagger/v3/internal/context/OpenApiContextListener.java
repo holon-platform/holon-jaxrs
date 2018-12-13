@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3;
-
-import com.holonplatform.jaxrs.swagger.v3.internal.OpenAPIResolutionContext;
+package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.ReaderListener;
@@ -26,7 +24,7 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * @since 5.2.0
  */
-public class OpenAPIContextListener implements ReaderListener {
+public class OpenApiContextListener implements ReaderListener {
 
 	/*
 	 * (non-Javadoc)
@@ -35,7 +33,7 @@ public class OpenAPIContextListener implements ReaderListener {
 	 */
 	@Override
 	public void beforeScan(Reader reader, OpenAPI openAPI) {
-		OpenAPIResolutionContext.setOpenAPI(openAPI);
+		OpenApiResolutionContext.setOpenAPI(openAPI);
 	}
 
 	/*
@@ -44,8 +42,8 @@ public class OpenAPIContextListener implements ReaderListener {
 	 */
 	@Override
 	public void afterScan(Reader reader, OpenAPI openAPI) {
-		OpenAPIResolutionContext.includeSchemas();
-		OpenAPIResolutionContext.removeOpenAPI();
+		OpenApiResolutionContext.includeSchemas();
+		OpenApiResolutionContext.removeOpenAPI();
 	}
 
 }

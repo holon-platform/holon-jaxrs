@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.jaxrs.swagger.v3.OpenAPIContextListener;
+import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.model.EnumValue;
 
@@ -60,7 +60,7 @@ public class TestPropertyBoxModelConverter {
 
 		Set<Class<?>> classes = new HashSet<>();
 		classes.add(TestResource1.class);
-		classes.add(OpenAPIContextListener.class);
+		classes.add(OpenApi.CONTEXT_READER_LISTENER);
 
 		Reader reader = new Reader(configuration);
 		OpenAPI api = reader.read(classes);
@@ -387,7 +387,7 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(property);
 		assertEquals("boolean", property.getType());
 	}
-	
+
 	private static void validateSet2(Schema<?> schema) {
 		assertNotNull(schema);
 		assertEquals("object", schema.getType());
@@ -447,7 +447,7 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(property);
 		assertEquals("number", property.getType());
 	}
-	
+
 	private static void validateSet3(Schema<?> schema) {
 		assertNotNull(schema);
 		assertEquals("object", schema.getType());
@@ -480,7 +480,7 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(property);
 		assertEquals("string", property.getType());
 	}
-	
+
 	private static void validateSet4(Schema<?> schema) {
 		assertNotNull(schema);
 		assertEquals("object", schema.getType());
@@ -537,7 +537,7 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(property);
 		assertEquals("number", property.getType());
 	}
-	
+
 	private static void validateSet5(Schema<?> schema) {
 		assertNotNull(schema);
 		assertEquals("object", schema.getType());
@@ -550,11 +550,11 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(property);
 		assertEquals("array", property.getType());
 		assertTrue(property instanceof ArraySchema);
-		ArraySchema array = ((ArraySchema)property);
+		ArraySchema array = ((ArraySchema) property);
 		assertNotNull(array.getItems());
 		assertEquals("object", array.getItems().getType());
 		assertNotNull(array.getItems().getProperties());
 		assertEquals(2, array.getItems().getProperties().size());
 	}
-	
+
 }

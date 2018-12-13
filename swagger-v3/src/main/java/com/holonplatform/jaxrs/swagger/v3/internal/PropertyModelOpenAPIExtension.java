@@ -37,6 +37,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiResolutionContext;
 import com.holonplatform.jaxrs.swagger.v3.internal.types.SwaggerTypeUtils;
 
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -165,7 +166,7 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 	 */
 	private static boolean definePropertySetModel(String name, String description, PropertySet<?> propertySet,
 			Function<AnnotatedType, Schema<?>> resolver, boolean includeReadOnly) {
-		return OpenAPIResolutionContext.getOpenAPI().map(openAPI -> {
+		return OpenApiResolutionContext.getOpenAPI().map(openAPI -> {
 			// check already defined
 			if (!hasSchema(openAPI, name)) {
 				// build and define
@@ -176,7 +177,7 @@ public class PropertyModelOpenAPIExtension extends AbstractOpenAPIExtension {
 					schema.setDescription(description);
 				}
 				// add schema to include
-				OpenAPIResolutionContext.getSchemas().ifPresent(schemas -> {
+				OpenApiResolutionContext.getSchemas().ifPresent(schemas -> {
 					if (!schemas.containsKey(name)) {
 						schemas.put(name, schema);
 					}

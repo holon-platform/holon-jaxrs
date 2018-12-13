@@ -16,7 +16,7 @@
 package com.holonplatform.jaxrs.swagger.v3.internal;
 
 import com.holonplatform.core.internal.Logger;
-import com.holonplatform.jaxrs.swagger.v3.OpenAPIContextListener;
+import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextListener;
 
 /**
  * Swagger integration {@link Logger}.
@@ -25,7 +25,7 @@ import com.holonplatform.jaxrs.swagger.v3.OpenAPIContextListener;
  */
 public interface SwaggerLogger {
 
-	final static String NAME = OpenAPIContextListener.class.getPackage().getName();
+	final static String NAME = OpenApiContextListener.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

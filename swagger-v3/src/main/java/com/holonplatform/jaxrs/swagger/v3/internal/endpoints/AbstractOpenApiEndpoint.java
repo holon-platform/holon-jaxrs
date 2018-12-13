@@ -34,13 +34,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.jaxrs.swagger.annotations.ApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.internal.DefaultOpenApiContextBuilder;
+import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.internal.SwaggerLogger;
 
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -63,8 +64,8 @@ public abstract class AbstractOpenApiEndpoint {
 		// build context
 		final OpenApiContext openApiContext;
 		try {
-			openApiContext = new DefaultOpenApiContextBuilder().application(application)
-					.configLocation(getConfigLocation().orElse(null)).ctxId(contextId).buildContext(true);
+			openApiContext = OpenApi.adapt(new JaxrsOpenApiContextBuilder<>().application(application)
+					.configLocation(getConfigLocation().orElse(null)).ctxId(contextId).buildContext(true));
 		} catch (OpenApiConfigurationException ce) {
 			LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)

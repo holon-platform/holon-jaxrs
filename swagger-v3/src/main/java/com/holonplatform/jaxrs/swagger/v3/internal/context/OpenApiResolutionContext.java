@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal;
+package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,12 +28,12 @@ import io.swagger.v3.oas.models.media.Schema;
  *
  * @since 5.2.0
  */
-public final class OpenAPIResolutionContext {
+public final class OpenApiResolutionContext {
 
 	private static final ThreadLocal<OpenAPI> _openAPI = new ThreadLocal<>();
 	private static final ThreadLocal<Map<String, Schema<?>>> _schemas = new ThreadLocal<>();
 
-	private OpenAPIResolutionContext() {
+	private OpenApiResolutionContext() {
 	}
 
 	/**
