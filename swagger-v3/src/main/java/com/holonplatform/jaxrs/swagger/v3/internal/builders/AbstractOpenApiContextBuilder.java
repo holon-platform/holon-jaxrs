@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.builders.OpenApiContextBuilder;
 
@@ -143,7 +143,7 @@ public abstract class AbstractOpenApiContextBuilder<B extends OpenApiContextBuil
 	 * @see com.holonplatform.jaxrs.swagger.v3.builders.OpenApiContextBuilder#build(boolean)
 	 */
 	@Override
-	public OpenApiContext build(boolean initialize) throws ApiContextConfigurationException {
+	public OpenApiContext build(boolean initialize) throws ApiConfigurationException {
 		try {
 			OpenApiContext context = configure(contextBuilder.buildContext(false));
 			if (reader != null) {
@@ -158,7 +158,7 @@ public abstract class AbstractOpenApiContextBuilder<B extends OpenApiContextBuil
 			}
 			return OpenApi.adapt(context);
 		} catch (OpenApiConfigurationException e) {
-			throw new ApiContextConfigurationException("Failed to initialize OpenAPI context", e);
+			throw new ApiConfigurationException("Failed to initialize OpenAPI context", e);
 		}
 	}
 

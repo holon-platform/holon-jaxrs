@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
@@ -74,7 +74,7 @@ public abstract class AbstractOpenApiEndpoint {
 					.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
 					// build and init
 					.build(true);
-		} catch (ApiContextConfigurationException ce) {
+		} catch (ApiConfigurationException ce) {
 			LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
 			return Response.status(Status.INTERNAL_SERVER_ERROR)
 					.entity("Failed to build the OpenAPI context for context id [" + contextId + "]").build();

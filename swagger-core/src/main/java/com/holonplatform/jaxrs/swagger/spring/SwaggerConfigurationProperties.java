@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+
 /**
  * Configuration properties for Swagger auto configuration.
  *
@@ -32,7 +34,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SwaggerConfigurationProperties {
 
 	/**
-	 * Whether to enable Swagger API listing endpoint configuration. Defaults to <code>true</code>.
+	 * Whether to enable the API listing endpoints configuration. Defaults to <code>true</code>.
 	 */
 	private boolean enabled = true;
 
@@ -46,6 +48,12 @@ public class SwaggerConfigurationProperties {
 	 * specified.
 	 */
 	private String path;
+
+	/**
+	 * Get the API endpoint type.
+	 * @since 5.2.0
+	 */
+	private ApiEndpointType type;
 
 	/**
 	 * API supported protocol schemes (e.g. <code>https</code>). Can be overridden by the specific
@@ -122,6 +130,14 @@ public class SwaggerConfigurationProperties {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public ApiEndpointType getType() {
+		return type;
+	}
+
+	public void setType(ApiEndpointType type) {
+		this.type = type;
 	}
 
 	public String[] getSchemes() {
@@ -229,6 +245,12 @@ public class SwaggerConfigurationProperties {
 		private String path;
 
 		/**
+		 * Get the API endpoint type.
+		 * @since 5.2.0
+		 */
+		private ApiEndpointType type;
+
+		/**
 		 * API group supported protocol schemes (e.g. <code>https</code>)
 		 */
 		private String[] schemes;
@@ -290,6 +312,14 @@ public class SwaggerConfigurationProperties {
 
 		public void setPath(String path) {
 			this.path = path;
+		}
+
+		public ApiEndpointType getType() {
+			return type;
+		}
+
+		public void setType(ApiEndpointType type) {
+			this.type = type;
 		}
 
 		public String[] getSchemes() {

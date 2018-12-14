@@ -20,6 +20,8 @@ import java.util.Optional;
 
 import javax.ws.rs.core.Application;
 
+import com.holonplatform.jaxrs.swagger.internal.DefaultApiEndpointConfiguration;
+
 /**
  * API listing endpoint configuration.
  *
@@ -70,5 +72,80 @@ public interface ApiEndpointConfiguration<C> extends Serializable {
 	 * @return Optional API configuration
 	 */
 	Optional<C> getConfiguration();
+
+	// ------- builder
+
+	/**
+	 * Get a builder to create a {@link ApiEndpointConfiguration}.
+	 * @param <C> API configuration type
+	 * @return A new {@link Builder}
+	 */
+	static <C> Builder<C> builder() {
+		return new DefaultApiEndpointConfiguration.DefaultBuilder<>();
+	}
+
+	/**
+	 * {@link ApiEndpointConfiguration} builder.
+	 *
+	 * @param <C> API configuration type
+	 */
+	public interface Builder<C> {
+
+		/**
+		 * Set the API context id to use.
+		 * @param contextId the API context id to set
+		 * @return this
+		 */
+		Builder<C> contextId(String contextId);
+
+		/**
+		 * Set the API endpoint path.
+		 * @param path the API endpoint path to set
+		 * @return this
+		 */
+		Builder<C> path(String path);
+
+		/**
+		 * Set the ClassLoader to use for API endpoints generation.
+		 * @param classLoader The ClassLoader to set
+		 * @return this
+		 */
+		Builder<C> classLoader(ClassLoader classLoader);
+
+		/**
+		 * Set the endpoint type.
+		 * @param type The endpoint type to set
+		 * @return this
+		 */
+		Builder<C> type(ApiEndpointType type);
+
+		/**
+		 * Set the JAX-RS {@link Application} to use.
+		 * @param application the JAX-RS {@link Application} to set
+		 * @return this
+		 */
+		Builder<C> application(Application application);
+
+		/**
+		 * Set the location to use to load the API definition.
+		 * @param configurationLocation the API configuration location to set
+		 * @return this
+		 */
+		Builder<C> configurationLocation(String configurationLocation);
+
+		/**
+		 * Set the API configuration.
+		 * @param configuration the API configuration to set
+		 * @return this
+		 */
+		Builder<C> configuration(C configuration);
+
+		/**
+		 * Build the {@link ApiEndpointConfiguration}.
+		 * @return A new {@link ApiEndpointConfiguration} instance
+		 */
+		ApiEndpointConfiguration<C> build();
+
+	}
 
 }

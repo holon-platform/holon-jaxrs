@@ -41,7 +41,7 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerContext;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
@@ -401,7 +401,7 @@ public class PropertyBoxSwaggerExtension extends AbstractSwaggerExtension {
 			String modelDescription, String modelReference) {
 		if (modelName != null) {
 			if (swagger == null) {
-				throw new ApiContextConfigurationException(
+				throw new ApiConfigurationException(
 						"Cannot define Model with name [" + modelName + "]: missing context Swagger instance");
 			}
 			ModelImpl model = new ModelImpl();

@@ -16,14 +16,14 @@
 package com.holonplatform.jaxrs.swagger.exceptions;
 
 /**
- * Exception used to notify API context configuration errors.
+ * Exception used to notify API configuration errors.
  * <p>
  * Note that this is a runtime (unchecked) exception.
  * </p>
  * 
  * @since 5.2.0
  */
-public class ApiContextConfigurationException extends RuntimeException {
+public class ApiConfigurationException extends RuntimeException {
 
 	private static final long serialVersionUID = -8177866905469601637L;
 
@@ -31,7 +31,7 @@ public class ApiContextConfigurationException extends RuntimeException {
 	 * Constructor with error message
 	 * @param message Error message
 	 */
-	public ApiContextConfigurationException(String message) {
+	public ApiConfigurationException(String message) {
 		super(message);
 	}
 
@@ -39,7 +39,7 @@ public class ApiContextConfigurationException extends RuntimeException {
 	 * Constructor with nested exception
 	 * @param cause Nested exception
 	 */
-	public ApiContextConfigurationException(Throwable cause) {
+	public ApiConfigurationException(Throwable cause) {
 		super(cause);
 	}
 
@@ -48,7 +48,7 @@ public class ApiContextConfigurationException extends RuntimeException {
 	 * @param message Error message
 	 * @param cause Nested exception
 	 */
-	public ApiContextConfigurationException(String message, Throwable cause) {
+	public ApiConfigurationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 

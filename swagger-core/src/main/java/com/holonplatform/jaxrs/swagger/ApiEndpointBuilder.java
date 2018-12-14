@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger;
 
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 
 /**
  * API listing endpoint builder.
@@ -29,9 +29,11 @@ public interface ApiEndpointBuilder<C> {
 	/**
 	 * Build a JAX-RS API listing endpoint using given <code>configuration</code>.
 	 * @param configuration The API endpoint configuration (not null)
-	 * @return The JAX-RS API listing endpoint class
-	 * @throws ApiContextConfigurationException If an error occurred
+	 * @param initContext Whether to init the API context
+	 * @return The API endpoint definition
+	 * @throws ApiConfigurationException If an error occurred
 	 */
-	Class<?> build(ApiEndpointConfiguration<? extends C> configuration) throws ApiContextConfigurationException;
+	ApiEndpointDefinition build(ApiEndpointConfiguration<? extends C> configuration, boolean initContext)
+			throws ApiConfigurationException;
 
 }

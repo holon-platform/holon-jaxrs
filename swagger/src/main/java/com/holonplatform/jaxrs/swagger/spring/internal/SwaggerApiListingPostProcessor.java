@@ -43,7 +43,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 
 import io.swagger.annotations.Api;
@@ -166,7 +166,7 @@ public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConf
 	 * @param path API listing path
 	 * @param resources Resource to validate and merge
 	 * @return Merged resource
-	 * @throws ApiContextConfigurationException If the resources are not mergeable
+	 * @throws ApiConfigurationException If the resources are not mergeable
 	 */
 	private static Optional<ApiResource> validateAndMergeResources(String apiGroupId, String path,
 			Set<ApiResource> resources) {
@@ -225,7 +225,7 @@ public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConf
 			return definition.get();
 		} else {
 			if (definition.get() != null && !Arrays.equals(value, definition.get())) {
-				throw new ApiContextConfigurationException("Invalid Api definitions for the same path [" + path
+				throw new ApiConfigurationException("Invalid Api definitions for the same path [" + path
 						+ "], different " + message + " declarations: [" + value + "] - [" + definition.get() + "]");
 			}
 		}
@@ -237,7 +237,7 @@ public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConf
 			return definition.get();
 		} else {
 			if (definition.get() != null && !value.equals(definition.get())) {
-				throw new ApiContextConfigurationException("Invalid Api definitions for the same path [" + path
+				throw new ApiConfigurationException("Invalid Api definitions for the same path [" + path
 						+ "], different " + message + " declarations: [" + value + "] - [" + definition.get() + "]");
 			}
 		}

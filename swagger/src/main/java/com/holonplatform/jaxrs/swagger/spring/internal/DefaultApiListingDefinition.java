@@ -25,7 +25,7 @@ import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
@@ -313,7 +313,7 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	public ApiListingEndpoint configureEndpoint(ClassLoader classLoader, String basePath) {
 
 		if (!getResourcePackage().isPresent() && getClassesToScan().isEmpty()) {
-			throw new ApiContextConfigurationException(
+			throw new ApiConfigurationException(
 					"Invalid API listing definition: neither resource package nor classes to scan were configured");
 		}
 

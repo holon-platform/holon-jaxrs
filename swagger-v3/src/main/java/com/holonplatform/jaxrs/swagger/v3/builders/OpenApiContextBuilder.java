@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.holonplatform.jaxrs.swagger.exceptions.ApiContextConfigurationException;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -123,8 +123,8 @@ public interface OpenApiContextBuilder<B extends OpenApiContextBuilder<B>> {
 	 * @param initialize Whether to initialize the context, which included the registration in the context locators
 	 *        registry
 	 * @return the OpenAPI context instance
-	 * @throws ApiContextConfigurationException If an error occurred
+	 * @throws ApiConfigurationException If an error occurred
 	 */
-	OpenApiContext build(boolean initialize) throws ApiContextConfigurationException;
+	OpenApiContext build(boolean initialize) throws ApiConfigurationException;
 
 }

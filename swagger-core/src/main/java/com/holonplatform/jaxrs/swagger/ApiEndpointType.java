@@ -43,4 +43,12 @@ public enum ApiEndpointType {
 	 */
 	ACCEPT_HEADER;
 
+	/**
+	 * Get the default API endpoint type.
+	 * @return the default API endpoint type
+	 */
+	public static ApiEndpointType getDefault() {
+		return QUERY_PARAMETER;
+	}
+
 }
