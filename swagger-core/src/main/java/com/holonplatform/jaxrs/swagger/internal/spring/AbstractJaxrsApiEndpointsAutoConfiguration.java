@@ -15,7 +15,9 @@
  */
 package com.holonplatform.jaxrs.swagger.internal.spring;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,7 @@ import javax.ws.rs.core.Application;
 
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -31,7 +34,10 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
 import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
 import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
 
@@ -82,22 +88,11 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	protected abstract Optional<String> getApplicationPath();
 
 	/**
-	 * Get the default API configuration to use when no API configuration is defined.
-	 * @return The default API configuration
+	 * Build an API configuration using given configuration properties.
+	 * @param configurationProperties The API configuration properties
+	 * @return The API configuration
 	 */
-	protected abstract C getDefaultConfiguration();
-
-	/**
-	 * Get the JAX-RS endpoint path.
-	 * @return Optional JAX-RS endpoint path
-	 */
-	protected abstract Optional<String> getEndpointPath(C configuration);
-
-	/**
-	 * Get the API context id.
-	 * @return Optional API context id
-	 */
-	protected abstract Optional<String> getApiContextId(C configuration);
+	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties);
 
 	/**
 	 * Register given endpoint class in the JAX-RS application.
@@ -140,77 +135,188 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	private void registerEndpoints() {
 		final List<C> configurations = this.apiConfigurations.stream().collect(Collectors.toList());
 		if (configurations.isEmpty()) {
-			// default configuration
-			configureAndRegisterEndpoint(getDefaultConfiguration());
+			// default configurations
+			getDefaultConfigurations().entrySet().forEach(e -> {
+				configureAndRegisterEndpoint(e.getValue(), e.getKey());
+			});
 		} else {
 			// use configurations
 			for (C configuration : configurations) {
-				configureAndRegisterEndpoint(configuration);
+				configureAndRegisterEndpoint(configuration, getApiEndpointContextId(configuration));
 			}
 		}
 	}
 
 	/**
+	 * Get the default API configurations from configuration properties.
+	 * @return The contextId - configuration properties, empty if none
+	 */
+	private Map<String, ApiConfigurationProperties> getDefaultConfigurations() {
+		final Map<String, ApiConfigurationProperties> configurations = new HashMap<>();
+		if (configurationProperties.getApiGroups() != null && !configurationProperties.getApiGroups().isEmpty()) {
+			// groups
+			for (ApiGroupConfiguration group : configurationProperties.getApiGroups()) {
+				if (group.getGroupId() != null && !group.getGroupId().trim().equals("")) {
+					final String contextId = group.getGroupId().trim();
+					if (configurations.containsKey(contextId)) {
+						throw new ApiConfigurationException(
+								"Duplicate Swagger API configuration group id: " + contextId);
+					}
+					configurations.put(contextId, group);
+				} else {
+					LOGGER.warn(
+							"At least one API group id definition is missing from Swagger API configuration properties: check the application configuration properties.");
+				}
+			}
+		} else {
+			// default
+			configurations.put(ApiContext.DEFAULT_CONTEXT_ID, configurationProperties);
+		}
+		return configurations;
+	}
+
+	/**
 	 * Register an API listing endpoint using given configuration.
 	 * @param configuration The API configuration
+	 * @param contextId The API context id
 	 */
-	private void configureAndRegisterEndpoint(C configuration) {
-		final ApiEndpointConfiguration.Builder<C> builder = ApiEndpointConfiguration.<C>builder()
-				.configuration(configuration).application(getApplication()).classLoader(classLoader);
-		// context id
-		final String contextId = getApiContextId(configuration).orElse(ApiContext.DEFAULT_CONTEXT_ID);
-		builder.contextId(getApiContextId(configuration).orElse(ApiContext.DEFAULT_CONTEXT_ID));
-		// path
-		final String path = getApiEndpointPath(configuration, contextId);
-		builder.path(path);
-		// type
-		final ApiEndpointType type = getApiEndpointType(configuration, contextId);
-		builder.type(type);
-		final ApiEndpointConfiguration<C> endpointConfiguration = builder.build();
+	private void configureAndRegisterEndpoint(C configuration, String contextId) {
 		// register endpoint
-		registerEndpoint(apiEndpointBuilder.build(endpointConfiguration, true));
+		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
+				// context id
+				.contextId(contextId)
+				// API configuration
+				.configuration(configuration)
+				// JAX-RS application
+				.application(getApplication())
+				// path
+				.path(getApiEndpointPath(configuration, contextId))
+				// type
+				.type(getApiEndpointType(configuration))
+				// classLoader
+				.classLoader(classLoader)
+				// build
+				.build(), true));
 	}
 
+	/**
+	 * Register an API listing endpoint using given configuration properties.
+	 * @param configurationProperties The API configuration properties
+	 * @param contextId The API context id
+	 */
+	private void configureAndRegisterEndpoint(ApiConfigurationProperties configurationProperties, String contextId) {
+		// register endpoint
+		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
+				// context id
+				.contextId(contextId)
+				// API configuration
+				.configuration(buildConfiguration(configurationProperties))
+				// JAX-RS application
+				.application(getApplication())
+				// path
+				.path(getApiEndpointPath(configurationProperties, contextId))
+				// type
+				.type(getApiEndpointType(configurationProperties))
+				// classLoader
+				.classLoader(classLoader)
+				// build
+				.build(), true));
+	}
+
+	/**
+	 * Get the API context id.
+	 * @param configuration The API configuration
+	 * @return the API context id
+	 */
+	private String getApiEndpointContextId(C configuration) {
+		// check annotation
+		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
+				ApiConfiguration.class);
+		if (annotation != null && !"".equals(annotation.contextId())) {
+			return annotation.contextId();
+		}
+		// default
+		return ApiContext.DEFAULT_CONTEXT_ID;
+	}
+
+	/**
+	 * Get the API endpoint path.
+	 * @param configuration The API configuration
+	 * @param contextId The API context id
+	 * @return the API endpoint path
+	 */
 	private String getApiEndpointPath(C configuration, String contextId) {
-		// from configuration
-		Optional<String> path = getEndpointPath(configuration);
-		if (path.isPresent()) {
-			return path.get();
+		// check annotation
+		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
+				ApiConfiguration.class);
+		if (annotation != null && !"".equals(annotation.path())) {
+			return annotation.path();
 		}
-		// using configuration properties
-		if (ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
-			if (configurationProperties.getPath() != null && !configurationProperties.getPath().trim().equals("")) {
-				return configurationProperties.getPath().trim();
-			}
-		} else {
-			path = getApiGroupConfiguration(contextId).map(g -> g.getPath())
-					.filter(p -> p != null && !p.trim().equals(""));
-			if (path.isPresent()) {
-				return path.get();
-			}
-		}
-		return ApiContext.DEFAULT_API_ENDPOINT_PATH;
+		// default
+		return getDefaultApiEndpointPath(contextId);
 	}
 
-	private ApiEndpointType getApiEndpointType(@SuppressWarnings("unused") C configuration, String contextId) {
-		// using configuration properties
-		if (ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
-			if (configurationProperties.getType() != null) {
-				return configurationProperties.getType();
-			}
-		} else {
-			ApiEndpointType type = getApiGroupConfiguration(contextId).map(g -> g.getType()).orElse(null);
-			if (type != null) {
-				return type;
-			}
+	/**
+	 * Get the API endpoint type.
+	 * @param configuration The API configuration
+	 * @return the API endpoint type
+	 */
+	private ApiEndpointType getApiEndpointType(C configuration) {
+		// check annotation
+		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
+				ApiConfiguration.class);
+		if (annotation != null) {
+			return annotation.endpointType();
+		}
+		// default
+		return ApiEndpointType.getDefault();
+	}
+
+	/**
+	 * Get the API endpoint path.
+	 * @param configurationProperties API configuration properties
+	 * @param contextId The API context id
+	 * @return the API endpoint path
+	 */
+	private String getApiEndpointPath(ApiConfigurationProperties configurationProperties, String contextId) {
+		if (configurationProperties.getPath() != null && !configurationProperties.getPath().trim().equals("")) {
+			return configurationProperties.getPath();
+		}
+		return getDefaultApiEndpointPath(contextId);
+	}
+
+	/**
+	 * Get the API endpoint type.
+	 * @param configurationProperties API configuration properties
+	 * @return the API endpoint type
+	 */
+	private static ApiEndpointType getApiEndpointType(ApiConfigurationProperties configurationProperties) {
+		if (configurationProperties.getType() != null) {
+			return configurationProperties.getType();
 		}
 		return ApiEndpointType.getDefault();
 	}
 
-	private Optional<ApiGroupConfiguration> getApiGroupConfiguration(String contextId) {
-		List<ApiGroupConfiguration> groups = configurationProperties.getApiGroups();
-		if (groups != null) {
-			return groups.stream().filter(g -> contextId.equals(g.getGroupId())).findFirst();
+	/**
+	 * Get the default API listing endpoint path.
+	 * @param contextId Optional API context id
+	 * @return the default API listing endpoint path
+	 */
+	protected String getDefaultApiEndpointPath(String contextId) {
+		if (contextId != null && !contextId.trim().equals("") && !ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
+			return ApiContext.DEFAULT_API_ENDPOINT_PATH + "/" + contextId;
+		}
+		return ApiContext.DEFAULT_API_ENDPOINT_PATH;
+	}
+
+	/**
+	 * Get a configuration property value, only if it is not <code>null</code> and not blank.
+	 * @param value The value
+	 * @return Optional configuration property value
+	 */
+	protected static Optional<String> getConfigurationProperty(String value) {
+		if (value != null && !value.trim().equals("")) {
+			return Optional.of(value.trim());
 		}
 		return Optional.empty();
 	}

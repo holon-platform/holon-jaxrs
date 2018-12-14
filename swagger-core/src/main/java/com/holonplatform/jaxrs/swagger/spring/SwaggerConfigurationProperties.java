@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 
 /**
@@ -31,82 +32,116 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointType;
  *      "http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html">http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html</a>
  */
 @ConfigurationProperties(prefix = "holon.swagger")
-public class SwaggerConfigurationProperties {
+public class SwaggerConfigurationProperties implements ApiConfigurationProperties {
 
 	/**
-	 * Whether to enable the API listing endpoints configuration. Defaults to <code>true</code>.
+	 * Whether to enable the API listing endpoints configuration.
+	 * <p>
+	 * Defaults to <code>true</code>.
+	 * </p>
 	 */
 	private boolean enabled = true;
 
 	/**
-	 * The package name to scan to detect API endpoints. Ignored when at least {@link ApiGroupConfiguration} is present.
+	 * The package names to use to filter the API resource classes.
+	 * <p>
+	 * To specify more than one package name, a comma (<code>,</code>) separator con be used
+	 * </p>
 	 */
 	private String resourcePackage;
 
 	/**
-	 * API listing common base path. This path will be used as base API listing group path if no specific group path
-	 * specified.
+	 * The API listing endpoint path.
+	 * <p>
+	 * Default is {@link ApiContext#DEFAULT_API_ENDPOINT_PATH}.
+	 * </p>
 	 */
 	private String path;
 
 	/**
-	 * Get the API endpoint type.
+	 * The API endpoint type.
+	 * <p>
+	 * Must be one of the {@link ApiEndpointType} enumeration values.
+	 * </p>
 	 * @since 5.2.0
 	 */
 	private ApiEndpointType type;
 
 	/**
-	 * API supported protocol schemes (e.g. <code>https</code>). Can be overridden by the specific
-	 * {@link ApiGroupConfiguration} property.
+	 * The supported API protocol schemes (e.g. <code>https</code>).
 	 */
 	private String[] schemes;
 
 	/**
-	 * Common API title. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API title.
 	 */
 	private String title;
 
 	/**
-	 * Common API version. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API version.
 	 */
 	private String version;
 
 	/**
-	 * Common API description. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API description.
 	 */
 	private String description;
 
 	/**
-	 * Common API Terms of Service URL. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API Terms of Service URL.
 	 */
 	private String termsOfServiceUrl;
 
 	/**
-	 * Common API contact information. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API contact information.
+	 * <p>
+	 * This configuration property is used with OpenAPI v3 only.
+	 * </p>
 	 */
 	private String contact;
 
 	/**
-	 * Common API license information. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API contact email.
+	 * <p>
+	 * This configuration property is used with OpenAPI v3 only.
+	 * </p>
+	 */
+	private String contactEmail;
+
+	/**
+	 * The API contact URL.
+	 * <p>
+	 * For OpenAPI v3, this represents the contact name.
+	 * </p>
+	 */
+	private String contactUrl;
+
+	/**
+	 * The API license information.
 	 */
 	private String license;
 
 	/**
-	 * Common API license URL. Can be overridden by the specific {@link ApiGroupConfiguration} property.
+	 * The API license URL.
 	 */
 	private String licenseUrl;
 
 	/**
-	 * API host.
+	 * The API host.
 	 */
 	private String host;
 
 	/**
-	 * Whether to <em>pretty</em> format API listing output.
+	 * Whether to <em>pretty</em> format the API listing output.
 	 */
-	private boolean prettyPrint;
+	private boolean prettyPrint = true;
 
+	/**
+	 * The API definition groups.
+	 */
 	private final List<ApiGroupConfiguration> apiGroups = new LinkedList<>();
+
+	// ------- getters and setters
 
 	public boolean isEnabled() {
 		return enabled;
@@ -116,6 +151,7 @@ public class SwaggerConfigurationProperties {
 		this.enabled = enabled;
 	}
 
+	@Override
 	public String getResourcePackage() {
 		return resourcePackage;
 	}
@@ -124,6 +160,7 @@ public class SwaggerConfigurationProperties {
 		this.resourcePackage = resourcePackage;
 	}
 
+	@Override
 	public String getPath() {
 		return path;
 	}
@@ -132,6 +169,7 @@ public class SwaggerConfigurationProperties {
 		this.path = path;
 	}
 
+	@Override
 	public ApiEndpointType getType() {
 		return type;
 	}
@@ -140,6 +178,7 @@ public class SwaggerConfigurationProperties {
 		this.type = type;
 	}
 
+	@Override
 	public String[] getSchemes() {
 		return schemes;
 	}
@@ -148,6 +187,7 @@ public class SwaggerConfigurationProperties {
 		this.schemes = schemes;
 	}
 
+	@Override
 	public String getTitle() {
 		return title;
 	}
@@ -156,6 +196,7 @@ public class SwaggerConfigurationProperties {
 		this.title = title;
 	}
 
+	@Override
 	public String getVersion() {
 		return version;
 	}
@@ -164,6 +205,7 @@ public class SwaggerConfigurationProperties {
 		this.version = version;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -172,6 +214,7 @@ public class SwaggerConfigurationProperties {
 		this.description = description;
 	}
 
+	@Override
 	public String getTermsOfServiceUrl() {
 		return termsOfServiceUrl;
 	}
@@ -180,6 +223,7 @@ public class SwaggerConfigurationProperties {
 		this.termsOfServiceUrl = termsOfServiceUrl;
 	}
 
+	@Override
 	public String getContact() {
 		return contact;
 	}
@@ -188,6 +232,25 @@ public class SwaggerConfigurationProperties {
 		this.contact = contact;
 	}
 
+	@Override
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+
+	@Override
+	public String getContactUrl() {
+		return contactUrl;
+	}
+
+	public void setContactUrl(String contactUrl) {
+		this.contactUrl = contactUrl;
+	}
+
+	@Override
 	public String getLicense() {
 		return license;
 	}
@@ -196,6 +259,7 @@ public class SwaggerConfigurationProperties {
 		this.license = license;
 	}
 
+	@Override
 	public String getLicenseUrl() {
 		return licenseUrl;
 	}
@@ -212,6 +276,7 @@ public class SwaggerConfigurationProperties {
 		this.host = host;
 	}
 
+	@Override
 	public boolean isPrettyPrint() {
 		return prettyPrint;
 	}
@@ -227,68 +292,106 @@ public class SwaggerConfigurationProperties {
 	/**
 	 * API group configuration.
 	 */
-	public static class ApiGroupConfiguration {
+	public static class ApiGroupConfiguration implements ApiConfigurationProperties {
 
 		/**
-		 * Group id
+		 * The API group id.
+		 * <p>
+		 * This will be used as API context id.
+		 * </p>
 		 */
 		private String groupId;
 
 		/**
-		 * The package name to scan to detect API group endpoints
+		 * The package names to use to filter the API resource classes.
+		 * <p>
+		 * To specify more than one package name, a comma (<code>,</code>) separator con be used
+		 * </p>
 		 */
 		private String resourcePackage;
 
 		/**
-		 * API group listing path
+		 * The API listing endpoint path.
+		 * <p>
+		 * Default is {@link ApiContext#DEFAULT_API_ENDPOINT_PATH}.
+		 * </p>
 		 */
 		private String path;
 
 		/**
-		 * Get the API endpoint type.
+		 * The API endpoint type.
+		 * <p>
+		 * Must be one of the {@link ApiEndpointType} enumeration values.
+		 * </p>
 		 * @since 5.2.0
 		 */
 		private ApiEndpointType type;
 
 		/**
-		 * API group supported protocol schemes (e.g. <code>https</code>)
+		 * The supported API protocol schemes (e.g. <code>https</code>).
 		 */
 		private String[] schemes;
 
 		/**
-		 * API group title
+		 * The API title.
 		 */
 		private String title;
 
 		/**
-		 * API group version
+		 * The API version.
 		 */
 		private String version;
 
 		/**
-		 * API group description
+		 * The API description.
 		 */
 		private String description;
 
 		/**
-		 * API group <em>Terms of Service</em> URL
+		 * The API Terms of Service URL.
 		 */
 		private String termsOfServiceUrl;
 
 		/**
-		 * API group contact information
+		 * The API contact information.
+		 * <p>
+		 * This configuration property is used with OpenAPI v3 only.
+		 * </p>
 		 */
 		private String contact;
 
 		/**
-		 * API group license information
+		 * The API contact email.
+		 * <p>
+		 * This configuration property is used with OpenAPI v3 only.
+		 * </p>
+		 */
+		private String contactEmail;
+
+		/**
+		 * The API contact URL.
+		 * <p>
+		 * For OpenAPI v3, this represents the contact name.
+		 * </p>
+		 */
+		private String contactUrl;
+
+		/**
+		 * The API license information.
 		 */
 		private String license;
 
 		/**
-		 * API group license URL
+		 * The API license URL.
 		 */
 		private String licenseUrl;
+
+		/**
+		 * Whether to <em>pretty</em> format the API listing output.
+		 */
+		private boolean prettyPrint = true;
+
+		// ------- getters and setters
 
 		public String getGroupId() {
 			return groupId;
@@ -298,6 +401,7 @@ public class SwaggerConfigurationProperties {
 			this.groupId = groupId;
 		}
 
+		@Override
 		public String getResourcePackage() {
 			return resourcePackage;
 		}
@@ -306,6 +410,7 @@ public class SwaggerConfigurationProperties {
 			this.resourcePackage = resourcePackage;
 		}
 
+		@Override
 		public String getPath() {
 			return path;
 		}
@@ -314,6 +419,7 @@ public class SwaggerConfigurationProperties {
 			this.path = path;
 		}
 
+		@Override
 		public ApiEndpointType getType() {
 			return type;
 		}
@@ -322,6 +428,7 @@ public class SwaggerConfigurationProperties {
 			this.type = type;
 		}
 
+		@Override
 		public String[] getSchemes() {
 			return schemes;
 		}
@@ -330,6 +437,7 @@ public class SwaggerConfigurationProperties {
 			this.schemes = schemes;
 		}
 
+		@Override
 		public String getTitle() {
 			return title;
 		}
@@ -338,6 +446,7 @@ public class SwaggerConfigurationProperties {
 			this.title = title;
 		}
 
+		@Override
 		public String getVersion() {
 			return version;
 		}
@@ -346,6 +455,7 @@ public class SwaggerConfigurationProperties {
 			this.version = version;
 		}
 
+		@Override
 		public String getDescription() {
 			return description;
 		}
@@ -354,6 +464,7 @@ public class SwaggerConfigurationProperties {
 			this.description = description;
 		}
 
+		@Override
 		public String getTermsOfServiceUrl() {
 			return termsOfServiceUrl;
 		}
@@ -362,6 +473,7 @@ public class SwaggerConfigurationProperties {
 			this.termsOfServiceUrl = termsOfServiceUrl;
 		}
 
+		@Override
 		public String getContact() {
 			return contact;
 		}
@@ -370,6 +482,25 @@ public class SwaggerConfigurationProperties {
 			this.contact = contact;
 		}
 
+		@Override
+		public String getContactEmail() {
+			return contactEmail;
+		}
+
+		public void setContactEmail(String contactEmail) {
+			this.contactEmail = contactEmail;
+		}
+
+		@Override
+		public String getContactUrl() {
+			return contactUrl;
+		}
+
+		public void setContactUrl(String contactUrl) {
+			this.contactUrl = contactUrl;
+		}
+
+		@Override
 		public String getLicense() {
 			return license;
 		}
@@ -378,12 +509,22 @@ public class SwaggerConfigurationProperties {
 			this.license = license;
 		}
 
+		@Override
 		public String getLicenseUrl() {
 			return licenseUrl;
 		}
 
 		public void setLicenseUrl(String licenseUrl) {
 			this.licenseUrl = licenseUrl;
+		}
+
+		@Override
+		public boolean isPrettyPrint() {
+			return prettyPrint;
+		}
+
+		public void setPrettyPrint(boolean prettyPrint) {
+			this.prettyPrint = prettyPrint;
 		}
 
 	}

@@ -32,14 +32,4 @@ public interface ApiContext {
 	 */
 	public static final String DEFAULT_API_ENDPOINT_PATH = "/api-docs";
 
-	/**
-	 * API configuration option to declare the API context id.
-	 */
-	public static final String CONFIGURATION_OPTION_CONTEXT_ID = ApiContext.class.getName() + ".option.contextId";
-
-	/**
-	 * API configuration option to declare the JAX-RS API endpoint path.
-	 */
-	public static final String CONFIGURATION_OPTION_PATH = ApiContext.class.getName() + ".option.path";
-
 }

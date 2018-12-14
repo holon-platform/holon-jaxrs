@@ -15,8 +15,6 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
-import java.util.Optional;
-
 import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.Logger;
@@ -37,7 +35,6 @@ import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
 
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -64,6 +61,7 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 	public ApiEndpointDefinition build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration,
 			boolean initContext) throws ApiConfigurationException {
 		ObjectUtils.argumentNotNull(configuration, "ApiEndpointConfiguration must be not null");
+
 		// type
 		final ApiEndpointType type = configuration.getType().orElse(ApiEndpointType.getDefault());
 		final Class<?> endpointClass;
@@ -79,10 +77,11 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 			endpointClass = QueryParamOpenApiEndpoint.class;
 			break;
 		}
+
 		// context id
-		final String contextId = getContextId(configuration).orElse(ApiContext.DEFAULT_CONTEXT_ID);
+		final String contextId = configuration.getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
 		// path
-		final String path = getEndpointPath(configuration).orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
+		final String path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
 
 		// build API context
 		configuration.getConfiguration().ifPresent(cfg -> {
@@ -132,93 +131,6 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 		}
 
 		return ApiEndpointDefinition.create(endpoint, type, path, contextId);
-	}
-
-	/**
-	 * Get the API context id for given configuration, if available.
-	 * @param configuration The API configuration
-	 * @return Optional API context id
-	 */
-	public static Optional<String> getContextId(OpenAPIConfiguration configuration) {
-		Optional<String> option = getConfigurationOption(configuration, ApiContext.CONFIGURATION_OPTION_CONTEXT_ID);
-		if (option.isPresent()) {
-			return option;
-		}
-		return getSwaggerConfigurationContextId(configuration);
-	}
-
-	/**
-	 * Get the API context id for given configuration, if available.
-	 * @param configuration The API endpoint configuration
-	 * @return Optional API context id
-	 */
-	private static Optional<String> getContextId(
-			ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration) {
-		Optional<String> contextId = configuration.getContextId();
-		if (contextId.isPresent()) {
-			return contextId;
-		}
-		return configuration.getConfiguration().flatMap(c -> getContextId(c));
-	}
-
-	/**
-	 * Get the API listing endpoint path for given configuration, if available.
-	 * @param configuration The API configuration
-	 * @return Optional API listing endpoint path
-	 */
-	public static Optional<String> getEndpointPath(OpenAPIConfiguration configuration) {
-		return getConfigurationOption(configuration, ApiContext.CONFIGURATION_OPTION_PATH);
-	}
-
-	/**
-	 * Get the API listing endpoint path for given configuration, if available.
-	 * @param configuration The API endpoint configuration
-	 * @return Optional API listing endpoint path
-	 */
-	private static Optional<String> getEndpointPath(
-			ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration) {
-		Optional<String> path = configuration.getPath();
-		if (path.isPresent()) {
-			return path;
-		}
-		return configuration.getConfiguration().flatMap(c -> getEndpointPath(c));
-	}
-
-	/**
-	 * Get the API configuration option value with given name, if available.
-	 * @param <T> Option value type
-	 * @param configuration API configuration
-	 * @param name Option name
-	 * @return Optional value
-	 */
-	@SuppressWarnings("unchecked")
-	private static <T> Optional<T> getConfigurationOption(OpenAPIConfiguration configuration, String name) {
-		if (configuration != null) {
-			if (configuration.getUserDefinedOptions() != null) {
-				Object value = configuration.getUserDefinedOptions().get(name);
-				if (value != null) {
-					try {
-						return Optional.of((T) value);
-					} catch (Exception e) {
-						LOGGER.warn("The API configuration option [" + name + "] "
-								+ "is not conistent with the required type", e);
-					}
-				}
-			}
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Get the context id from the API configuration, if it is of {@link SwaggerConfiguration} type.
-	 * @param configuration API configuration
-	 * @return Optional context id
-	 */
-	private static Optional<String> getSwaggerConfigurationContextId(OpenAPIConfiguration configuration) {
-		if (configuration instanceof SwaggerConfiguration) {
-			return Optional.ofNullable(((SwaggerConfiguration) configuration).getId());
-		}
-		return Optional.empty();
 	}
 
 }

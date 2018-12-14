@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.swagger.v3.internal.spring;
 
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -25,11 +26,16 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration;
+import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.OpenApiEndpointBuilder;
 
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 
 /**
  * Base Swagger API listing endpoints auto-configuration.
@@ -99,34 +105,68 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#
-	 * getDefaultConfiguration()
-	 */
-	@Override
-	protected OpenAPIConfiguration getDefaultConfiguration() {
-		return new SwaggerConfiguration();
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getEndpointPath(java.
-	 * lang.Object)
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#buildConfiguration(com
+	 * .holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties)
 	 */
+	// TODO
 	@Override
-	protected Optional<String> getEndpointPath(OpenAPIConfiguration configuration) {
-		return OpenApiEndpointBuilder.getEndpointPath(configuration);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getApiContextId(java.
-	 * lang.Object)
-	 */
-	@Override
-	protected Optional<String> getApiContextId(OpenAPIConfiguration configuration) {
-		return OpenApiEndpointBuilder.getContextId(configuration);
+	protected OpenAPIConfiguration buildConfiguration(ApiConfigurationProperties configurationProperties) {
+		final SwaggerConfiguration cfg = new SwaggerConfiguration();
+		// configuration
+		Set<String> packages = configurationProperties.getResourcePackages();
+		if (!packages.isEmpty()) {
+			cfg.setResourcePackages(packages);
+		}
+		cfg.setPrettyPrint(configurationProperties.isPrettyPrint());
+		// API definition
+		final OpenAPI api = new OpenAPI();
+		final Info info = new Info();
+		api.setInfo(info);
+		getConfigurationProperty(configurationProperties.getTitle()).ifPresent(v -> {
+			info.setTitle(v);
+		});
+		getConfigurationProperty(configurationProperties.getVersion()).ifPresent(v -> {
+			info.setVersion(v);
+		});
+		getConfigurationProperty(configurationProperties.getDescription()).ifPresent(v -> {
+			info.setDescription(v);
+		});
+		getConfigurationProperty(configurationProperties.getTermsOfServiceUrl()).ifPresent(v -> {
+			info.setTermsOfService(v);
+		});
+		getConfigurationProperty(configurationProperties.getLicense()).ifPresent(v -> {
+			if (info.getLicense() == null) {
+				info.setLicense(new License());
+			}
+			info.getLicense().setName(v);
+		});
+		getConfigurationProperty(configurationProperties.getLicenseUrl()).ifPresent(v -> {
+			if (info.getLicense() == null) {
+				info.setLicense(new License());
+			}
+			info.getLicense().setUrl(v);
+		});
+		getConfigurationProperty(configurationProperties.getContact()).ifPresent(v -> {
+			if (info.getContact() == null) {
+				info.setContact(new Contact());
+			}
+			info.getContact().setName(v);
+		});
+		getConfigurationProperty(configurationProperties.getContactEmail()).ifPresent(v -> {
+			if (info.getContact() == null) {
+				info.setContact(new Contact());
+			}
+			info.getContact().setEmail(v);
+		});
+		getConfigurationProperty(configurationProperties.getContactUrl()).ifPresent(v -> {
+			if (info.getContact() == null) {
+				info.setContact(new Contact());
+			}
+			info.getContact().setUrl(v);
+		});
+		cfg.setOpenAPI(api);
+		return cfg;
 	}
 
 }
