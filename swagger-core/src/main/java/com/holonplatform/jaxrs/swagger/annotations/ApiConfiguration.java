@@ -25,8 +25,9 @@ import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 
 /**
- * TODO
+ * Annotation which can be used on a API configuration class to setup the API listing endpoint.
  *
+ * @since 5.2.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

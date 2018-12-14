@@ -23,8 +23,8 @@ import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
-import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.ApiGroupId;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerApiListingResource;
@@ -163,9 +163,9 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 	public String getPath() {
 		if (path == null || path.trim().equals("")) {
 			if (ApiGroupId.DEFAULT_GROUP_ID.equals(getGroupId())) {
-				return ApiDefinition.DEFAULT_PATH;
+				return ApiContext.DEFAULT_API_ENDPOINT_PATH;
 			}
-			return ApiDefinition.DEFAULT_PATH + "/" + getGroupId();
+			return ApiContext.DEFAULT_API_ENDPOINT_PATH + "/" + getGroupId();
 		}
 		return path;
 	}

@@ -33,18 +33,10 @@ import java.lang.annotation.Target;
 public @interface ApiDefinition {
 
 	/**
-	 * Default Swagger API listing endpoint path.
-	 */
-	public static final String DEFAULT_PATH = "/api-docs";
-
-	/**
 	 * Get the Swagger API listing endpoint JAX-RS path from which the API documentation will be available.
-	 * <p>
-	 * The default path is {@link #DEFAULT_PATH}.
-	 * </p>
 	 * @return the Swagger API listing endpoint path
 	 */
-	String value() default DEFAULT_PATH;
+	String value() default "";
 
 	/**
 	 * Get the Swagger API listing endpoint JAX-RS path from which the API documentation will be available.
