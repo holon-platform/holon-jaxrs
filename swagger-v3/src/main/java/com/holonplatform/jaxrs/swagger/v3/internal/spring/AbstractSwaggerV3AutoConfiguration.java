@@ -106,6 +106,20 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	/*
 	 * (non-Javadoc)
 	 * @see
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#processConfiguration(
+	 * javax.ws.rs.core.Application, java.lang.String, java.lang.Object)
+	 */
+	@Override
+	protected OpenAPIConfiguration processConfiguration(A application, String contextId,
+			OpenAPIConfiguration configuration) {
+		// TODO
+		// check ApiContextId annotation
+		return configuration;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
 	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#buildConfiguration(com
 	 * .holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties)
 	 */

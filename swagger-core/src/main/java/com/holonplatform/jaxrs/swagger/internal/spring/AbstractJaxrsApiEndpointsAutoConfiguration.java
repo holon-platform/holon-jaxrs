@@ -95,6 +95,15 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties);
 
 	/**
+	 * Process given API configuration.
+	 * @param application The JAX-RS application
+	 * @param contextId The API context id
+	 * @param configuration The API configuration
+	 * @return The processed API configuration
+	 */
+	protected abstract C processConfiguration(A application, String contextId, C configuration);
+
+	/**
 	 * Register given endpoint class in the JAX-RS application.
 	 * @param endpoint The endpoint definition to register
 	 */
@@ -177,10 +186,11 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/**
 	 * Register an API listing endpoint using given configuration.
-	 * @param configuration The API configuration
+	 * @param apiConfiguration The API configuration
 	 * @param contextId The API context id
 	 */
-	private void configureAndRegisterEndpoint(C configuration, String contextId) {
+	private void configureAndRegisterEndpoint(C apiConfiguration, String contextId) {
+		final C configuration = processConfiguration(getApplication(), contextId, apiConfiguration);
 		// register endpoint
 		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
 				// context id
@@ -205,12 +215,14 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @param contextId The API context id
 	 */
 	private void configureAndRegisterEndpoint(ApiConfigurationProperties configurationProperties, String contextId) {
+		final C configuration = processConfiguration(getApplication(), contextId,
+				buildConfiguration(configurationProperties));
 		// register endpoint
 		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
 				// context id
 				.contextId(contextId)
 				// API configuration
-				.configuration(buildConfiguration(configurationProperties))
+				.configuration(configuration)
 				// JAX-RS application
 				.application(getApplication())
 				// path
