@@ -83,23 +83,6 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 		// path
 		final String path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
 
-		// build API context
-		configuration.getConfiguration().ifPresent(cfg -> {
-			configuration.getApplication().ifPresent(application -> {
-				OpenApi.contextBuilder()
-						// context id
-						.contextId(contextId)
-						// JAX-RS Application
-						.application(application)
-						// config location
-						.configLocation(configuration.getConfigurationLocation().orElse(null))
-						// scanner type
-						.scannerType(JaxrsScannerType.APPLICATION)
-						// build and init
-						.build(true);
-			});
-		});
-
 		// build endpoint class
 		final DynamicType.Builder<?> builder = new ByteBuddy().subclass(endpointClass)
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
