@@ -98,10 +98,21 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 		return getScanner().resources();
 	}
 
+	/**
+	 * Checks whether the given class matches the context id.
+	 * @param cls The class
+	 * @param contextId The context id
+	 * @return <code>true</code> if the class should be included in given context id classes
+	 */
 	private static boolean matches(Class<?> cls, String contextId) {
 		return getResourceContextId(cls).map(ctxId -> ctxId.equals(contextId)).orElse(Boolean.TRUE);
 	}
 
+	/**
+	 * Get the class context id declaration using the {@link ApiContextId} annotation, if available.
+	 * @param cls The class
+	 * @return Optional class context id
+	 */
 	private static Optional<String> getResourceContextId(Class<?> cls) {
 		Optional<String> clsContextId = AnnotationUtils.getAnnotation(cls, ApiContextId.class)
 				.map(a -> AnnotationUtils.getStringValue(a.value()));
