@@ -27,7 +27,7 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 @Component
 @ApiContextId("ctx_resource_2_2")
 @Path("resource2")
-public class CtxResource2 {
+public class Ctx2Resource2 {
 
 	@GET
 	@Path("test")
