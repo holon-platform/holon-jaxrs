@@ -32,9 +32,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesBindin
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.annotation.AnnotationUtils;
 
 import com.holonplatform.core.internal.Logger;
+import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
@@ -185,7 +185,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			} else {
 				parent = null;
 			}
-			getDefaultConfigurations().entrySet().forEach(e -> {
+			getDefaultConfigurations(application).entrySet().forEach(e -> {
 				definitions.add(configureAndRegisterEndpoint(application, e.getValue(), parent, e.getKey()));
 			});
 		} else {
@@ -200,9 +200,10 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/**
 	 * Get the default API configurations from configuration properties.
+	 * @param application The JAX-RS application (not null)
 	 * @return The contextId - configuration properties, empty if none
 	 */
-	private Map<String, ApiConfigurationProperties> getDefaultConfigurations() {
+	private Map<String, ApiConfigurationProperties> getDefaultConfigurations(A application) {
 		final Map<String, ApiConfigurationProperties> configurations = new HashMap<>();
 		if (configurationProperties.getApiGroups() != null && !configurationProperties.getApiGroups().isEmpty()) {
 			// groups
@@ -294,14 +295,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @return the API context id
 	 */
 	private String getApiEndpointContextId(C configuration) {
-		// check annotation
-		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
-				ApiConfiguration.class);
-		if (annotation != null && !"".equals(annotation.contextId())) {
-			return annotation.contextId();
-		}
-		// default
-		return ApiContext.DEFAULT_CONTEXT_ID;
+		return AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
+				.map(a -> AnnotationUtils.getStringValue(a.contextId())).orElse(ApiContext.DEFAULT_CONTEXT_ID);
 	}
 
 	/**
@@ -311,14 +306,9 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @return the API endpoint path
 	 */
 	private String getApiEndpointPath(C configuration, String contextId) {
-		// check annotation
-		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
-				ApiConfiguration.class);
-		if (annotation != null && !"".equals(annotation.path())) {
-			return annotation.path();
-		}
-		// default
-		return getDefaultApiEndpointPath(contextId, false);
+		return AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
+				.map(a -> AnnotationUtils.getStringValue(a.path()))
+				.orElseGet(() -> getDefaultApiEndpointPath(contextId, false));
 	}
 
 	/**
@@ -327,14 +317,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @return the API endpoint type
 	 */
 	private ApiEndpointType getApiEndpointType(C configuration) {
-		// check annotation
-		final ApiConfiguration annotation = AnnotationUtils.findAnnotation(configuration.getClass(),
-				ApiConfiguration.class);
-		if (annotation != null) {
-			return annotation.endpointType();
-		}
-		// default
-		return ApiEndpointType.getDefault();
+		return AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
+				.map(a -> a.endpointType()).orElse(ApiEndpointType.getDefault());
 	}
 
 	/**

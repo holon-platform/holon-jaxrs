@@ -113,10 +113,11 @@ holon:
     title: 'Title groups1'
     version: '0.1.2'
     api-groups:
-      - resource-package: "com.holonplatform.jaxrs.swagger.v3.test.resources.context2"
+      - group-id: "ctx_grp_1"
+        resource-package: "com.holonplatform.jaxrs.swagger.v3.test.resources.context2"
         description: "The API group 1"
         path: docs1
-      - group-id: "additional"
+      - group-id: "ctx_grp_2"
         resource-package: "com.holonplatform.jaxrs.swagger.v3.test.resources.context3"
         description: "The API group 2"
         path: docs2
