@@ -77,11 +77,6 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	private String contextId;
 
 	/**
-	 * The supported API protocol schemes (e.g. <code>https</code>).
-	 */
-	private String[] schemes;
-
-	/**
 	 * The API title.
 	 */
 	private String title;
@@ -103,42 +98,50 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	/**
 	 * The API contact information.
-	 * <p>
-	 * This configuration property is used with OpenAPI v3 only.
-	 * </p>
+	 * @since 5.2.0
 	 */
-	private String contact;
-
-	/**
-	 * The API contact email.
-	 * <p>
-	 * This configuration property is used with OpenAPI v3 only.
-	 * </p>
-	 */
-	private String contactEmail;
-
-	/**
-	 * The API contact URL.
-	 * <p>
-	 * For OpenAPI v3, this represents the contact name.
-	 * </p>
-	 */
-	private String contactUrl;
+	private Contact contact;
 
 	/**
 	 * The API license information.
+	 * @since 5.2.0
 	 */
-	private String license;
+	private License license;
 
 	/**
 	 * The API license URL.
+	 * @deprecated Use {@link #license}
 	 */
+	@Deprecated
 	private String licenseUrl;
 
 	/**
-	 * The API host.
+	 * External documentation information.
+	 * <p>
+	 * This configuration property is used with OpenAPI v3 only.
+	 * </p>
+	 * @since 5.2.0
 	 */
+	private ExternalDocs externalDocs;
+
+	/**
+	 * The supported API protocol schemes (e.g. <code>https</code>).
+	 * @deprecated Use {@link #server}
+	 */
+	@Deprecated
+	private String[] schemes;
+
+	/**
+	 * The API host.
+	 * @deprecated Use {@link #server}
+	 */
+	@Deprecated
 	private String host;
+
+	/**
+	 * The API server configuration
+	 */
+	private Server server;
 
 	/**
 	 * Whether to <em>pretty</em> format the API listing output.
@@ -202,15 +205,6 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	}
 
 	@Override
-	public String[] getSchemes() {
-		return schemes;
-	}
-
-	public void setSchemes(String[] schemes) {
-		this.schemes = schemes;
-	}
-
-	@Override
 	public String getTitle() {
 		return title;
 	}
@@ -246,49 +240,99 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		this.termsOfServiceUrl = termsOfServiceUrl;
 	}
 
-	@Override
-	public String getContact() {
+	public Contact getContact() {
 		return contact;
 	}
 
-	public void setContact(String contact) {
+	public void setContact(Contact contact) {
 		this.contact = contact;
 	}
 
-	@Override
-	public String getContactEmail() {
-		return contactEmail;
-	}
-
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
-
-	@Override
-	public String getContactUrl() {
-		return contactUrl;
-	}
-
-	public void setContactUrl(String contactUrl) {
-		this.contactUrl = contactUrl;
-	}
-
-	@Override
-	public String getLicense() {
+	public License getLicense() {
 		return license;
 	}
 
-	public void setLicense(String license) {
+	public void setLicense(License license) {
 		this.license = license;
-	}
-
-	@Override
-	public String getLicenseUrl() {
-		return licenseUrl;
 	}
 
 	public void setLicenseUrl(String licenseUrl) {
 		this.licenseUrl = licenseUrl;
+	}
+
+	public ExternalDocs getExternalDocs() {
+		return externalDocs;
+	}
+
+	public void setExternalDocs(ExternalDocs externalDocs) {
+		this.externalDocs = externalDocs;
+	}
+
+	@Override
+	public String getContactName() {
+		if (getContact() != null) {
+			return getContact().getName();
+		}
+		return null;
+	}
+
+	@Override
+	public String getContactEmail() {
+		if (getContact() != null) {
+			return getContact().getEmail();
+		}
+		return null;
+	}
+
+	@Override
+	public String getContactUrl() {
+		if (getContact() != null) {
+			return getContact().getUrl();
+		}
+		return null;
+	}
+
+	@Override
+	public String getLicenseName() {
+		if (getLicense() != null) {
+			return getLicense().getName();
+		}
+		return null;
+	}
+
+	@Override
+	public String getLicenseUrl() {
+		if (licenseUrl != null) {
+			return licenseUrl;
+		}
+		if (getLicense() != null) {
+			return getLicense().getUrl();
+		}
+		return null;
+	}
+
+	@Override
+	public String getExternalDocsUrl() {
+		if (getExternalDocs() != null) {
+			return getExternalDocs().getUrl();
+		}
+		return null;
+	}
+
+	@Override
+	public String getExternalDocsDescription() {
+		if (getExternalDocs() != null) {
+			return getExternalDocs().getDescription();
+		}
+		return null;
+	}
+
+	public String[] getSchemes() {
+		return schemes;
+	}
+
+	public void setSchemes(String[] schemes) {
+		this.schemes = schemes;
 	}
 
 	public String getHost() {
@@ -297,6 +341,36 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
+	@Override
+	public String getServerUrl() {
+		if (getServer() != null) {
+			return getServer().getUrl();
+		}
+		if (getHost() != null) {
+			if (getSchemes() != null && getSchemes().length > 0) {
+				return getSchemes()[0] + "://" + getHost();
+			}
+			return getHost();
+		}
+		return null;
+	}
+
+	@Override
+	public String getServerDescription() {
+		if (getServer() != null) {
+			return getServer().getDescription();
+		}
+		return null;
 	}
 
 	@Override
@@ -310,6 +384,167 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public List<ApiGroupConfiguration> getApiGroups() {
 		return apiGroups;
+	}
+
+	// ------- sub classes
+
+	/**
+	 * API contact configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class Contact {
+
+		/**
+		 * Contact name
+		 */
+		private String name;
+
+		/**
+		 * Contact email.
+		 * <p>
+		 * This configuration property is used with OpenAPI v3 only.
+		 * </p>
+		 */
+		private String email;
+
+		/**
+		 * Contact URL.
+		 * <p>
+		 * This configuration property is used with OpenAPI v3 only.
+		 * </p>
+		 */
+		private String url;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+	}
+
+	/**
+	 * API license configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class License {
+
+		/**
+		 * License name
+		 */
+		private String name;
+
+		/**
+		 * License URL.
+		 */
+		private String url;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+	}
+
+	/**
+	 * API server configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class Server {
+
+		/**
+		 * Server URL
+		 */
+		private String url;
+
+		/**
+		 * Server description
+		 */
+		private String description;
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+	}
+
+	/**
+	 * API external docs configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class ExternalDocs {
+
+		/**
+		 * External documentation description.
+		 */
+		private String description;
+
+		/**
+		 * External documentation URL.
+		 */
+		private String url;
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
+		}
+
 	}
 
 	/**
@@ -351,11 +586,6 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private ApiEndpointType type;
 
 		/**
-		 * The supported API protocol schemes (e.g. <code>https</code>).
-		 */
-		private String[] schemes;
-
-		/**
 		 * The API title.
 		 */
 		private String title;
@@ -377,37 +607,29 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		/**
 		 * The API contact information.
-		 * <p>
-		 * This configuration property is used with OpenAPI v3 only.
-		 * </p>
+		 * @since 5.2.0
 		 */
-		private String contact;
-
-		/**
-		 * The API contact email.
-		 * <p>
-		 * This configuration property is used with OpenAPI v3 only.
-		 * </p>
-		 */
-		private String contactEmail;
-
-		/**
-		 * The API contact URL.
-		 * <p>
-		 * For OpenAPI v3, this represents the contact name.
-		 * </p>
-		 */
-		private String contactUrl;
+		private Contact contact;
 
 		/**
 		 * The API license information.
+		 * @since 5.2.0
 		 */
-		private String license;
+		private License license;
 
 		/**
-		 * The API license URL.
+		 * External documentation information.
+		 * <p>
+		 * This configuration property is used with OpenAPI v3 only.
+		 * </p>
+		 * @since 5.2.0
 		 */
-		private String licenseUrl;
+		private ExternalDocs externalDocs;
+
+		/**
+		 * The API server configuration
+		 */
+		private Server server;
 
 		/**
 		 * Whether to <em>pretty</em> format the API listing output.
@@ -462,15 +684,6 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		}
 
 		@Override
-		public String[] getSchemes() {
-			return schemes;
-		}
-
-		public void setSchemes(String[] schemes) {
-			this.schemes = schemes;
-		}
-
-		@Override
 		public String getTitle() {
 			return title;
 		}
@@ -506,49 +719,108 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 			this.termsOfServiceUrl = termsOfServiceUrl;
 		}
 
-		@Override
-		public String getContact() {
+		public Contact getContact() {
 			return contact;
 		}
 
-		public void setContact(String contact) {
+		public void setContact(Contact contact) {
 			this.contact = contact;
+		}
+
+		public License getLicense() {
+			return license;
+		}
+
+		public void setLicense(License license) {
+			this.license = license;
+		}
+
+		public ExternalDocs getExternalDocs() {
+			return externalDocs;
+		}
+
+		public void setExternalDocs(ExternalDocs externalDocs) {
+			this.externalDocs = externalDocs;
+		}
+
+		@Override
+		public String getContactName() {
+			if (getContact() != null) {
+				return getContact().getName();
+			}
+			return null;
 		}
 
 		@Override
 		public String getContactEmail() {
-			return contactEmail;
-		}
-
-		public void setContactEmail(String contactEmail) {
-			this.contactEmail = contactEmail;
+			if (getContact() != null) {
+				return getContact().getEmail();
+			}
+			return null;
 		}
 
 		@Override
 		public String getContactUrl() {
-			return contactUrl;
-		}
-
-		public void setContactUrl(String contactUrl) {
-			this.contactUrl = contactUrl;
+			if (getContact() != null) {
+				return getContact().getUrl();
+			}
+			return null;
 		}
 
 		@Override
-		public String getLicense() {
-			return license;
-		}
-
-		public void setLicense(String license) {
-			this.license = license;
+		public String getLicenseName() {
+			if (getLicense() != null) {
+				return getLicense().getName();
+			}
+			return null;
 		}
 
 		@Override
 		public String getLicenseUrl() {
-			return licenseUrl;
+			if (getLicense() != null) {
+				return getLicense().getUrl();
+			}
+			return null;
 		}
 
-		public void setLicenseUrl(String licenseUrl) {
-			this.licenseUrl = licenseUrl;
+		@Override
+		public String getExternalDocsUrl() {
+			if (getExternalDocs() != null) {
+				return getExternalDocs().getUrl();
+			}
+			return null;
+		}
+
+		@Override
+		public String getExternalDocsDescription() {
+			if (getExternalDocs() != null) {
+				return getExternalDocs().getDescription();
+			}
+			return null;
+		}
+
+		public Server getServer() {
+			return server;
+		}
+
+		public void setServer(Server server) {
+			this.server = server;
+		}
+
+		@Override
+		public String getServerUrl() {
+			if (getServer() != null) {
+				return getServer().getUrl();
+			}
+			return null;
+		}
+
+		@Override
+		public String getServerDescription() {
+			if (getServer() != null) {
+				return getServer().getDescription();
+			}
+			return null;
 		}
 
 		@Override

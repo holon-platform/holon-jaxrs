@@ -82,8 +82,8 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setDescription(properties.getDescription());
 			setVersion(properties.getVersion());
 			setTermsOfServiceUrl(properties.getTermsOfServiceUrl());
-			setContact(properties.getContact());
-			setLicense(properties.getLicense());
+			setContact(properties.getContactName());
+			setLicense(properties.getLicenseName());
 			setLicenseUrl(properties.getLicenseUrl());
 			setHost(properties.getHost());
 			setPrettyPrint(properties.isPrettyPrint());
@@ -92,9 +92,6 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			setResourcePackage(groupConfiguration.getResourcePackage());
 			if (groupConfiguration.getPath() != null && !groupConfiguration.getPath().trim().equals("")) {
 				setPath(groupConfiguration.getPath());
-			}
-			if (groupConfiguration.getSchemes() != null && groupConfiguration.getSchemes().length > 0) {
-				setSchemes(groupConfiguration.getSchemes());
 			}
 			if (groupConfiguration.getTitle() != null) {
 				setTitle(groupConfiguration.getTitle());
@@ -108,11 +105,11 @@ public class DefaultApiListingDefinition implements ApiListingDefinition {
 			if (groupConfiguration.getTermsOfServiceUrl() != null) {
 				setTermsOfServiceUrl(groupConfiguration.getTermsOfServiceUrl());
 			}
-			if (groupConfiguration.getContact() != null) {
-				setContact(groupConfiguration.getContact());
+			if (groupConfiguration.getContactName() != null) {
+				setContact(groupConfiguration.getContactName());
 			}
-			if (groupConfiguration.getLicense() != null) {
-				setLicense(groupConfiguration.getLicense());
+			if (groupConfiguration.getLicenseName() != null) {
+				setLicense(groupConfiguration.getLicenseName());
 			}
 			if (groupConfiguration.getLicenseUrl() != null) {
 				setLicenseUrl(groupConfiguration.getLicenseUrl());

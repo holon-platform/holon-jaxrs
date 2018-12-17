@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.spring;
 
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,10 +33,12 @@ import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.OpenApiEndpointBuil
 
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * Base Swagger API listing endpoints auto-configuration.
@@ -129,11 +132,11 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	 * (non-Javadoc)
 	 * @see
 	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#buildConfiguration(com
-	 * .holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties)
+	 * .holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties, java.lang.String)
 	 */
-	// TODO
 	@Override
-	protected OpenAPIConfiguration buildConfiguration(ApiConfigurationProperties configurationProperties) {
+	protected OpenAPIConfiguration buildConfiguration(ApiConfigurationProperties configurationProperties,
+			String applicationPath) {
 		final SwaggerConfiguration cfg = new SwaggerConfiguration();
 		// configuration
 		Set<String> packages = configurationProperties.getResourcePackages();
@@ -143,6 +146,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 		cfg.setPrettyPrint(configurationProperties.isPrettyPrint());
 		// API definition
 		final OpenAPI api = new OpenAPI();
+		// info
 		final Info info = new Info();
 		api.setInfo(info);
 		getConfigurationProperty(configurationProperties.getTitle()).ifPresent(v -> {
@@ -157,7 +161,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 		getConfigurationProperty(configurationProperties.getTermsOfServiceUrl()).ifPresent(v -> {
 			info.setTermsOfService(v);
 		});
-		getConfigurationProperty(configurationProperties.getLicense()).ifPresent(v -> {
+		getConfigurationProperty(configurationProperties.getLicenseName()).ifPresent(v -> {
 			if (info.getLicense() == null) {
 				info.setLicense(new License());
 			}
@@ -169,7 +173,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			}
 			info.getLicense().setUrl(v);
 		});
-		getConfigurationProperty(configurationProperties.getContact()).ifPresent(v -> {
+		getConfigurationProperty(configurationProperties.getContactName()).ifPresent(v -> {
 			if (info.getContact() == null) {
 				info.setContact(new Contact());
 			}
@@ -186,6 +190,39 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 				info.setContact(new Contact());
 			}
 			info.getContact().setUrl(v);
+		});
+		// server
+		getConfigurationProperty(configurationProperties.getServerUrl()).ifPresent(v -> {
+			if (api.getServers() == null) {
+				api.setServers(new LinkedList<>());
+			}
+			StringBuilder sb = new StringBuilder();
+			sb.append(v);
+			if (applicationPath != null && !"/".equals(applicationPath)) {
+				if (!v.endsWith("/") && !applicationPath.startsWith("/")) {
+					sb.append("/");
+				}
+				sb.append(applicationPath);
+			}
+			final Server server = new Server();
+			server.setUrl(sb.toString());
+			getConfigurationProperty(configurationProperties.getServerDescription()).ifPresent(d -> {
+				server.setDescription(d);
+			});
+			api.getServers().add(server);
+		});
+		// external docs
+		getConfigurationProperty(configurationProperties.getExternalDocsUrl()).ifPresent(v -> {
+			if (api.getExternalDocs() == null) {
+				api.setExternalDocs(new ExternalDocumentation());
+			}
+			api.getExternalDocs().setUrl(v);
+		});
+		getConfigurationProperty(configurationProperties.getExternalDocsDescription()).ifPresent(v -> {
+			if (api.getExternalDocs() == null) {
+				api.setExternalDocs(new ExternalDocumentation());
+			}
+			api.getExternalDocs().setDescription(v);
 		});
 		cfg.setOpenAPI(api);
 		return cfg;

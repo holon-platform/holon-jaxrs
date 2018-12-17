@@ -28,6 +28,7 @@ import javax.ws.rs.core.Application;
 
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -98,6 +99,18 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 		};
 	}
 
+	@Bean
+	@ConfigurationPropertiesBinding
+	public static LegacyContactNameConverter legacyContactToContactNamePropertyConverter() {
+		return new LegacyContactNameConverter();
+	}
+
+	@Bean
+	@ConfigurationPropertiesBinding
+	public static LegacyLicenseNameConverter legacyLicenseToLicenseNamePropertyConverter() {
+		return new LegacyLicenseNameConverter();
+	}
+
 	/**
 	 * Get the JAX-RS Application path.
 	 * @param application The JAX-RS application
@@ -108,9 +121,10 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Build an API configuration using given configuration properties.
 	 * @param configurationProperties The API configuration properties
+	 * @param applicationPath Application path
 	 * @return The API configuration
 	 */
-	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties);
+	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties, String applicationPath);
 
 	/**
 	 * Register given endpoint class in the JAX-RS application.
@@ -245,7 +259,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 */
 	private ApiEndpointDefinition configureAndRegisterEndpoint(A application,
 			ApiConfigurationProperties configurationProperties, String contextId) {
-		final C configuration = buildConfiguration(configurationProperties);
+		final C configuration = buildConfiguration(configurationProperties,
+				getApplicationPath(application).orElse(null));
 		// create endpoint
 		final ApiEndpointDefinition endpoint = apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
 				// context id

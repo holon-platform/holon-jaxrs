@@ -65,6 +65,47 @@ holon:
 
 ---
 spring:
+  profiles: config1
+  
+holon:
+  swagger:
+    context-id: 'test-config1'
+    pretty-print: true
+    title: 'Title config1'
+    version: '0.0.1'
+    description: 'Description config1'
+    termsOfServiceUrl: 'https://foo.bar'
+    contact: 
+      name: 'Test Contact'
+      email: 'contact@email.com'
+      url: 'https://foo.bar/contact'
+    license:
+      name: 'My license'
+      url: 'https://foo.bar/license'
+    external-docs:
+      url: 'https://foo.bar/docs'
+      description: 'Ext docs'
+    server:
+      url: 'https://localhost:8080'
+      description: 'Test server'
+
+---
+spring:
+  profiles: config2
+  
+holon:
+  swagger:
+    context-id: 'test-config2'
+    title: 'Title config2'
+    version: '0.0.2'
+    contact: 'Test Contact'
+    license: 'My license'
+    license-url: 'https://foo.bar/license'
+    host: 'localhost:8080'
+    schemes: 'https'
+
+---
+spring:
   profiles: groups
   
 holon:

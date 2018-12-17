@@ -34,7 +34,7 @@ public interface ApiConfigurationProperties {
 	 * @return whether is a API group configuration
 	 */
 	boolean isGroupConfiguration();
-	
+
 	/**
 	 * Get the package names to use to filter the API resource classes.
 	 * <p>
@@ -78,12 +78,6 @@ public interface ApiConfigurationProperties {
 	String getContextId();
 
 	/**
-	 * Get the allowed schemes.
-	 * @return the allowed schemes
-	 */
-	String[] getSchemes();
-
-	/**
 	 * Get the API title.
 	 * @return the API title
 	 */
@@ -111,7 +105,7 @@ public interface ApiConfigurationProperties {
 	 * Get the API contact name.
 	 * @return the API contact name
 	 */
-	String getContact();
+	String getContactName();
 
 	/**
 	 * Get the API contact email.
@@ -134,16 +128,48 @@ public interface ApiConfigurationProperties {
 	String getContactUrl();
 
 	/**
-	 * Get the API license information.
-	 * @return the API license information
+	 * Get the API license name.
+	 * @return the API license name
 	 */
-	String getLicense();
+	String getLicenseName();
 
 	/**
 	 * Get the API license URL.
 	 * @return the API license URL
 	 */
 	String getLicenseUrl();
+
+	/**
+	 * Get the external documentation URL.
+	 * <p>
+	 * This configuration property is used only OpenAPI v3 only.
+	 * </p>
+	 * @return the API contact URL
+	 * @since 5.2.0
+	 */
+	String getExternalDocsUrl();
+
+	/**
+	 * Get the external documentation description.
+	 * <p>
+	 * This configuration property is used only OpenAPI v3 only.
+	 * </p>
+	 * @return the API contact URL
+	 * @since 5.2.0
+	 */
+	String getExternalDocsDescription();
+
+	/**
+	 * Get the API server URL.
+	 * @return the API server URL
+	 */
+	String getServerUrl();
+
+	/**
+	 * Get the API server description.
+	 * @return the API server description
+	 */
+	String getServerDescription();
 
 	/**
 	 * Get whether the API output should be formatted.
