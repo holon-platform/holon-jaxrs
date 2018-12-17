@@ -109,21 +109,13 @@ public interface ApiConfigurationProperties {
 
 	/**
 	 * Get the API contact email.
-	 * <p>
-	 * This configuration property is used with OpenAPI v3 only.
-	 * </p>
 	 * @return the API contact email
-	 * @since 5.2.0
 	 */
 	String getContactEmail();
 
 	/**
 	 * Get the API contact URL.
-	 * <p>
-	 * This configuration property is used only OpenAPI v3 only.
-	 * </p>
 	 * @return the API contact URL
-	 * @since 5.2.0
 	 */
 	String getContactUrl();
 
@@ -141,21 +133,13 @@ public interface ApiConfigurationProperties {
 
 	/**
 	 * Get the external documentation URL.
-	 * <p>
-	 * This configuration property is used only OpenAPI v3 only.
-	 * </p>
 	 * @return the API contact URL
-	 * @since 5.2.0
 	 */
 	String getExternalDocsUrl();
 
 	/**
 	 * Get the external documentation description.
-	 * <p>
-	 * This configuration property is used only OpenAPI v3 only.
-	 * </p>
 	 * @return the API contact URL
-	 * @since 5.2.0
 	 */
 	String getExternalDocsDescription();
 

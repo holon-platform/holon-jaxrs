@@ -27,9 +27,6 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointType;
  * Configuration properties for Swagger auto configuration.
  *
  * @since 5.0.0
- *
- * @see <a href=
- *      "http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html">http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html</a>
  */
 @ConfigurationProperties(prefix = "holon.swagger")
 public class SwaggerConfigurationProperties implements ApiConfigurationProperties {
@@ -98,12 +95,14 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	/**
 	 * The API contact information.
+	 * 
 	 * @since 5.2.0
 	 */
 	private Contact contact;
 
 	/**
 	 * The API license information.
+	 * 
 	 * @since 5.2.0
 	 */
 	private License license;
@@ -117,9 +116,7 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	/**
 	 * External documentation information.
-	 * <p>
-	 * This configuration property is used with OpenAPI v3 only.
-	 * </p>
+	 * 
 	 * @since 5.2.0
 	 */
 	private ExternalDocs externalDocs;
@@ -402,17 +399,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		/**
 		 * Contact email.
-		 * <p>
-		 * This configuration property is used with OpenAPI v3 only.
-		 * </p>
 		 */
 		private String email;
 
 		/**
 		 * Contact URL.
-		 * <p>
-		 * This configuration property is used with OpenAPI v3 only.
-		 * </p>
 		 */
 		private String url;
 
@@ -607,21 +598,21 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		/**
 		 * The API contact information.
+		 * 
 		 * @since 5.2.0
 		 */
 		private Contact contact;
 
 		/**
 		 * The API license information.
+		 * 
 		 * @since 5.2.0
 		 */
 		private License license;
 
 		/**
 		 * External documentation information.
-		 * <p>
-		 * This configuration property is used with OpenAPI v3 only.
-		 * </p>
+		 * 
 		 * @since 5.2.0
 		 */
 		private ExternalDocs externalDocs;
