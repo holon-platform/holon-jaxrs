@@ -195,7 +195,7 @@ public class TestPropertyBoxModelConverter {
 		validateModel1(schema, "PropertyBox");
 	}
 
-	private static void validateModel1(Schema<?> schema, String title) {
+	public static void validateModel1(Schema<?> schema, String title) {
 		assertNotNull(schema);
 		assertEquals(title, schema.getTitle());
 		assertEquals("object", schema.getType());

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 
@@ -75,14 +76,15 @@ public final class OpenApiResolutionContext {
 	public static void includeSchemas() {
 		getOpenAPI().ifPresent(openAPI -> {
 			getSchemas().ifPresent(schemas -> {
-				if (openAPI.getComponents() != null) {
-					if (openAPI.getComponents().getSchemas() == null) {
-						openAPI.getComponents().setSchemas(new LinkedHashMap<>());
-					}
-					for (Entry<String, Schema<?>> entry : schemas.entrySet()) {
-						if (!openAPI.getComponents().getSchemas().containsKey(entry.getKey())) {
-							openAPI.getComponents().getSchemas().put(entry.getKey(), entry.getValue());
-						}
+				if (openAPI.getComponents() == null) {
+					openAPI.setComponents(new Components());
+				}
+				if (openAPI.getComponents().getSchemas() == null) {
+					openAPI.getComponents().setSchemas(new LinkedHashMap<>());
+				}
+				for (Entry<String, Schema<?>> entry : schemas.entrySet()) {
+					if (!openAPI.getComponents().getSchemas().containsKey(entry.getKey())) {
+						openAPI.getComponents().getSchemas().put(entry.getKey(), entry.getValue());
 					}
 				}
 			});
