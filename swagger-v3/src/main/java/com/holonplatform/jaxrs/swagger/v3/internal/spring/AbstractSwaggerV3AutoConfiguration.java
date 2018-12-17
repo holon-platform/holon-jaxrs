@@ -50,13 +50,12 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	/**
 	 * Constructor.
 	 * @param configurationProperties API configuration properties
-	 * @param application JAX-RS application
 	 * @param configurations API configurations provider
 	 * @param apiEndpointBuilder API endpoint builder
 	 */
-	public AbstractSwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties, A application,
+	public AbstractSwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
 			ObjectProvider<OpenAPIConfiguration> apiConfigurations) {
-		super(configurationProperties, application, apiConfigurations, OpenApiEndpointBuilder.INSTANCE);
+		super(configurationProperties, apiConfigurations, OpenApiEndpointBuilder.INSTANCE);
 	}
 
 	/**
@@ -67,52 +66,63 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 
 	/**
 	 * Register given endpoint class in JAX-RS application.
+	 * @param application The JAX-RS application
 	 * @param endpoint The endpoint class to register
 	 */
-	protected abstract void registerEndpoint(Class<?> endpoint);
+	protected abstract void registerEndpoint(A application, Class<?> endpoint);
 
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#registerEndpoint(com.
-	 * holonplatform.jaxrs.swagger.ApiEndpointDefinition)
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#registerEndpoint(javax
+	 * .ws.rs.core.Application, com.holonplatform.jaxrs.swagger.ApiEndpointDefinition)
 	 */
 	@Override
-	protected void registerEndpoint(ApiEndpointDefinition endpoint) {
-		registerEndpoint(endpoint.getEndpointClass());
-		LOGGER.info("Registered Swagger OpenAPI V3 endpoint type [" + endpoint.getType() + "] to path ["
-				+ endpoint.getPath() + "] - API context id: [" + endpoint.getContextId() + "]");
+	protected void registerEndpoint(A application, ApiEndpointDefinition endpoint) {
+		registerEndpoint(application, endpoint.getEndpointClass());
+		// log
+		final String path = getApplicationPath(application).map(ap -> {
+			StringBuilder sb = new StringBuilder();
+			if (!ap.startsWith("/")) {
+				sb.append("/");
+			}
+			sb.append(ap);
+			if (!endpoint.getPath().startsWith("/") && !ap.endsWith("/")) {
+				sb.append("/");
+			}
+			if (endpoint.getPath().startsWith("/")) {
+				if (endpoint.getPath().length() > 1) {
+					sb.append(endpoint.getPath().substring(1));
+				}
+			} else {
+				sb.append(endpoint.getPath());
+			}
+			return sb.toString();
+		}).orElseGet(() -> endpoint.getPath());
+		LOGGER.info("Registered Swagger OpenAPI V3 endpoint type [" + endpoint.getType() + "] to path [" + path
+				+ "] - API context id: [" + endpoint.getContextId() + "]");
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getApplicationPath()
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getApplicationPath(
+	 * javax.ws.rs.core.Application)
 	 */
 	@Override
-	protected Optional<String> getApplicationPath() {
+	protected Optional<String> getApplicationPath(A application) {
 		Optional<String> defaultPath = getDefaultApplicationPath().filter(p -> p != null && !p.trim().equals(""));
 		if (defaultPath.isPresent()) {
 			return defaultPath;
 		}
-		final ApplicationPath applicationPath = AnnotationUtils.findAnnotation(getApplication().getClass(),
-				ApplicationPath.class);
-		if (applicationPath != null && !"".equals(applicationPath.value())) {
-			return Optional.of(applicationPath.value());
+		if (application != null) {
+			final ApplicationPath applicationPath = AnnotationUtils.findAnnotation(application.getClass(),
+					ApplicationPath.class);
+			if (applicationPath != null && !"".equals(applicationPath.value())) {
+				return Optional.of(applicationPath.value());
+			}
 		}
 		return Optional.empty();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#processConfiguration(
-	 * javax.ws.rs.core.Application, java.lang.String, java.lang.Object)
-	 */
-	@Override
-	protected OpenAPIConfiguration processConfiguration(A application, String contextId,
-			OpenAPIConfiguration configuration) {
-		return configuration;
 	}
 
 	/*

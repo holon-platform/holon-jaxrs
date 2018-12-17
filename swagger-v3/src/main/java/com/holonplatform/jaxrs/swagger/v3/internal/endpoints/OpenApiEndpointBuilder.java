@@ -36,6 +36,7 @@ import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
 
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -52,14 +53,9 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 
 	private static final Logger LOGGER = SwaggerLogger.create();
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.ApiEndpointBuilder#build(com.holonplatform.jaxrs.swagger.
-	 * ApiEndpointConfiguration, boolean)
-	 */
 	@Override
-	public ApiEndpointDefinition build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration,
-			boolean initContext) throws ApiConfigurationException {
+	public ApiEndpointDefinition build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration)
+			throws ApiConfigurationException {
 		ObjectUtils.argumentNotNull(configuration, "ApiEndpointConfiguration must be not null");
 
 		// type
@@ -80,8 +76,14 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 
 		// context id
 		final String contextId = configuration.getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
+
 		// path
-		final String path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
+		final String path;
+		if (ApiEndpointType.PATH_PARAMETER == type) {
+			path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH) + ".{type:json|yaml}";
+		} else {
+			path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
+		}
 
 		// build endpoint class
 		final DynamicType.Builder<?> builder = new ByteBuddy().subclass(endpointClass)
@@ -96,24 +98,25 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 						ClassLoadingStrategy.Default.INJECTION)
 				.getLoaded();
 
-		// check init
-		if (initContext) {
-			final JaxrsOpenApiContextBuilder contextBuilder = OpenApi.contextBuilder().contextId(contextId);
-			// configuration
-			configuration.getConfiguration().ifPresent(c -> contextBuilder.configuration(c));
-			// config location
-			configuration.getConfigurationLocation().ifPresent(cl -> contextBuilder.configLocation(cl));
-			// JAX-RS Application
-			configuration.getApplication().ifPresent(a -> {
-				contextBuilder.application(a);
-				contextBuilder.scannerType(JaxrsScannerType.APPLICATION);
-			});
-			contextBuilder.build(true);
+		// build context
+		final JaxrsOpenApiContextBuilder contextBuilder = OpenApi.contextBuilder().contextId(contextId);
+		// configuration
+		configuration.getConfiguration().ifPresent(c -> contextBuilder.configuration(c));
+		// config location
+		configuration.getConfigurationLocation().ifPresent(cl -> contextBuilder.configLocation(cl));
+		// JAX-RS Application
+		configuration.getApplication().ifPresent(a -> {
+			contextBuilder.application(a);
+			contextBuilder.scannerType(JaxrsScannerType.APPLICATION);
+		});
+		final OpenApiContext context = contextBuilder.build(false);
 
-			LOGGER.debug(() -> "OpenAPI context inited - context id: " + contextId);
-		}
+		LOGGER.debug(() -> "OpenAPI context inited - context id: " + contextId);
 
-		return ApiEndpointDefinition.create(endpoint, type, path, contextId);
+		return ApiEndpointDefinition.create(endpoint, type, path, contextId, () -> {
+			context.init();
+			return null;
+		});
 	}
 
 }

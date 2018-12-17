@@ -68,6 +68,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	private ApiEndpointType type;
 
 	/**
+	 * The API context id to use.
+	 * <p>
+	 * If not specified, the {@link ApiContext#DEFAULT_CONTEXT_ID} default context id will be used.
+	 * </p>
+	 * @since 5.2.0
+	 */
+	private String contextId;
+
+	/**
 	 * The supported API protocol schemes (e.g. <code>https</code>).
 	 */
 	private String[] schemes;
@@ -176,6 +185,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setType(ApiEndpointType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
 	}
 
 	@Override
@@ -426,6 +444,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		public void setType(ApiEndpointType type) {
 			this.type = type;
+		}
+
+		@Override
+		public String getContextId() {
+			return getGroupId();
 		}
 
 		@Override

@@ -17,8 +17,6 @@ package com.holonplatform.jaxrs.swagger.v3.spring;
 
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -27,10 +25,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
+import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer;
 import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
@@ -74,17 +74,17 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
 public class ResteasySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfiguration<ResteasyConfig> {
 
-	@Value("${holon.resteasy.application-path}")
+	@Value("${holon.resteasy.application-path:/}")
 	private String applicationPath;
 
 	public ResteasySwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
-			ResteasyConfig application, ObjectProvider<OpenAPIConfiguration> openAPIConfigurations) {
-		super(configurationProperties, application, openAPIConfigurations);
+			ObjectProvider<OpenAPIConfiguration> openAPIConfigurations) {
+		super(configurationProperties, openAPIConfigurations);
 	}
 
-	@PostConstruct
-	public void configure() {
-		configureEndpoints();
+	@Bean
+	public ResteasyConfigCustomizer resteasySwaggerV3ResourceConfigCustomizer() {
+		return application -> this.configure(application);
 	}
 
 	/*
@@ -100,12 +100,12 @@ public class ResteasySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoCon
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#registerEndpoint(java.lang.
-	 * Class)
+	 * com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#registerEndpoint(javax.ws.
+	 * rs.core.Application, java.lang.Class)
 	 */
 	@Override
-	protected void registerEndpoint(Class<?> endpoint) {
-		getApplication().register(endpoint);
+	protected void registerEndpoint(ResteasyConfig application, Class<?> endpoint) {
+		application.register(endpoint);
 	}
 
 }

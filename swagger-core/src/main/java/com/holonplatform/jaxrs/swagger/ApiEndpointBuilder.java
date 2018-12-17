@@ -29,11 +29,9 @@ public interface ApiEndpointBuilder<C> {
 	/**
 	 * Build a JAX-RS API listing endpoint using given <code>configuration</code>.
 	 * @param configuration The API endpoint configuration (not null)
-	 * @param initContext Whether to init the API context
 	 * @return The API endpoint definition
 	 * @throws ApiConfigurationException If an error occurred
 	 */
-	ApiEndpointDefinition build(ApiEndpointConfiguration<? extends C> configuration, boolean initContext)
-			throws ApiConfigurationException;
+	ApiEndpointDefinition build(ApiEndpointConfiguration<? extends C> configuration) throws ApiConfigurationException;
 
 }

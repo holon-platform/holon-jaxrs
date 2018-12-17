@@ -15,9 +15,12 @@
  */
 package com.holonplatform.jaxrs.swagger.internal;
 
+import java.util.concurrent.Callable;
+
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 
 /**
  * Default {@link ApiEndpointDefinition} implementation.
@@ -32,14 +35,20 @@ public class DefaultApiEndpointDefinition implements ApiEndpointDefinition {
 	private final ApiEndpointType type;
 	private final String path;
 	private final String contextId;
+	private final Callable<Void> initializer;
 
-	public DefaultApiEndpointDefinition(Class<?> endpointClass, ApiEndpointType type, String path, String contextId) {
+	private boolean initialized = false;
+
+	public DefaultApiEndpointDefinition(Class<?> endpointClass, ApiEndpointType type, String path, String contextId,
+			Callable<Void> initializer) {
 		super();
 		ObjectUtils.argumentNotNull(endpointClass, "API endpoint class must be not null");
+		ObjectUtils.argumentNotNull(initializer, "Initializer must be not null");
 		this.endpointClass = endpointClass;
 		this.type = type;
 		this.path = path;
 		this.contextId = contextId;
+		this.initializer = initializer;
 	}
 
 	/*
@@ -76,6 +85,24 @@ public class DefaultApiEndpointDefinition implements ApiEndpointDefinition {
 	@Override
 	public String getContextId() {
 		return contextId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.ApiEndpointDefinition#init()
+	 */
+	@Override
+	public boolean init() {
+		if (!initialized) {
+			try {
+				initializer.call();
+				initialized = true;
+				return true;
+			} catch (Exception e) {
+				throw new ApiConfigurationException("Failed to initialize context [" + getContextId() + "]", e);
+			}
+		}
+		return false;
 	}
 
 }

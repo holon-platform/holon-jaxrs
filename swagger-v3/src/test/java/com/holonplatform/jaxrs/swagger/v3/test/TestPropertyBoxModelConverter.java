@@ -70,6 +70,10 @@ public class TestPropertyBoxModelConverter {
 	}
 
 	public static void validateApi(OpenAPI api, String title) {
+		validateApi(api, "/resource1", title);
+	}
+
+	public static void validateApi(OpenAPI api, String path, String title) {
 
 		assertNotNull(api);
 
@@ -85,29 +89,29 @@ public class TestPropertyBoxModelConverter {
 		assertNotNull(api.getPaths());
 		assertEquals(23, api.getPaths().size());
 
-		validateModel1(validateOperationResponse(api, "/resource1/test1"));
-		validateModel1(validateOperationBody(api, "/resource1/test2"));
-		validateModel1(validateOperationResponseArray(api, "/resource1/test3", false));
-		validateModel1(validateOperationResponseArray(api, "/resource1/test4", false));
-		validateModel1(validateOperationResponseArray(api, "/resource1/test5", true));
-		validateModel2(validateOperationResponse(api, "/resource1/test6"));
-		validateModel2(validateOperationBody(api, "/resource1/test7"));
-		validateTestData(validateOperationResponse(api, "/resource1/test8"));
-		validateTestData(validateOperationBody(api, "/resource1/test9"));
-		validateStringPlainResponse(api, "/resource1/test10");
-		validateModelOne(api, validateOperationResponse(api, "/resource1/test11"));
-		validateModelOne(api, validateOperationBody(api, "/resource1/test12"));
-		validateModelOne(api, validateOperationResponseArray(api, "/resource1/test13", false));
-		validateModelOne(api, validateOperationResponseArray(api, "/resource1/test14", false));
-		validateModelOne(api, validateOperationResponseArray(api, "/resource1/test15", true));
-		validateModelTwo(api, validateOperationResponse(api, "/resource1/test16"));
-		validateModelTwo(api, validateOperationBody(api, "/resource1/test17"));
-		validateSet1(validateOperationResponse(api, "/resource1/test18"));
-		validateSet1Model(api, validateOperationBody(api, "/resource1/test19"));
-		validateSet2(validateOperationResponse(api, "/resource1/test20"));
-		validateSet3(validateOperationResponse(api, "/resource1/test21"));
-		validateSet4(validateOperationResponse(api, "/resource1/test22"));
-		validateSet5(validateOperationResponse(api, "/resource1/test23"));
+		validateModel1(validateOperationResponse(api, path + "/test1"));
+		validateModel1(validateOperationBody(api, path + "/test2"));
+		validateModel1(validateOperationResponseArray(api, path + "/test3", false));
+		validateModel1(validateOperationResponseArray(api, path + "/test4", false));
+		validateModel1(validateOperationResponseArray(api, path + "/test5", true));
+		validateModel2(validateOperationResponse(api, path + "/test6"));
+		validateModel2(validateOperationBody(api, path + "/test7"));
+		validateTestData(validateOperationResponse(api, path + "/test8"));
+		validateTestData(validateOperationBody(api, path + "/test9"));
+		validateStringPlainResponse(api, path + "/test10");
+		validateModelOne(api, validateOperationResponse(api, path + "/test11"));
+		validateModelOne(api, validateOperationBody(api, path + "/test12"));
+		validateModelOne(api, validateOperationResponseArray(api, path + "/test13", false));
+		validateModelOne(api, validateOperationResponseArray(api, path + "/test14", false));
+		validateModelOne(api, validateOperationResponseArray(api, path + "/test15", true));
+		validateModelTwo(api, validateOperationResponse(api, path + "/test16"));
+		validateModelTwo(api, validateOperationBody(api, path + "/test17"));
+		validateSet1(validateOperationResponse(api, path + "/test18"));
+		validateSet1Model(api, validateOperationBody(api, path + "/test19"));
+		validateSet2(validateOperationResponse(api, path + "/test20"));
+		validateSet3(validateOperationResponse(api, path + "/test21"));
+		validateSet4(validateOperationResponse(api, path + "/test22"));
+		validateSet5(validateOperationResponse(api, path + "/test23"));
 
 	}
 

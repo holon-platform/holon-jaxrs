@@ -17,8 +17,6 @@ package com.holonplatform.jaxrs.swagger.v3.spring;
 
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +25,9 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
+import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
@@ -73,23 +73,23 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
 public class JerseySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfiguration<ResourceConfig> {
 
-	@Value("${spring.jersey.application-path}")
+	@Value("${spring.jersey.application-path:/}")
 	private String applicationPath;
 
 	public JerseySwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
-			ResourceConfig application, ObjectProvider<OpenAPIConfiguration> openAPIConfigurations) {
-		super(configurationProperties, application, openAPIConfigurations);
+			ObjectProvider<OpenAPIConfiguration> apiConfigurations) {
+		super(configurationProperties, apiConfigurations);
 	}
 
-	@PostConstruct
-	public void configure() {
-		configureEndpoints();
+	@Bean
+	public ResourceConfigCustomizer jerseySwaggerV3ResourceConfigCustomizer() {
+		return application -> this.configure(application);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#getDefaultApplicationPath()
+	 * @see com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#
+	 * getDefaultApplicationPath()
 	 */
 	@Override
 	protected Optional<String> getDefaultApplicationPath() {
@@ -99,12 +99,12 @@ public class JerseySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfi
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#registerEndpoint(java.lang.
-	 * Class)
+	 * com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration#registerEndpoint(javax.
+	 * ws.rs.core.Application, java.lang.Class)
 	 */
 	@Override
-	protected void registerEndpoint(Class<?> endpoint) {
-		getApplication().register(endpoint);
+	protected void registerEndpoint(ResourceConfig application, Class<?> endpoint) {
+		application.register(endpoint);
 	}
 
 }

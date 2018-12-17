@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.swagger;
 
 import java.io.Serializable;
+import java.util.concurrent.Callable;
 
 import com.holonplatform.jaxrs.swagger.internal.DefaultApiEndpointDefinition;
 
@@ -51,15 +52,23 @@ public interface ApiEndpointDefinition extends Serializable {
 	String getContextId();
 
 	/**
+	 * Init the endpoint context.
+	 * @return <code>true</code> if initialized, <code>false</code> if already initialized
+	 */
+	boolean init();
+
+	/**
 	 * Create a new {@link ApiEndpointDefinition}.
 	 * @param endpointClass The endpoint class (not null)
 	 * @param type The endpoint type
 	 * @param path The endpoint path
 	 * @param contextId the API context id to which the endpoint is bound
+	 * @param initializer Initializer (not null)
 	 * @return A new {@link ApiEndpointDefinition} instance
 	 */
-	static ApiEndpointDefinition create(Class<?> endpointClass, ApiEndpointType type, String path, String contextId) {
-		return new DefaultApiEndpointDefinition(endpointClass, type, path, contextId);
+	static ApiEndpointDefinition create(Class<?> endpointClass, ApiEndpointType type, String path, String contextId,
+			Callable<Void> initializer) {
+		return new DefaultApiEndpointDefinition(endpointClass, type, path, contextId, initializer);
 	}
 
 }

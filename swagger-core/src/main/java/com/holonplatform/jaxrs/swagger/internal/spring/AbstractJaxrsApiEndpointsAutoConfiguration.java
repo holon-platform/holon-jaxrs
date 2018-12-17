@@ -15,16 +15,22 @@
  */
 package com.holonplatform.jaxrs.swagger.internal.spring;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
 
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.holonplatform.core.internal.Logger;
@@ -56,36 +62,48 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	private final SwaggerConfigurationProperties configurationProperties;
 
-	private final A application;
-
 	private final ObjectProvider<C> apiConfigurations;
 
 	private final ApiEndpointBuilder<C> apiEndpointBuilder;
 
 	private ClassLoader classLoader;
 
+	private static final Map<ClassLoader, List<ApiEndpointDefinition>> API_ENDPOINT_DEFINITIONS = new WeakHashMap<>();
+
 	/**
 	 * Constructor.
 	 * @param configurationProperties API configuration properties
-	 * @param application JAX-RS application
 	 * @param configurations API configurations provider
 	 * @param apiEndpointBuilder API endpoint builder
 	 */
 	public AbstractJaxrsApiEndpointsAutoConfiguration(SwaggerConfigurationProperties configurationProperties,
-			A application, ObjectProvider<C> apiConfigurations, ApiEndpointBuilder<C> apiEndpointBuilder) {
+			ObjectProvider<C> apiConfigurations, ApiEndpointBuilder<C> apiEndpointBuilder) {
 		super();
 		ObjectUtils.argumentNotNull(apiEndpointBuilder, "ApiEndpointBuilder must be not null");
 		this.configurationProperties = configurationProperties;
-		this.application = application;
 		this.apiConfigurations = apiConfigurations;
 		this.apiEndpointBuilder = apiEndpointBuilder;
 	}
 
+	@Bean
+	public ApplicationListener<ContextRefreshedEvent> jaxrsApiEndpointsDefinitionsInitializerApplicationListenerOnContextRefresh() {
+		return event -> {
+			API_ENDPOINT_DEFINITIONS
+					.getOrDefault(event.getApplicationContext().getClassLoader(), Collections.emptyList())
+					.forEach(d -> {
+						if (d.init()) {
+							LOGGER.info("API endpoint definition [" + d.getContextId() + "] initialized.");
+						}
+					});
+		};
+	}
+
 	/**
 	 * Get the JAX-RS Application path.
+	 * @param application The JAX-RS application
 	 * @return Optional JAX-RS Application path
 	 */
-	protected abstract Optional<String> getApplicationPath();
+	protected abstract Optional<String> getApplicationPath(A application);
 
 	/**
 	 * Build an API configuration using given configuration properties.
@@ -95,19 +113,11 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties);
 
 	/**
-	 * Process given API configuration.
-	 * @param application The JAX-RS application
-	 * @param contextId The API context id
-	 * @param configuration The API configuration
-	 * @return The processed API configuration
-	 */
-	protected abstract C processConfiguration(A application, String contextId, C configuration);
-
-	/**
 	 * Register given endpoint class in the JAX-RS application.
+	 * @param application The JAX-RS application
 	 * @param endpoint The endpoint definition to register
 	 */
-	protected abstract void registerEndpoint(ApiEndpointDefinition endpoint);
+	protected abstract void registerEndpoint(A application, ApiEndpointDefinition endpoint);
 
 	/*
 	 * (non-Javadoc)
@@ -119,41 +129,51 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	}
 
 	/**
-	 * Get the JAX-RS application.
-	 * @return the JAX-RS application
+	 * Configure the API listing endpoints.
+	 * @param application The JAX-RS application (not null)
 	 */
-	protected A getApplication() {
-		return application;
+	protected void configure(A application) {
+		final List<ApiEndpointDefinition> definitions = API_ENDPOINT_DEFINITIONS.computeIfAbsent(classLoader,
+				cl -> new LinkedList<>());
+		configureEndpoints(application).forEach(d -> definitions.add(d));
 	}
 
 	/**
-	 * Configure the API listing endpoints.
+	 * Configure the API listing endpoints, if the configuration is enabled
+	 * @param application The JAX-RS application (not null)
+	 * @return The API endpoint definitions
 	 */
-	protected void configureEndpoints() {
+	private List<ApiEndpointDefinition> configureEndpoints(A application) {
 		// check disabled
 		if (configurationProperties.isEnabled()) {
-			registerEndpoints();
+			return registerEndpoints(application);
 		} else {
 			LOGGER.info("Swagger API endpoints configuration is disabled.");
+			return Collections.emptyList();
 		}
 	}
 
 	/**
 	 * Register the API listing endpoints.
+	 * @param application The JAX-RS application (not null)
+	 * @return The API endpoint definitions
 	 */
-	private void registerEndpoints() {
+	private List<ApiEndpointDefinition> registerEndpoints(A application) {
+		final List<ApiEndpointDefinition> definitions = new LinkedList<>();
 		final List<C> configurations = this.apiConfigurations.stream().collect(Collectors.toList());
 		if (configurations.isEmpty()) {
 			// default configurations
 			getDefaultConfigurations().entrySet().forEach(e -> {
-				configureAndRegisterEndpoint(e.getValue(), e.getKey());
+				definitions.add(configureAndRegisterEndpoint(application, e.getValue(), e.getKey()));
 			});
 		} else {
 			// use configurations
 			for (C configuration : configurations) {
-				configureAndRegisterEndpoint(configuration, getApiEndpointContextId(configuration));
+				definitions.add(configureAndRegisterEndpoint(application, configuration,
+						getApiEndpointContextId(configuration)));
 			}
 		}
+		return definitions;
 	}
 
 	/**
@@ -179,26 +199,30 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			}
 		} else {
 			// default
-			configurations.put(ApiContext.DEFAULT_CONTEXT_ID, configurationProperties);
+			String contextId = configurationProperties.getContextId();
+			configurations.put(
+					(contextId != null && !contextId.trim().equals("")) ? contextId : ApiContext.DEFAULT_CONTEXT_ID,
+					configurationProperties);
 		}
 		return configurations;
 	}
 
 	/**
 	 * Register an API listing endpoint using given configuration.
-	 * @param apiConfiguration The API configuration
+	 * @param application The JAX-RS application
+	 * @param configuration The API configuration
 	 * @param contextId The API context id
+	 * @return The API endpoint definition
 	 */
-	private void configureAndRegisterEndpoint(C apiConfiguration, String contextId) {
-		final C configuration = processConfiguration(getApplication(), contextId, apiConfiguration);
-		// register endpoint
-		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
+	private ApiEndpointDefinition configureAndRegisterEndpoint(A application, C configuration, String contextId) {
+		// create endpoint
+		final ApiEndpointDefinition endpoint = apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
 				// context id
 				.contextId(contextId)
 				// API configuration
 				.configuration(configuration)
 				// JAX-RS application
-				.application(getApplication())
+				.application(application)
 				// path
 				.path(getApiEndpointPath(configuration, contextId))
 				// type
@@ -206,25 +230,30 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 				// classLoader
 				.classLoader(classLoader)
 				// build
-				.build(), true));
+				.build());
+		// register endpoint
+		registerEndpoint(application, endpoint);
+		return endpoint;
 	}
 
 	/**
 	 * Register an API listing endpoint using given configuration properties.
+	 * @param application The JAX-RS application
 	 * @param configurationProperties The API configuration properties
 	 * @param contextId The API context id
+	 * @return The API endpoint definition
 	 */
-	private void configureAndRegisterEndpoint(ApiConfigurationProperties configurationProperties, String contextId) {
-		final C configuration = processConfiguration(getApplication(), contextId,
-				buildConfiguration(configurationProperties));
-		// register endpoint
-		registerEndpoint(apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
+	private ApiEndpointDefinition configureAndRegisterEndpoint(A application,
+			ApiConfigurationProperties configurationProperties, String contextId) {
+		final C configuration = buildConfiguration(configurationProperties);
+		// create endpoint
+		final ApiEndpointDefinition endpoint = apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
 				// context id
 				.contextId(contextId)
 				// API configuration
 				.configuration(configuration)
 				// JAX-RS application
-				.application(getApplication())
+				.application(application)
 				// path
 				.path(getApiEndpointPath(configurationProperties, contextId))
 				// type
@@ -232,7 +261,10 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 				// classLoader
 				.classLoader(classLoader)
 				// build
-				.build(), true));
+				.build());
+		// register endpoint
+		registerEndpoint(application, endpoint);
+		return endpoint;
 	}
 
 	/**

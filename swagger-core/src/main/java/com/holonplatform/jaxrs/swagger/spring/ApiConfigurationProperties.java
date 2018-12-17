@@ -66,6 +66,12 @@ public interface ApiConfigurationProperties {
 	ApiEndpointType getType();
 
 	/**
+	 * Get the API context id.
+	 * @return The context id
+	 */
+	String getContextId();
+
+	/**
 	 * Get the allowed schemes.
 	 * @return the allowed schemes
 	 */
