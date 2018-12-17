@@ -69,7 +69,6 @@ public class TestOpenApiEndpointsContext extends JerseyTest5 {
 	@Override
 	protected Application configure() {
 		return new ResourceConfig()
-				// .register(Resource1.class).register(Resource2.class).register(Resource3.class)
 				.register(QueryOpenApiEndpoint.class).register(PathOpenApiEndpoint.class)
 				.register(AcceptOpenApiEndpoint.class);
 	}

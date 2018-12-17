@@ -59,6 +59,11 @@ public class OpenApiContextAdapter implements OpenApiContext {
 		getContextReader(context).ifPresent(r -> {
 			context.setOpenApiReader(OpenApi.adapt(r));
 		});
+		if (context.getId() != null) {
+			getContextScanner(context).ifPresent(s -> {
+				context.setOpenApiScanner(OpenApi.adapt(s, context.getId()));
+			});
+		}
 	}
 
 	/**
@@ -86,12 +91,23 @@ public class OpenApiContextAdapter implements OpenApiContext {
 	public OpenApiContext init() throws OpenApiConfigurationException {
 		OpenApiContext ctx = getContext().init();
 		if (!adapted) {
+			// reader
 			final OpenApiReader contextReader = getContextReader(getContext()).orElse(null);
 			if (contextReader != null) {
 				getContext().setOpenApiReader(OpenApi.adapt(contextReader));
 			} else {
 				LOGGER.warn("Failed to obtain the OpenApiReader bound to context [" + getContext()
 						+ "]: the reader won't be adapted");
+			}
+			// scanner
+			if (getId() != null) {
+				final OpenApiScanner contextScanner = getContextScanner(getContext()).orElse(null);
+				if (contextScanner != null) {
+					getContext().setOpenApiScanner(OpenApi.adapt(contextScanner, getId()));
+				} else {
+					LOGGER.warn("Failed to obtain the OpenApiScanner bound to context [" + getContext()
+							+ "]: the scanner won't be adapted");
+				}
 			}
 		}
 		return ctx;
@@ -186,6 +202,18 @@ public class OpenApiContextAdapter implements OpenApiContext {
 	private static Optional<OpenApiReader> getContextReader(OpenApiContext context) {
 		if (context instanceof GenericOpenApiContext) {
 			return Optional.ofNullable(((GenericOpenApiContext<?>) context).getOpenApiReader());
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Try to obtain the {@link OpenApiScanner} bound to given context.
+	 * @param context The context
+	 * @return Optional context scanner
+	 */
+	private static Optional<OpenApiScanner> getContextScanner(OpenApiContext context) {
+		if (context instanceof GenericOpenApiContext) {
+			return Optional.ofNullable(((GenericOpenApiContext<?>) context).getOpenApiScanner());
 		}
 		return Optional.empty();
 	}

@@ -19,16 +19,19 @@ import java.util.Optional;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.internal.builders.DefaultJaxrsOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextAdapter;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextListener;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiReaderAdapter;
+import com.holonplatform.jaxrs.swagger.v3.internal.scanner.OpenApiScannerAdapter;
 
 import io.swagger.v3.jaxrs2.ReaderListener;
 import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.integration.api.OpenApiReader;
+import io.swagger.v3.oas.integration.api.OpenApiScanner;
 
 /**
  * Entrypoint interface to provide OpenAPI resources, helpers, builders and property model integration facilities.
@@ -55,6 +58,17 @@ public interface OpenApi {
 	 */
 	static OpenApiReader adapt(OpenApiReader reader) {
 		return new OpenApiReaderAdapter(reader);
+	}
+
+	/**
+	 * Adapt given {@link OpenApiScanner} to filter API resources according to given <code>contextId</code> using the
+	 * {@link ApiContextId} annotation.
+	 * @param scanner The scanner to adapt (not null)
+	 * @param contextId The API context id
+	 * @return The adapted {@link OpenApiScanner}
+	 */
+	static OpenApiScanner adapt(OpenApiScanner scanner, String contextId) {
+		return new OpenApiScannerAdapter(scanner, contextId);
 	}
 
 	/**

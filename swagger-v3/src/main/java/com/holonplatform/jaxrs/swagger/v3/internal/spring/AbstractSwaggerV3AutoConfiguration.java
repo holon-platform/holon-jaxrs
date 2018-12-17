@@ -112,8 +112,6 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	@Override
 	protected OpenAPIConfiguration processConfiguration(A application, String contextId,
 			OpenAPIConfiguration configuration) {
-		// TODO
-		// check ApiContextId annotation
 		return configuration;
 	}
 
