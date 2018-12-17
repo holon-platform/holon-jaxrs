@@ -30,6 +30,12 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 public interface ApiConfigurationProperties {
 
 	/**
+	 * Get whether is a API group configuration.
+	 * @return whether is a API group configuration
+	 */
+	boolean isGroupConfiguration();
+	
+	/**
 	 * Get the package names to use to filter the API resource classes.
 	 * <p>
 	 * To specify more than one package name, a comma separator con be used

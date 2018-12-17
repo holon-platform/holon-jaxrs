@@ -42,6 +42,7 @@ import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -60,24 +61,28 @@ public abstract class AbstractOpenApiEndpoint {
 		// get context id
 		final String contextId = getContextIdOrDefault();
 
+		// check available
+		OpenApiContext openApiContext = OpenApiContextLocator.getInstance().getOpenApiContext(contextId);
+
 		// build context
-		final OpenApiContext openApiContext;
-		try {
-			openApiContext = OpenApi.contextBuilder()
-					// context id
-					.contextId(contextId)
-					// JAX-RS Application
-					.application(application)
-					// config location
-					.configLocation(getConfigLocation().orElse(null))
-					// scanner type
-					.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
-					// build and init
-					.build(true);
-		} catch (ApiConfigurationException ce) {
-			LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
-			return Response.status(Status.INTERNAL_SERVER_ERROR)
-					.entity("Failed to build the OpenAPI context for context id [" + contextId + "]").build();
+		if (openApiContext == null) {
+			try {
+				openApiContext = OpenApi.contextBuilder()
+						// context id
+						.contextId(contextId)
+						// JAX-RS Application
+						.application(application)
+						// config location
+						.configLocation(getConfigLocation().orElse(null))
+						// scanner type
+						.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
+						// build and init
+						.build(true);
+			} catch (ApiConfigurationException ce) {
+				LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
+				return Response.status(Status.INTERNAL_SERVER_ERROR)
+						.entity("Failed to build the OpenAPI context for context id [" + contextId + "]").build();
+			}
 		}
 
 		// read the OpenAPI definitions

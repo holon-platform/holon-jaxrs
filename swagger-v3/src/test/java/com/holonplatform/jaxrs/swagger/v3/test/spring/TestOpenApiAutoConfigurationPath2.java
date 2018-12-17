@@ -35,9 +35,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.v3.spring.ResteasySwaggerV3AutoConfiguration;
-import com.holonplatform.jaxrs.swagger.v3.test.TestPropertyBoxModelConverter;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -81,11 +81,11 @@ public class TestOpenApiAutoConfigurationPath2 {
 		// json
 		Response response = client.target("http://localhost:" + port + "/api").path("docs.json").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, "/resourcepath2", null);
+		OpenApiValidation.validateTestResourceApi(api, "/resourcepath2", null);
 		// yaml
 		response = client.target("http://localhost:" + port + "/api").path("docs.yaml").request().get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, "/resourcepath2", null);
+		OpenApiValidation.validateTestResourceApi(api, "/resourcepath2", null);
 	}
 
 }

@@ -32,6 +32,7 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.test.model.Model1;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -126,8 +127,7 @@ public class TestApiContextId {
 		assertNotNull(api.getPaths());
 		assertEquals(1, api.getPaths().size());
 
-		TestPropertyBoxModelConverter
-				.validateModel1(TestPropertyBoxModelConverter.validateOperationResponse(api, "/resource1/test"));
+		OpenApiValidation.validateModel1(OpenApiValidation.validateOperationResponse(api, "/resource1/test"));
 	}
 
 	private static void validateApiContext2(OpenAPI api) {
@@ -138,10 +138,8 @@ public class TestApiContextId {
 		assertNotNull(api.getPaths());
 		assertEquals(2, api.getPaths().size());
 
-		TestPropertyBoxModelConverter
-				.validateModel1(TestPropertyBoxModelConverter.validateOperationResponse(api, "/resource2/test"));
-		TestPropertyBoxModelConverter
-				.validateModel1(TestPropertyBoxModelConverter.validateOperationResponse(api, "/resource3/test"));
+		OpenApiValidation.validateModel1(OpenApiValidation.validateOperationResponse(api, "/resource2/test"));
+		OpenApiValidation.validateModel1(OpenApiValidation.validateOperationResponse(api, "/resource3/test"));
 
 		PathItem item = api.getPaths().get("/resource2/test");
 		assertNotNull(item);

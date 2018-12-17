@@ -152,6 +152,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	// ------- getters and setters
 
+	@Override
+	public boolean isGroupConfiguration() {
+		return false;
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -410,6 +415,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private boolean prettyPrint = true;
 
 		// ------- getters and setters
+
+		@Override
+		public boolean isGroupConfiguration() {
+			return true;
+		}
 
 		public String getGroupId() {
 			return groupId;

@@ -297,7 +297,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			return annotation.path();
 		}
 		// default
-		return getDefaultApiEndpointPath(contextId);
+		return getDefaultApiEndpointPath(contextId, false);
 	}
 
 	/**
@@ -320,13 +320,14 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * Get the API endpoint path.
 	 * @param configurationProperties API configuration properties
 	 * @param contextId The API context id
+	 * @param appendContextId Whether to append the context id, if available
 	 * @return the API endpoint path
 	 */
 	private String getApiEndpointPath(ApiConfigurationProperties configurationProperties, String contextId) {
 		if (configurationProperties.getPath() != null && !configurationProperties.getPath().trim().equals("")) {
 			return configurationProperties.getPath();
 		}
-		return getDefaultApiEndpointPath(contextId);
+		return getDefaultApiEndpointPath(contextId, configurationProperties.isGroupConfiguration());
 	}
 
 	/**
@@ -344,10 +345,12 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Get the default API listing endpoint path.
 	 * @param contextId Optional API context id
+	 * @param appendContextId Whether to append the context id, if available
 	 * @return the default API listing endpoint path
 	 */
-	protected String getDefaultApiEndpointPath(String contextId) {
-		if (contextId != null && !contextId.trim().equals("") && !ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
+	protected String getDefaultApiEndpointPath(String contextId, boolean appendContextId) {
+		if (appendContextId && contextId != null && !contextId.trim().equals("")
+				&& !ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
 			return ApiContext.DEFAULT_API_ENDPOINT_PATH + "/" + contextId;
 		}
 		return ApiContext.DEFAULT_API_ENDPOINT_PATH;

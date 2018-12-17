@@ -15,9 +15,6 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +29,7 @@ import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsApplicationResou
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.resources.context2.Resource2;
 import com.holonplatform.jaxrs.swagger.v3.test.resources.context3.Resource3;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -66,7 +64,7 @@ public class TestOpenApiContextScanner {
 				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
-		validateApi(api, "Title of " + id, 25);
+		OpenApiValidation.validateApi(api, "Title of " + id, 25);
 
 	}
 
@@ -96,7 +94,7 @@ public class TestOpenApiContextScanner {
 				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
-		validateApi(api, "Title of " + id, 24);
+		OpenApiValidation.validateApi(api, "Title of " + id, 24);
 
 	}
 
@@ -125,7 +123,7 @@ public class TestOpenApiContextScanner {
 				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
-		validateApi(api, "Title of " + id, 1);
+		OpenApiValidation.validateApi(api, "Title of " + id, 1);
 
 	}
 
@@ -155,7 +153,7 @@ public class TestOpenApiContextScanner {
 				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
-		validateApi(api, "Title of " + id, 2);
+		OpenApiValidation.validateApi(api, "Title of " + id, 2);
 
 	}
 
@@ -176,19 +174,7 @@ public class TestOpenApiContextScanner {
 				.configuration(configuration).contextId(id).scannerType(JaxrsScannerType.APPLICATION).build(true);
 
 		OpenAPI api = openApiContext.read();
-		validateApi(api, "Title of " + id, 25);
-
-	}
-
-	private static void validateApi(OpenAPI api, String title, int pathsCount) {
-
-		assertNotNull(api);
-
-		assertNotNull(api.getInfo());
-		assertEquals(title, api.getInfo().getTitle());
-
-		assertNotNull(api.getPaths());
-		assertEquals(pathsCount, api.getPaths().size());
+		OpenApiValidation.validateApi(api, "Title of " + id, 25);
 
 	}
 

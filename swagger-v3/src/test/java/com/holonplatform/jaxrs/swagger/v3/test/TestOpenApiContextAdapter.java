@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -56,7 +57,7 @@ public class TestOpenApiContextAdapter {
 		assertTrue(OpenApi.getOpenApiContext(id).isPresent());
 
 		OpenAPI api = openApiContext.read();
-		TestPropertyBoxModelConverter.validateApi(api, "Title of " + id);
+		OpenApiValidation.validateTestResourceApi(api, "Title of " + id);
 
 	}
 
@@ -75,7 +76,7 @@ public class TestOpenApiContextAdapter {
 				.configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
-		TestPropertyBoxModelConverter.validateApi(api, "Title of " + id);
+		OpenApiValidation.validateTestResourceApi(api, "Title of " + id);
 
 		assertTrue(OpenApi.getOpenApiContext(id).isPresent());
 

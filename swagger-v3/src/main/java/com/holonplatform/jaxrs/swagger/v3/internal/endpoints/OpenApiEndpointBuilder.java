@@ -17,7 +17,6 @@ package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
 import javax.ws.rs.Path;
 
-import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
@@ -26,7 +25,6 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
 import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
@@ -50,8 +48,6 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfiguration> {
 
 	INSTANCE;
-
-	private static final Logger LOGGER = SwaggerLogger.create();
 
 	@Override
 	public ApiEndpointDefinition build(ApiEndpointConfiguration<? extends OpenAPIConfiguration> configuration)
@@ -110,8 +106,6 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 			contextBuilder.scannerType(JaxrsScannerType.APPLICATION);
 		});
 		final OpenApiContext context = contextBuilder.build(false);
-
-		LOGGER.debug(() -> "OpenAPI context inited - context id: " + contextId);
 
 		return ApiEndpointDefinition.create(endpoint, type, path, contextId, () -> {
 			context.init();

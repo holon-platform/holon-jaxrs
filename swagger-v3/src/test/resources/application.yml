@@ -47,6 +47,24 @@ holon:
 
 ---
 spring:
+  profiles: packages1
+  
+holon:
+  swagger:
+    context-id: 'test-packages1'
+    resource-package: 'com.holonplatform.jaxrs.swagger.v3.test.resources.context2'
+
+---
+spring:
+  profiles: packages2
+  
+holon:
+  swagger:
+    context-id: 'test-packages2'
+    resource-package: 'com.holonplatform.jaxrs.swagger.v3.test.resources.context2,com.holonplatform.jaxrs.swagger.v3.test.resources.context3'
+
+---
+spring:
   profiles: groups
   
 holon:

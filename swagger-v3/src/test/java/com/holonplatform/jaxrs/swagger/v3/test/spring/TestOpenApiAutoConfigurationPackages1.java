@@ -15,81 +15,55 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.test.spring;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.v3.spring.ResteasySwaggerV3AutoConfiguration;
-import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
+import com.holonplatform.jaxrs.swagger.v3.test.resources.Resources;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
+@ActiveProfiles("packages1")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class TestOpenApiAutoConfigurationDefault {
-
-	@Path("resource1")
-	public static class TestResource extends AbstractTestResource {
-
-	}
+public class TestOpenApiAutoConfigurationPackages1 {
 
 	@LocalServerPort
 	private int port;
 
+	@ComponentScan(basePackageClasses = Resources.class)
 	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, ResteasySwaggerV3AutoConfiguration.class })
 	static class Config {
 
-		@Bean
-		public ResourceConfig applicationConfig() {
-			ResourceConfig cfg = new ResourceConfig();
-			cfg.register(TestResource.class);
-			return cfg;
-		}
-
-	}
-
-	@Test
-	public void testEndpoint() {
-		final Client client = JerseyClientBuilder.createClient();
-		WebTarget target = client.target("http://localhost:" + port + "/resource1").path("test10");
-		String response = target.request().get(String.class);
-		assertEquals("test", response);
 	}
 
 	@SuppressWarnings("resource")
 	@Test
 	public void testOpenApi() {
 		final Client client = JerseyClientBuilder.createClient();
-		// dft
-		Response response = client.target("http://localhost:" + port).path("api-docs").request().get();
-		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		OpenApiValidation.validateTestResourceApi(api, "/resource1", null);
 		// json
-		response = client.target("http://localhost:" + port).path("api-docs").queryParam("type", "json").request()
-				.get();
-		api = OpenAPIEndpointUtils.readAsJson(response);
-		OpenApiValidation.validateTestResourceApi(api, "/resource1", null);
+		Response response = client.target("http://localhost:" + port).path("api-docs").queryParam("type", "json")
+				.request().get();
+		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
+		OpenApiValidation.validateModel1Api(api, "/resource2/test21", null);
 		// yaml
 		response = client.target("http://localhost:" + port).path("api-docs").queryParam("type", "yaml").request()
 				.get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		OpenApiValidation.validateTestResourceApi(api, "/resource1", null);
+		OpenApiValidation.validateModel1Api(api, "/resource2/test21", null);
 	}
 
 }

@@ -35,6 +35,7 @@ import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.test.model.Model1;
 import com.holonplatform.jaxrs.swagger.v3.test.model.ModelOne;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -126,7 +127,7 @@ public class TestOpenApiAnnotations {
 		io.swagger.v3.oas.models.media.MediaType mt = resp.getContent().get(MediaType.APPLICATION_JSON);
 		assertNotNull(mt);
 		io.swagger.v3.oas.models.media.Schema<?> schema = mt.getSchema();
-		TestPropertyBoxModelConverter.validateModel1(schema);
+		OpenApiValidation.validateModel1(schema);
 
 		// test2
 		item = api.getPaths().get("/resource/test2");
@@ -153,7 +154,7 @@ public class TestOpenApiAnnotations {
 		assertTrue(schema instanceof io.swagger.v3.oas.models.media.ArraySchema);
 		io.swagger.v3.oas.models.media.Schema<?> items = ((io.swagger.v3.oas.models.media.ArraySchema) schema)
 				.getItems();
-		TestPropertyBoxModelConverter.validateModel1(items);
+		OpenApiValidation.validateModel1(items);
 
 		// test3
 		item = api.getPaths().get("/resource/test3");
@@ -178,7 +179,7 @@ public class TestOpenApiAnnotations {
 		assertNotNull(api.getComponents().getSchemas());
 		Map<String, io.swagger.v3.oas.models.media.Schema> schemas = api.getComponents().getSchemas();
 		assertTrue(schemas.containsKey("ModelOne"));
-		TestPropertyBoxModelConverter.validateModel1(schemas.get("ModelOne"), "ModelOne");
+		OpenApiValidation.validateModel1(schemas.get("ModelOne"), "ModelOne");
 	}
 
 }

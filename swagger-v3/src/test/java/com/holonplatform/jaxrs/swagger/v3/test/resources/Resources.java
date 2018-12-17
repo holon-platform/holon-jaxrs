@@ -13,16 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.test.resources.context1;
+package com.holonplatform.jaxrs.swagger.v3.test.resources;
 
-import javax.ws.rs.Path;
-
-import org.springframework.stereotype.Component;
-
-import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
-
-@Component
-@Path("resource1")
-public class Resource1 extends AbstractTestResource {
+public class Resources {
 
 }

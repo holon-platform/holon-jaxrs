@@ -35,6 +35,7 @@ import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
+import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 import com.holonplatform.test.JerseyTest5;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -94,15 +95,15 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// dft
 		Response response = target("/openapi/query").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		OpenApiValidation.validateTestResourceApi(api, null);
 		// json
 		response = target("/openapi/query").queryParam("type", "json").request().get();
 		api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		OpenApiValidation.validateTestResourceApi(api, null);
 		// yaml
 		response = target("/openapi/query").queryParam("type", "yaml").request().get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, null);
+		OpenApiValidation.validateTestResourceApi(api, null);
 	}
 
 	@SuppressWarnings("resource")
@@ -111,11 +112,11 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// json
 		Response response = target("/openapi.json").request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 1");
+		OpenApiValidation.validateTestResourceApi(api, "Test file config 1");
 		// yaml
 		response = target("/openapi.yaml").request().get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 1");
+		OpenApiValidation.validateTestResourceApi(api, "Test file config 1");
 	}
 
 	@SuppressWarnings("resource")
@@ -124,11 +125,11 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 		// json
 		Response response = target("/openapi/accept").request().accept("application/json").get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 2");
+		OpenApiValidation.validateTestResourceApi(api, "Test file config 2");
 		// yaml
 		response = target("/openapi/accept").request().accept("application/yaml").get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
-		TestPropertyBoxModelConverter.validateApi(api, "Test file config 2");
+		OpenApiValidation.validateTestResourceApi(api, "Test file config 2");
 	}
 
 }
