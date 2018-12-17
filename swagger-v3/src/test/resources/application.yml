@@ -106,16 +106,34 @@ holon:
 
 ---
 spring:
-  profiles: groups
+  profiles: groups1
   
 holon:
   swagger:
+    title: 'Title groups1'
+    version: '0.1.2'
     api-groups:
-      - resource-package: "com.holonplatform.jaxrs.swagger.test.resources"
+      - resource-package: "com.holonplatform.jaxrs.swagger.v3.test.resources.context2"
         description: "The API group 1"
         path: docs1
       - group-id: "additional"
-        resource-package: "com.holonplatform.jaxrs.swagger.test.resources2"
+        resource-package: "com.holonplatform.jaxrs.swagger.v3.test.resources.context3"
         description: "The API group 2"
         path: docs2
-    
+
+---
+spring:
+  profiles: groups2
+  
+holon:
+  swagger:
+    title: 'Title groups2'
+    version: '0.1.2'
+    api-groups:
+      - group-id: 'ctx_resource_1'
+        description: 'The API group 1'
+        path: docs1
+      - group-id: 'ctx_resource_2'
+        description: 'The API group 2'
+        path: docs2
+        

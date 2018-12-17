@@ -128,15 +128,9 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 		return Optional.empty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#buildConfiguration(com
-	 * .holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties, java.lang.String)
-	 */
 	@Override
 	protected OpenAPIConfiguration buildConfiguration(ApiConfigurationProperties configurationProperties,
-			String applicationPath) {
+			ApiConfigurationProperties parent, String applicationPath) {
 		final SwaggerConfiguration cfg = new SwaggerConfiguration();
 		// configuration
 		Set<String> packages = configurationProperties.getResourcePackages();
@@ -196,16 +190,8 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			if (api.getServers() == null) {
 				api.setServers(new LinkedList<>());
 			}
-			StringBuilder sb = new StringBuilder();
-			sb.append(v);
-			if (applicationPath != null && !"/".equals(applicationPath)) {
-				if (!v.endsWith("/") && !applicationPath.startsWith("/")) {
-					sb.append("/");
-				}
-				sb.append(applicationPath);
-			}
 			final Server server = new Server();
-			server.setUrl(sb.toString());
+			server.setUrl(builServerUrl(v, applicationPath));
 			getConfigurationProperty(configurationProperties.getServerDescription()).ifPresent(d -> {
 				server.setDescription(d);
 			});
@@ -224,8 +210,106 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			}
 			api.getExternalDocs().setDescription(v);
 		});
+		// check parent
+		if (parent != null) {
+			if (info.getTitle() == null) {
+				getConfigurationProperty(parent.getTitle()).ifPresent(v -> {
+					info.setTitle(v);
+				});
+			}
+			if (info.getVersion() == null) {
+				getConfigurationProperty(parent.getVersion()).ifPresent(v -> {
+					info.setVersion(v);
+				});
+			}
+			if (info.getDescription() == null) {
+				getConfigurationProperty(parent.getDescription()).ifPresent(v -> {
+					info.setDescription(v);
+				});
+			}
+			if (info.getTermsOfService() == null) {
+				getConfigurationProperty(parent.getTermsOfServiceUrl()).ifPresent(v -> {
+					info.setTermsOfService(v);
+				});
+			}
+			if (info.getLicense() == null) {
+				getConfigurationProperty(parent.getLicenseName()).ifPresent(v -> {
+					if (info.getLicense() == null) {
+						info.setLicense(new License());
+					}
+					info.getLicense().setName(v);
+				});
+				getConfigurationProperty(parent.getLicenseUrl()).ifPresent(v -> {
+					if (info.getLicense() == null) {
+						info.setLicense(new License());
+					}
+					info.getLicense().setUrl(v);
+				});
+			}
+			if (info.getContact() == null) {
+				getConfigurationProperty(parent.getContactName()).ifPresent(v -> {
+					if (info.getContact() == null) {
+						info.setContact(new Contact());
+					}
+					info.getContact().setName(v);
+				});
+				getConfigurationProperty(parent.getContactEmail()).ifPresent(v -> {
+					if (info.getContact() == null) {
+						info.setContact(new Contact());
+					}
+					info.getContact().setEmail(v);
+				});
+				getConfigurationProperty(parent.getContactUrl()).ifPresent(v -> {
+					if (info.getContact() == null) {
+						info.setContact(new Contact());
+					}
+					info.getContact().setUrl(v);
+				});
+			}
+			if (api.getServers() == null || api.getServers().isEmpty()) {
+				getConfigurationProperty(parent.getServerUrl()).ifPresent(v -> {
+					if (api.getServers() == null) {
+						api.setServers(new LinkedList<>());
+					}
+					final Server server = new Server();
+					server.setUrl(builServerUrl(v, applicationPath));
+					getConfigurationProperty(parent.getServerDescription()).ifPresent(d -> {
+						server.setDescription(d);
+					});
+					api.getServers().add(server);
+				});
+			}
+			if (api.getExternalDocs() == null) {
+				getConfigurationProperty(parent.getExternalDocsUrl()).ifPresent(v -> {
+					if (api.getExternalDocs() == null) {
+						api.setExternalDocs(new ExternalDocumentation());
+					}
+					api.getExternalDocs().setUrl(v);
+				});
+				getConfigurationProperty(parent.getExternalDocsDescription()).ifPresent(v -> {
+					if (api.getExternalDocs() == null) {
+						api.setExternalDocs(new ExternalDocumentation());
+					}
+					api.getExternalDocs().setDescription(v);
+				});
+			}
+		}
+
+		// done
 		cfg.setOpenAPI(api);
 		return cfg;
+	}
+
+	private static String builServerUrl(String url, String applicationPath) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(url);
+		if (applicationPath != null && !"/".equals(applicationPath)) {
+			if (!url.endsWith("/") && !applicationPath.startsWith("/")) {
+				sb.append("/");
+			}
+			sb.append(applicationPath);
+		}
+		return sb.toString();
 	}
 
 }

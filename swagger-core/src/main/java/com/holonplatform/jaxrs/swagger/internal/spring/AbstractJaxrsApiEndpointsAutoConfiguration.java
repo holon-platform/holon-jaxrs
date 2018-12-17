@@ -121,10 +121,12 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Build an API configuration using given configuration properties.
 	 * @param configurationProperties The API configuration properties
+	 * @param parent Optional parent configuration properties
 	 * @param applicationPath Application path
 	 * @return The API configuration
 	 */
-	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties, String applicationPath);
+	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties,
+			ApiConfigurationProperties parent, String applicationPath);
 
 	/**
 	 * Register given endpoint class in the JAX-RS application.
@@ -177,8 +179,14 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 		final List<C> configurations = this.apiConfigurations.stream().collect(Collectors.toList());
 		if (configurations.isEmpty()) {
 			// default configurations
+			final ApiConfigurationProperties parent;
+			if (configurationProperties.getApiGroups() != null && !configurationProperties.getApiGroups().isEmpty()) {
+				parent = configurationProperties;
+			} else {
+				parent = null;
+			}
 			getDefaultConfigurations().entrySet().forEach(e -> {
-				definitions.add(configureAndRegisterEndpoint(application, e.getValue(), e.getKey()));
+				definitions.add(configureAndRegisterEndpoint(application, e.getValue(), parent, e.getKey()));
 			});
 		} else {
 			// use configurations
@@ -199,17 +207,14 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 		if (configurationProperties.getApiGroups() != null && !configurationProperties.getApiGroups().isEmpty()) {
 			// groups
 			for (ApiGroupConfiguration group : configurationProperties.getApiGroups()) {
-				if (group.getGroupId() != null && !group.getGroupId().trim().equals("")) {
-					final String contextId = group.getGroupId().trim();
-					if (configurations.containsKey(contextId)) {
-						throw new ApiConfigurationException(
-								"Duplicate Swagger API configuration group id: " + contextId);
-					}
-					configurations.put(contextId, group);
-				} else {
-					LOGGER.warn(
-							"At least one API group id definition is missing from Swagger API configuration properties: check the application configuration properties.");
+				String contextId = group.getGroupId();
+				if (contextId == null || contextId.trim().equals("")) {
+					contextId = ApiContext.DEFAULT_CONTEXT_ID;
 				}
+				if (configurations.containsKey(contextId)) {
+					throw new ApiConfigurationException("Duplicate Swagger API configuration group id: " + contextId);
+				}
+				configurations.put(contextId, group);
 			}
 		} else {
 			// default
@@ -254,12 +259,13 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * Register an API listing endpoint using given configuration properties.
 	 * @param application The JAX-RS application
 	 * @param configurationProperties The API configuration properties
+	 * @param parent Optional parent configuration properties
 	 * @param contextId The API context id
 	 * @return The API endpoint definition
 	 */
 	private ApiEndpointDefinition configureAndRegisterEndpoint(A application,
-			ApiConfigurationProperties configurationProperties, String contextId) {
-		final C configuration = buildConfiguration(configurationProperties,
+			ApiConfigurationProperties configurationProperties, ApiConfigurationProperties parent, String contextId) {
+		final C configuration = buildConfiguration(configurationProperties, parent,
 				getApplicationPath(application).orElse(null));
 		// create endpoint
 		final ApiEndpointDefinition endpoint = apiEndpointBuilder.build(ApiEndpointConfiguration.<C>builder()
