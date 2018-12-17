@@ -26,10 +26,15 @@ import java.lang.annotation.Target;
  * definition properties for JAX-RS endpoint classes.
  * 
  * @since 5.0.0
+ * 
+ * @deprecated Use {@link ApiContextId} to assign a context id to API resource classes when more than one API definition
+ *             is configured. For API definition information configuration, the standard Swagger annotations should be
+ *             used (for example <code>Info</code> or <code>OpenAPIDefinition</code> for Swagger/OpenAPI v3).
  */
 @Target({ ElementType.TYPE, ElementType.PACKAGE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Deprecated
 public @interface ApiDefinition {
 
 	/**

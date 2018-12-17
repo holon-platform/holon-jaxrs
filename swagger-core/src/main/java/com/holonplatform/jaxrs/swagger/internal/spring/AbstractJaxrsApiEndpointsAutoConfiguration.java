@@ -35,6 +35,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
@@ -369,6 +370,19 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	protected static Optional<String> getConfigurationProperty(String value) {
 		if (value != null && !value.trim().equals("")) {
 			return Optional.of(value.trim());
+		}
+		return Optional.empty();
+	}
+
+	@Deprecated
+	public static Optional<String> getContextIdByPath(ClassLoader classLoader, String path) {
+		if (path != null) {
+			ClassLoader cl = (classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader();
+			for (ApiEndpointDefinition d : API_ENDPOINT_DEFINITIONS.getOrDefault(cl, Collections.emptyList())) {
+				if (path.equals(d.getPath())) {
+					return Optional.ofNullable(d.getContextId());
+				}
+			}
 		}
 		return Optional.empty();
 	}

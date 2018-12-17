@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
+import com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration;
 
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
@@ -104,7 +105,21 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 	 * @param contextId The context id
 	 * @return <code>true</code> if the class should be included in given context id classes
 	 */
+	@SuppressWarnings("deprecation")
 	private static boolean matches(Class<?> cls, String contextId) {
+		// check legacy ApiDefinition
+		Optional<String> legacyContextId = AnnotationUtils
+				.getAnnotation(cls, com.holonplatform.jaxrs.swagger.annotations.ApiDefinition.class).map(a -> {
+					if (!"".equals(a.docsPath())) {
+						return AnnotationUtils.getStringValue(a.docsPath());
+					}
+					return AnnotationUtils.getStringValue(a.value());
+				}).flatMap(path -> AbstractJaxrsApiEndpointsAutoConfiguration.getContextIdByPath(cls.getClassLoader(),
+						path));
+		if (legacyContextId.isPresent()) {
+			return legacyContextId.get().equals(contextId);
+		}
+		// use ApiContextId
 		return getResourceContextId(cls).map(ctxId -> ctxId.equals(contextId)).orElse(Boolean.TRUE);
 	}
 

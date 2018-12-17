@@ -138,4 +138,19 @@ holon:
         description: 'The API group 2'
         path: docs2
 
-     
+
+---
+spring:
+  profiles: groups3_legacy
+  
+holon:
+  swagger:
+    title: 'Title groups3'
+    version: '0.1.3'
+    api-groups:
+      - group-id: 'ctx_legacy_1'
+        description: 'The API group 1'
+        path: docs1
+      - group-id: 'ctx_legacy_2'
+        description: 'The API group 2'
+        path: docs2
