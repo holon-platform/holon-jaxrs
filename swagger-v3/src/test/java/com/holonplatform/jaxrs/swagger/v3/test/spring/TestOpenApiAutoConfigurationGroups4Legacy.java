@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.test.spring;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.ws.rs.client.Client;
@@ -28,23 +29,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.v3.spring.ResteasySwaggerV3AutoConfiguration;
-import com.holonplatform.jaxrs.swagger.v3.test.ctxresources3.Ctx3Resource1;
+import com.holonplatform.jaxrs.swagger.v3.test.ctxresources4.Ctx4Resource1;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.info.Info;
 
-@ActiveProfiles("groups3_legacy")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class TestOpenApiAutoConfigurationGroups3Legacy {
+public class TestOpenApiAutoConfigurationGroups4Legacy {
 
 	@LocalServerPort
 	private int port;
 
-	@ComponentScan(basePackageClasses = Ctx3Resource1.class)
+	@ComponentScan(basePackageClasses = Ctx4Resource1.class)
 	@SpringBootConfiguration
 	@EnableAutoConfiguration(exclude = { ResteasyAutoConfiguration.class, ResteasySwaggerV3AutoConfiguration.class })
 	static class Config {
@@ -55,16 +57,32 @@ public class TestOpenApiAutoConfigurationGroups3Legacy {
 	@Test
 	public void testOpenApi() {
 		final Client client = JerseyClientBuilder.createClient();
-
 		// group1
-		Response response = client.target("http://localhost:" + port).path("docs1").queryParam("type", "json").request()
-				.get();
+		Response response = client.target("http://localhost:" + port).path("ctxlgy4docs1").queryParam("type", "json")
+				.request().get();
 		OpenAPI api = OpenAPIEndpointUtils.readAsJson(response);
-		assertNotNull(api);
+		validate(api, "Group1", "/resource1/test");
 		// group2
-		response = client.target("http://localhost:" + port).path("docs2").queryParam("type", "yaml").request().get();
+		response = client.target("http://localhost:" + port).path("ctxlgy4docs2").queryParam("type", "yaml").request()
+				.get();
 		api = OpenAPIEndpointUtils.readAsYaml(response);
+		validate(api, "Group2", "/resource2/test");
+	}
+
+	public static void validate(OpenAPI api, String title, String path) {
 		assertNotNull(api);
+		assertNotNull(api.getPaths());
+		assertEquals(1, api.getPaths().size());
+
+		assertNotNull(api.getInfo());
+		Info info = api.getInfo();
+		assertEquals(title, info.getTitle());
+
+		PathItem item = api.getPaths().get(path);
+		assertNotNull(item);
+		Operation op = item.getGet();
+		assertNotNull(op);
+
 	}
 
 }

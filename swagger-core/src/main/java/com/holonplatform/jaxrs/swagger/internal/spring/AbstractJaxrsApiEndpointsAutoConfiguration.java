@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.Contact;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.License;
 
 /**
  * Base Spring Boot auto-configuration class for JAX-RS API listing endpoints.
@@ -219,6 +222,11 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 				configurations.put(contextId, group);
 			}
 		} else {
+			// check legacy ApiDefinition
+			Map<String, ApiConfigurationProperties> legacy = getApiDefinitionConfigurations(application);
+			if (!legacy.isEmpty()) {
+				return legacy;
+			}
 			// default
 			String contextId = configurationProperties.getContextId();
 			configurations.put(
@@ -226,6 +234,51 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 					configurationProperties);
 		}
 		return configurations;
+	}
+
+	@Deprecated
+	private Map<String, ApiConfigurationProperties> getApiDefinitionConfigurations(A application) {
+		Map<String, ApiConfigurationProperties> cfgs = new HashMap<>();
+		Set<Class<?>> classes = (application != null && application.getClasses() != null) ? application.getClasses()
+				: Collections.emptySet();
+		for (Class<?> cls : classes) {
+			if (cls.isAnnotationPresent(com.holonplatform.jaxrs.swagger.annotations.ApiDefinition.class)) {
+				com.holonplatform.jaxrs.swagger.annotations.ApiDefinition ad = cls
+						.getAnnotation(com.holonplatform.jaxrs.swagger.annotations.ApiDefinition.class);
+				String path = AnnotationUtils.getStringValue(ad.value());
+				if (!"".equals(ad.docsPath())) {
+					path = AnnotationUtils.getStringValue(ad.docsPath());
+				}
+				if (path != null && !cfgs.containsKey(path)) {
+					SwaggerConfigurationProperties cfg = new SwaggerConfigurationProperties();
+					cfg.setContextId(path);
+					cfg.setPath(path);
+					cfg.setPrettyPrint(ad.prettyPrint());
+					cfg.setTitle(AnnotationUtils.getStringValue(ad.title()));
+					cfg.setVersion(AnnotationUtils.getStringValue(ad.version()));
+					cfg.setDescription(AnnotationUtils.getStringValue(ad.description()));
+					cfg.setTermsOfServiceUrl(AnnotationUtils.getStringValue(ad.termsOfServiceUrl()));
+					cfg.setHost(AnnotationUtils.getStringValue(ad.host()));
+					cfg.setSchemes(ad.schemes());
+					String cname = AnnotationUtils.getStringValue(ad.contact());
+					if (cname != null) {
+						Contact c = new Contact();
+						c.setName(cname);
+						cfg.setContact(c);
+					}
+					String lname = AnnotationUtils.getStringValue(ad.license());
+					String lurl = AnnotationUtils.getStringValue(ad.licenseUrl());
+					if (lname != null || lurl != null) {
+						License l = new License();
+						l.setName(lname);
+						l.setUrl(lurl);
+						cfg.setLicense(l);
+					}
+					cfgs.put(path, cfg);
+				}
+			}
+		}
+		return cfgs;
 	}
 
 	/**
