@@ -63,7 +63,7 @@ import io.swagger.v3.oas.models.media.Schema;
  * 
  * @since 5.2.0
  */
-public class PropertyBoxModelConverter implements ModelConverter {
+public class SwaggerV3PropertyBoxModelConverter implements ModelConverter {
 
 	private static final Logger LOGGER = SwaggerLogger.create();
 
@@ -109,7 +109,7 @@ public class PropertyBoxModelConverter implements ModelConverter {
 	}
 
 	/**
-	 * Get the Schema to use to delegate the actual resolution to the {@link PropertyModelOpenApiExtension}.
+	 * Get the Schema to use to delegate the actual resolution to the {@link SwaggerV3ApiExtension}.
 	 * @return Delgate resolution schema
 	 */
 	private static Schema<Object> delegateToExtensionResolution() {

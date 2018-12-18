@@ -29,7 +29,7 @@ import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * Entrypoint interface to provide OpenAPI resources, helpers, builders and property model integration facilities.
+ * Entrypoint interface for Swagger/OpenAPI V3 readers and adapters.
  * 
  * @since 5.2.0
  */

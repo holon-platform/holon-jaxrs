@@ -58,14 +58,14 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
  * 
  * @since 5.2.0
  */
-public class PropertyModelOpenApiExtension extends AbstractOpenAPIExtension {
+public class SwaggerV3ApiExtension extends AbstractOpenAPIExtension {
 
 	private static final Logger LOGGER = SwaggerLogger.create();
 
-	public PropertyModelOpenApiExtension() {
+	public SwaggerV3ApiExtension() {
 		super();
 		// register model converters
-		ModelConverters.getInstance().addConverter(new PropertyBoxModelConverter());
+		ModelConverters.getInstance().addConverter(new SwaggerV3PropertyBoxModelConverter());
 	}
 
 	/*
@@ -150,7 +150,7 @@ public class PropertyModelOpenApiExtension extends AbstractOpenAPIExtension {
 			refModel.set$ref(name);
 			return refModel;
 		}).orElseGet(() -> {
-			return PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver, true);
+			return SwaggerV3PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver, true);
 		});
 	}
 
@@ -171,7 +171,7 @@ public class PropertyModelOpenApiExtension extends AbstractOpenAPIExtension {
 			// check already defined
 			if (!hasSchema(openAPI, name)) {
 				// build and define
-				Schema<Object> schema = PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver,
+				Schema<Object> schema = SwaggerV3PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver,
 						includeReadOnly);
 				schema.setTitle(name);
 				if (description != null) {
