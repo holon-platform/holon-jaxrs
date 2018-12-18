@@ -16,13 +16,17 @@
 package com.holonplatform.jaxrs.swagger.v3;
 
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.jaxrs.swagger.ApiReader;
+import com.holonplatform.jaxrs.swagger.v3.internal.DefaultApiReader;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextAdapter;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextListener;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiReaderAdapter;
 
 import io.swagger.v3.jaxrs2.ReaderListener;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.integration.api.OpenApiReader;
+import io.swagger.v3.oas.models.OpenAPI;
 
 /**
  * Entrypoint interface to provide OpenAPI resources, helpers, builders and property model integration facilities.
@@ -36,6 +40,15 @@ public interface SwaggerV3 {
 	 * when the {@link PropertyBox} type is used.
 	 */
 	public static Class<? extends ReaderListener> CONTEXT_READER_LISTENER = OpenApiContextListener.class;
+
+	/**
+	 * Create a new {@link ApiReader} to create an OpenAPI definition from a set of API resource classes.
+	 * @param configuration The API configuration to use
+	 * @return The {@link ApiReader} instance
+	 */
+	static ApiReader<OpenAPI> reader(OpenAPIConfiguration configuration) {
+		return new DefaultApiReader(configuration);
+	}
 
 	/**
 	 * Adapt given {@link OpenApiReader} to ensure the {@link SwaggerV3#CONTEXT_READER_LISTENER} class inclusion in the
