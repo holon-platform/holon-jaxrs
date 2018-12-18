@@ -34,6 +34,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.v3.spring.JerseySwaggerV3AutoConfiguration;
 import com.holonplatform.jaxrs.swagger.v3.test.resources.context1.Resource1;
@@ -71,7 +72,7 @@ public class TestOpenApiAutoConfigurationResteasy1 {
 
 	}
 
-	@ApiConfiguration(contextId = "test_resteasy_bean_config_context_1")
+	@ApiConfiguration(contextId = "test_resteasy_bean_config_context_1", scannerType = JaxrsScannerType.APPLICATION)
 	private static class ApiConfig extends SwaggerConfiguration {
 
 		public ApiConfig() {
