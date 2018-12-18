@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.types;
+package com.holonplatform.jaxrs.swagger.internal.types;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;

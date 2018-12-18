@@ -19,13 +19,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 
+import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
-import com.holonplatform.jaxrs.swagger.v2.internal.types.PropertyBoxTypeInfo;
+import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
 
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
@@ -42,6 +46,8 @@ import io.swagger.models.properties.Property;
  */
 public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 
+	private static final Logger LOGGER = SwaggerLogger.create();
+
 	/*
 	 * (non-Javadoc)
 	 * @see io.swagger.converter.ModelConverter#resolveProperty(java.lang.reflect.Type,
@@ -51,7 +57,7 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations,
 			Iterator<ModelConverter> chain) {
 
-		final PropertyBoxTypeInfo pbType = PropertyBoxTypeInfo.check(type).orElse(null);
+		final PropertyBoxTypeInfo pbType = PropertyBoxTypeResolver.resolvePropertyBoxType(type).orElse(null);
 
 		// PropertyBox type
 		if (pbType != null) {
@@ -92,7 +98,7 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
 
 		// skip PropertyBox types
-		if (PropertyBoxTypeInfo.check(type).isPresent()) {
+		if (PropertyBoxTypeResolver.resolvePropertyBoxType(type).isPresent()) {
 			return null;
 		}
 
@@ -100,6 +106,18 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 			return chain.next().resolve(type, context, chain);
 		}
 		return null;
+	}
+
+	/**
+	 * Get the model actual resolution to the {@link SwaggerV2ApiExtension}.
+	 * @return Delgate resolution model
+	 */
+	private static Model delegateToExtensionResolution() {
+		final ModelImpl model = new ModelImpl();
+		model.setType(ModelImpl.OBJECT);
+		model.setTitle("PropertyBox");
+		model.setVendorExtension(SwaggerExtensions.MODEL_TYPE.getExtensionName(), PropertyBox.class.getName());
+		return model;
 	}
 
 }

@@ -45,8 +45,9 @@ import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
 import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContext;
-import com.holonplatform.jaxrs.swagger.v2.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.v2.internal.types.SwaggerPropertyFactory;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -138,7 +139,7 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 
 		// check PropertyBox type and body parameter case
 		if (isBodyParameter(annotations)) {
-			final PropertyBoxTypeInfo pbType = PropertyBoxTypeInfo.check(type).orElse(null);
+			final PropertyBoxTypeInfo pbType = PropertyBoxTypeResolver.resolvePropertyBoxType(type).orElse(null);
 			if (pbType != null) {
 				// check property set
 				final PropertySetRef aps = hasApiPropertySet(annotations);

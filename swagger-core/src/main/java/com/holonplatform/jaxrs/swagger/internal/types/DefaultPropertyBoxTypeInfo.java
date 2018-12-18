@@ -13,25 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v2.internal.types;
+package com.holonplatform.jaxrs.swagger.internal.types;
 
 /**
  * Default {@link PropertyBoxTypeInfo} implementation.
  *
- * @since 5.0.0
+ * @since 5.2.0
  */
 public class DefaultPropertyBoxTypeInfo implements PropertyBoxTypeInfo {
 
 	private static final long serialVersionUID = -3643333268584552728L;
 
-	private boolean containerType;
+	private final boolean containerType;
 	private boolean map;
 	private boolean uniqueItems;
 	private boolean optional;
-
-	public DefaultPropertyBoxTypeInfo() {
-		super();
-	}
 
 	public DefaultPropertyBoxTypeInfo(boolean containerType) {
 		super();
@@ -72,14 +68,6 @@ public class DefaultPropertyBoxTypeInfo implements PropertyBoxTypeInfo {
 	@Override
 	public boolean isOptional() {
 		return optional;
-	}
-
-	/**
-	 * Set whether this type is a container (array, list, set, map) type.
-	 * @param containerType <code>true</code> if container type
-	 */
-	public void setContainerType(boolean containerType) {
-		this.containerType = containerType;
 	}
 
 	/**

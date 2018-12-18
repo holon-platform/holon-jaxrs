@@ -62,6 +62,14 @@
 			<version>${bytebuddy.version}</version>
 		</dependency>
 
+		<!-- Optional Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Optional Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

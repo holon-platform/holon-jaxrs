@@ -42,9 +42,9 @@ import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
+import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
 import com.holonplatform.jaxrs.swagger.v3.internal.resolver.SwaggerPropertySetSerializationTreeResolver;
-import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeInfo;
-import com.holonplatform.jaxrs.swagger.v3.internal.types.PropertyBoxTypeResolver;
 import com.holonplatform.json.model.PropertySetSerializationNode;
 import com.holonplatform.json.model.PropertySetSerializationTree;
 
