@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * API listing configuration properties.
@@ -70,6 +71,12 @@ public interface ApiConfigurationProperties {
 	 * @return the API listing endpoint type
 	 */
 	ApiEndpointType getType();
+
+	/**
+	 * Get the API resource classes scanner type.
+	 * @return the API resource classes scanner type
+	 */
+	JaxrsScannerType getScannerType();
 
 	/**
 	 * Get the API context id.

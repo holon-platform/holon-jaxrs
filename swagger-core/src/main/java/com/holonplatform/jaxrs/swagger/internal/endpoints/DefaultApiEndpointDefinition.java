@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.internal;
+package com.holonplatform.jaxrs.swagger.internal.endpoints;
 
 import java.util.concurrent.Callable;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 
 /**
@@ -33,19 +33,21 @@ public class DefaultApiEndpointDefinition implements ApiEndpointDefinition {
 
 	private final Class<?> endpointClass;
 	private final ApiEndpointType type;
+	private final JaxrsScannerType scannerType;
 	private final String path;
 	private final String contextId;
 	private final Callable<Void> initializer;
 
 	private boolean initialized = false;
 
-	public DefaultApiEndpointDefinition(Class<?> endpointClass, ApiEndpointType type, String path, String contextId,
-			Callable<Void> initializer) {
+	public DefaultApiEndpointDefinition(Class<?> endpointClass, ApiEndpointType type, JaxrsScannerType scannerType,
+			String path, String contextId, Callable<Void> initializer) {
 		super();
 		ObjectUtils.argumentNotNull(endpointClass, "API endpoint class must be not null");
 		ObjectUtils.argumentNotNull(initializer, "Initializer must be not null");
 		this.endpointClass = endpointClass;
 		this.type = type;
+		this.scannerType = scannerType;
 		this.path = path;
 		this.contextId = contextId;
 		this.initializer = initializer;
@@ -67,6 +69,15 @@ public class DefaultApiEndpointDefinition implements ApiEndpointDefinition {
 	@Override
 	public ApiEndpointType getType() {
 		return type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition#getScannerType()
+	 */
+	@Override
+	public JaxrsScannerType getScannerType() {
+		return scannerType;
 	}
 
 	/*

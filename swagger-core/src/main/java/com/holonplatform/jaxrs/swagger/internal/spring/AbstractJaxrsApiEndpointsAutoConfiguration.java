@@ -17,6 +17,7 @@ package com.holonplatform.jaxrs.swagger.internal.spring;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,25 +28,33 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.annotation.Order;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
-import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
-import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
-import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointBuilder;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.ApiGroupConfiguration;
@@ -61,7 +70,7 @@ import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.Lic
  * @since 5.2.0
  */
 public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Application, C>
-		implements BeanClassLoaderAware {
+		implements BeanClassLoaderAware, BeanFactoryAware {
 
 	protected static final Logger LOGGER = SwaggerLogger.create();
 
@@ -72,6 +81,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	private final ApiEndpointBuilder<C> apiEndpointBuilder;
 
 	private ClassLoader classLoader;
+
+	private BeanFactory beanFactory;
 
 	private static final Map<ClassLoader, List<ApiEndpointDefinition>> API_ENDPOINT_DEFINITIONS = new WeakHashMap<>();
 
@@ -91,6 +102,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	}
 
 	@Bean
+	@Order(Integer.MAX_VALUE - 100)
 	public ApplicationListener<ContextRefreshedEvent> jaxrsApiEndpointsDefinitionsInitializerApplicationListenerOnContextRefresh() {
 		return event -> {
 			API_ENDPOINT_DEFINITIONS
@@ -146,6 +158,16 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	@Override
 	public void setBeanClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
+	 */
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
 	}
 
 	/**
@@ -301,8 +323,12 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 				.path(getApiEndpointPath(configuration, contextId))
 				// type
 				.type(getApiEndpointType(configuration))
+				// scanner
+				.scannerType(getScannerType(configuration))
 				// classLoader
 				.classLoader(classLoader)
+				// auto configuration packages
+				.rootResourcePackages(getAutoScanPackages())
 				// build
 				.build());
 		// register endpoint
@@ -334,8 +360,12 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 				.path(getApiEndpointPath(configurationProperties, contextId))
 				// type
 				.type(getApiEndpointType(configurationProperties))
+				// scanner
+				.scannerType(getScannerType(configurationProperties))
 				// classLoader
 				.classLoader(classLoader)
+				// auto configuration packages
+				.rootResourcePackages(getAutoScanPackages())
 				// build
 				.build());
 		// register endpoint
@@ -376,6 +406,20 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	}
 
 	/**
+	 * Get the scanner type.
+	 * @param configuration The API configuration
+	 * @return the API resources scanner type
+	 */
+	private JaxrsScannerType getScannerType(C configuration) {
+		JaxrsScannerType type = AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
+				.map(a -> a.scannerType()).orElseGet(() -> getDefaultScannerType());
+		if (JaxrsScannerType.DEFAULT == type) {
+			return getDefaultScannerType();
+		}
+		return type;
+	}
+
+	/**
 	 * Get the API endpoint path.
 	 * @param configurationProperties API configuration properties
 	 * @param contextId The API context id
@@ -399,6 +443,64 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			return configurationProperties.getType();
 		}
 		return ApiEndpointType.getDefault();
+	}
+
+	/**
+	 * Get the API scanner type.
+	 * @param configurationProperties API configuration properties
+	 * @return the API resources scanner type
+	 */
+	private JaxrsScannerType getScannerType(ApiConfigurationProperties configurationProperties) {
+		if (configurationProperties.getScannerType() != null) {
+			return configurationProperties.getScannerType();
+		}
+		return getDefaultScannerType();
+	}
+
+	/**
+	 * Get the default scanner type.
+	 * @return the default scanner type
+	 */
+	protected abstract JaxrsScannerType getDefaultScannerType();
+
+	/**
+	 * Get the packages to scan in context.
+	 * @return the packages to scan
+	 */
+	private Set<String> getAutoScanPackages() {
+		// check Component scan
+		if (beanFactory instanceof ListableBeanFactory) {
+			String[] names = ((ListableBeanFactory) beanFactory).getBeanNamesForAnnotation(ComponentScan.class);
+			if (names != null && names.length > 0) {
+				final Set<String> packages = new HashSet<>();
+				for (String name : names) {
+					ComponentScan scan = ((ListableBeanFactory) beanFactory).findAnnotationOnBean(name,
+							ComponentScan.class);
+					if (scan != null) {
+						for (String p : scan.value()) {
+							packages.add(p);
+						}
+						for (String p : scan.basePackages()) {
+							packages.add(p);
+						}
+						for (Class<?> cls : scan.basePackageClasses()) {
+							if (cls.getPackage() != null) {
+								packages.add(cls.getPackage().getName());
+							}
+						}
+					}
+				}
+				return packages;
+			}
+		}
+		// auto configuration packages
+		if (AutoConfigurationPackages.has(beanFactory)) {
+			List<String> acpackages = AutoConfigurationPackages.get(beanFactory);
+			if (acpackages != null) {
+				return new HashSet<>(acpackages);
+			}
+		}
+		return Collections.emptySet();
 	}
 
 	/**

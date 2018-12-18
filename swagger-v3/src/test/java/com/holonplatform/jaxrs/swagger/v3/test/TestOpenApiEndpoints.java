@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;

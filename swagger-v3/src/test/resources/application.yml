@@ -154,3 +154,15 @@ holon:
       - group-id: 'ctx_legacy_2'
         description: 'The API group 2'
         path: docs2
+
+---
+spring:
+  profiles: resteasy2
+    
+holon:
+  swagger:
+    context-id: 'test_resteasy_config_context_2'
+    title: 'Title resteasy 2'
+    version: '2.0.0'
+    scanner-type: APPLICATION_AND_ANNOTATION
+        

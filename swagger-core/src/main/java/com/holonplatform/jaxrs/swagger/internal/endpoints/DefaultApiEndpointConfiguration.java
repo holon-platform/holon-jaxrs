@@ -13,14 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.internal;
+package com.holonplatform.jaxrs.swagger.internal.endpoints;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * Default {@link ApiEndpointConfiguration} implementation.
@@ -32,10 +34,12 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfiguration<C> {
 
 	private static final long serialVersionUID = 930451863047563827L;
-	
+
 	private ClassLoader classLoader;
 	private Application application;
+	private Set<String> rootResourcePackages;
 	private ApiEndpointType type;
+	private JaxrsScannerType scannerType;
 	private String contextId;
 	private String path;
 	private String configurationLocation;
@@ -65,11 +69,29 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration#getRootResourcePackages()
+	 */
+	@Override
+	public Set<String> getRootResourcePackages() {
+		return (rootResourcePackages != null) ? rootResourcePackages : Collections.emptySet();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration#getType()
 	 */
 	@Override
 	public Optional<ApiEndpointType> getType() {
 		return Optional.ofNullable(type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration#getScannerType()
+	 */
+	@Override
+	public Optional<JaxrsScannerType> getScannerType() {
+		return Optional.ofNullable(scannerType);
 	}
 
 	/*
@@ -125,11 +147,27 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 	}
 
 	/**
+	 * Set the root packages for API resources scan.
+	 * @param rootResourcePackages the root packages to set
+	 */
+	public void setRootResourcePackages(Set<String> rootResourcePackages) {
+		this.rootResourcePackages = rootResourcePackages;
+	}
+
+	/**
 	 * Set the API endpoint type.
 	 * @param type the API endpoint type to set
 	 */
 	public void setType(ApiEndpointType type) {
 		this.type = type;
+	}
+
+	/**
+	 * Set the API scanner type.
+	 * @param scannerType the scanner type to set
+	 */
+	public void setScannerType(JaxrsScannerType scannerType) {
+		this.scannerType = scannerType;
 	}
 
 	/**
@@ -163,17 +201,18 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 	public void setConfiguration(C configuration) {
 		this.configuration = configuration;
 	}
-	
+
 	public static class DefaultBuilder<C> implements Builder<C> {
 
 		private final DefaultApiEndpointConfiguration<C> instance;
-		
+
 		public DefaultBuilder() {
 			super();
 			this.instance = new DefaultApiEndpointConfiguration<>();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#contextId(java.lang.String)
 		 */
 		@Override
@@ -182,7 +221,8 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#path(java.lang.String)
 		 */
 		@Override
@@ -191,7 +231,8 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#classLoader(java.lang.ClassLoader)
 		 */
 		@Override
@@ -200,8 +241,10 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
-		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#type(com.holonplatform.jaxrs.swagger.ApiEndpointType)
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#type(com.holonplatform.jaxrs.swagger.
+		 * ApiEndpointType)
 		 */
 		@Override
 		public Builder<C> type(ApiEndpointType type) {
@@ -209,8 +252,21 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
-		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#application(javax.ws.rs.core.Application)
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration.Builder#scannerType(com.
+		 * holonplatform.jaxrs.swagger.JaxrsScannerType)
+		 */
+		@Override
+		public Builder<C> scannerType(JaxrsScannerType scannerType) {
+			this.instance.setScannerType(scannerType);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#application(javax.ws.rs.core.Application)
 		 */
 		@Override
 		public Builder<C> application(Application application) {
@@ -218,7 +274,20 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration.Builder#rootResourcePackages(
+		 * java. lang.String)
+		 */
+		@Override
+		public Builder<C> rootResourcePackages(Set<String> rootResourcePackages) {
+			this.instance.setRootResourcePackages(rootResourcePackages);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#configurationLocation(java.lang.String)
 		 */
 		@Override
@@ -227,7 +296,8 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#configuration(java.lang.Object)
 		 */
 		@Override
@@ -236,14 +306,15 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 			return this;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#build()
 		 */
 		@Override
 		public ApiEndpointConfiguration<C> build() {
 			return instance;
 		}
-		
+
 	}
 
 }

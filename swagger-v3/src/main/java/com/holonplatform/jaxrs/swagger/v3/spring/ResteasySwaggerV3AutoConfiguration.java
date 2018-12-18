@@ -32,6 +32,7 @@ import org.springframework.core.Ordered;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigCustomizer;
 import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration;
@@ -80,6 +81,17 @@ public class ResteasySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoCon
 	public ResteasySwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
 			ObjectProvider<OpenAPIConfiguration> openAPIConfigurations) {
 		super(configurationProperties, openAPIConfigurations);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getDefaultScannerType(
+	 * )
+	 */
+	@Override
+	protected JaxrsScannerType getDefaultScannerType() {
+		return JaxrsScannerType.APPLICATION_AND_ANNOTATION;
 	}
 
 	@Bean

@@ -13,14 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger;
+package com.holonplatform.jaxrs.swagger.internal.endpoints;
 
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-import com.holonplatform.jaxrs.swagger.internal.DefaultApiEndpointConfiguration;
+import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * API listing endpoint configuration.
@@ -44,10 +46,22 @@ public interface ApiEndpointConfiguration<C> extends Serializable {
 	Optional<Application> getApplication();
 
 	/**
+	 * Get the root packages for API resources scan, if available.
+	 * @return Root API resources package, empty if none
+	 */
+	Set<String> getRootResourcePackages();
+
+	/**
 	 * Get the API endpoint type.
 	 * @return Optional API endpoint type
 	 */
 	Optional<ApiEndpointType> getType();
+
+	/**
+	 * Get the API scanner type.
+	 * @return Optional API scanner type
+	 */
+	Optional<JaxrsScannerType> getScannerType();
 
 	/**
 	 * Get the API context id.
@@ -120,11 +134,25 @@ public interface ApiEndpointConfiguration<C> extends Serializable {
 		Builder<C> type(ApiEndpointType type);
 
 		/**
+		 * Set the scanner type.
+		 * @param scannerType The scanner type to set
+		 * @return this
+		 */
+		Builder<C> scannerType(JaxrsScannerType scannerType);
+
+		/**
 		 * Set the JAX-RS {@link Application} to use.
 		 * @param application the JAX-RS {@link Application} to set
 		 * @return this
 		 */
 		Builder<C> application(Application application);
+
+		/**
+		 * Set the root packages for API resources scan.
+		 * @param rootResourcePackages the API resources root packages
+		 * @return this
+		 */
+		Builder<C> rootResourcePackages(Set<String> rootResourcePackages);
 
 		/**
 		 * Set the location to use to load the API definition.

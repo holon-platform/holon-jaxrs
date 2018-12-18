@@ -23,7 +23,7 @@ import javax.ws.rs.Path;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsApplicationResourcesScanner;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;

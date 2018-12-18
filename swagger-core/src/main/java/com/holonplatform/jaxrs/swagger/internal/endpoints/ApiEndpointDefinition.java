@@ -13,12 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger;
+package com.holonplatform.jaxrs.swagger.internal.endpoints;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-import com.holonplatform.jaxrs.swagger.internal.DefaultApiEndpointDefinition;
+import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * API listing endpoint definition.
@@ -38,6 +39,12 @@ public interface ApiEndpointDefinition extends Serializable {
 	 * @return the endpoint type
 	 */
 	ApiEndpointType getType();
+
+	/**
+	 * Get the scanner type.
+	 * @return the scanner type
+	 */
+	JaxrsScannerType getScannerType();
 
 	/**
 	 * Get the endpoint path.
@@ -61,14 +68,15 @@ public interface ApiEndpointDefinition extends Serializable {
 	 * Create a new {@link ApiEndpointDefinition}.
 	 * @param endpointClass The endpoint class (not null)
 	 * @param type The endpoint type
+	 * @param scannerType The scanner type
 	 * @param path The endpoint path
 	 * @param contextId the API context id to which the endpoint is bound
 	 * @param initializer Initializer (not null)
 	 * @return A new {@link ApiEndpointDefinition} instance
 	 */
-	static ApiEndpointDefinition create(Class<?> endpointClass, ApiEndpointType type, String path, String contextId,
-			Callable<Void> initializer) {
-		return new DefaultApiEndpointDefinition(endpointClass, type, path, contextId, initializer);
+	static ApiEndpointDefinition create(Class<?> endpointClass, ApiEndpointType type, JaxrsScannerType scannerType,
+			String path, String contextId, Callable<Void> initializer) {
+		return new DefaultApiEndpointDefinition(endpointClass, type, scannerType, path, contextId, initializer);
 	}
 
 }

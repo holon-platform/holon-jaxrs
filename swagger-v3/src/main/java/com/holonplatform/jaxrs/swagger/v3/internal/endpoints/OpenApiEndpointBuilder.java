@@ -15,17 +15,19 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
+import java.util.Set;
+
 import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiContext;
-import com.holonplatform.jaxrs.swagger.ApiEndpointBuilder;
-import com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration;
-import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointBuilder;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.v3.OpenApi;
 import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
@@ -33,6 +35,7 @@ import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
 
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import net.bytebuddy.ByteBuddy;
@@ -70,6 +73,9 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 			break;
 		}
 
+		// scanner type
+		final JaxrsScannerType scannerType = configuration.getScannerType().orElse(JaxrsScannerType.DEFAULT);
+
 		// context id
 		final String contextId = configuration.getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
 
@@ -86,9 +92,7 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 				.annotateType(AnnotationDescription.Builder.ofType(Path.class).define("value", path).build())
 				.annotateType(AnnotationDescription.Builder.ofType(ApiEndpoint.class).define("value", contextId)
 						.define("configLocation", configuration.getConfigurationLocation().orElse(""))
-						.define("scannerType", configuration.getApplication().isPresent() ? JaxrsScannerType.APPLICATION
-								: JaxrsScannerType.DEFAULT)
-						.build());
+						.define("scannerType", scannerType).build());
 		final Class<?> endpoint = builder.make()
 				.load(configuration.getClassLoader().orElseGet(() -> ClassUtils.getDefaultClassLoader()),
 						ClassLoadingStrategy.Default.INJECTION)
@@ -100,14 +104,28 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 		configuration.getConfiguration().ifPresent(c -> contextBuilder.configuration(c));
 		// config location
 		configuration.getConfigurationLocation().ifPresent(cl -> contextBuilder.configLocation(cl));
+		// scanner
+		contextBuilder.scannerType(scannerType);
 		// JAX-RS Application
 		configuration.getApplication().ifPresent(a -> {
 			contextBuilder.application(a);
-			contextBuilder.scannerType(JaxrsScannerType.APPLICATION);
 		});
+		// check root package
+		if (scannerType == JaxrsScannerType.ANNOTATION || scannerType == JaxrsScannerType.APPLICATION_AND_ANNOTATION) {
+			Set<String> pkgs = configuration.getRootResourcePackages();
+			if (!pkgs.isEmpty()) {
+				SwaggerConfiguration sc = configuration.getConfiguration()
+						.filter(c -> c instanceof SwaggerConfiguration).map(c -> (SwaggerConfiguration) c).orElse(null);
+				if (sc != null && (sc.getResourcePackages() == null || sc.getResourcePackages().isEmpty())) {
+					sc.setResourcePackages(pkgs);
+				} else {
+					contextBuilder.resourcePackages(pkgs);
+				}
+			}
+		}
 		final OpenApiContext context = contextBuilder.build(false);
 
-		return ApiEndpointDefinition.create(endpoint, type, path, contextId, () -> {
+		return ApiEndpointDefinition.create(endpoint, type, scannerType, path, contextId, () -> {
 			context.init();
 			return null;
 		});

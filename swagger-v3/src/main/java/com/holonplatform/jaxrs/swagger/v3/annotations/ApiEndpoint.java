@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.holonplatform.jaxrs.swagger.ApiContext;
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 

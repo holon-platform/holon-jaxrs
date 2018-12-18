@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger;
+package com.holonplatform.jaxrs.swagger.internal.endpoints;
 
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 

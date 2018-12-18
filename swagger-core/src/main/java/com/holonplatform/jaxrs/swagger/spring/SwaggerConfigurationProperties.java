@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * Configuration properties for Swagger auto configuration.
@@ -63,6 +64,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	 * @since 5.2.0
 	 */
 	private ApiEndpointType type;
+
+	/**
+	 * The API resource classes scanner type. By default the {@link JaxrsScannerType#DEFAULT} is used.
+	 * <p>
+	 * Must be one of the {@link JaxrsScannerType} enumeration values.
+	 * </p>
+	 * @since 5.2.0
+	 */
+	private JaxrsScannerType scannerType;
 
 	/**
 	 * The API context id to use.
@@ -190,6 +200,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setType(ApiEndpointType type) {
 		this.type = type;
+	}
+
+	@Override
+	public JaxrsScannerType getScannerType() {
+		return scannerType;
+	}
+
+	public void setScannerType(JaxrsScannerType scannerType) {
+		this.scannerType = scannerType;
 	}
 
 	@Override
@@ -577,6 +596,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private ApiEndpointType type;
 
 		/**
+		 * The API resource classes scanner type. By default the {@link JaxrsScannerType#DEFAULT} is used.
+		 * <p>
+		 * Must be one of the {@link JaxrsScannerType} enumeration values.
+		 * </p>
+		 * @since 5.2.0
+		 */
+		private JaxrsScannerType scannerType;
+
+		/**
 		 * The API title.
 		 */
 		private String title;
@@ -667,6 +695,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		public void setType(ApiEndpointType type) {
 			this.type = type;
+		}
+
+		@Override
+		public JaxrsScannerType getScannerType() {
+			return scannerType;
+		}
+
+		public void setScannerType(JaxrsScannerType scannerType) {
+			this.scannerType = scannerType;
 		}
 
 		@Override

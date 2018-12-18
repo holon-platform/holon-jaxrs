@@ -25,7 +25,7 @@ import javax.ws.rs.core.Application;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.holonplatform.jaxrs.swagger.ApiEndpointDefinition;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
@@ -103,7 +103,8 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			return sb.toString();
 		}).orElseGet(() -> endpoint.getPath());
 		LOGGER.info("Registered Swagger OpenAPI V3 endpoint type [" + endpoint.getType() + "] to path [" + path
-				+ "] - API context id: [" + endpoint.getContextId() + "]");
+				+ "] bound to API context id: [" + endpoint.getContextId() + "] with scanner type ["
+				+ endpoint.getScannerType() + "]");
 	}
 
 	/*

@@ -17,9 +17,10 @@ package com.holonplatform.jaxrs.swagger.v3.internal.builders;
 
 import javax.ws.rs.core.Application;
 
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
+import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsScannerProvider;
 
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -65,12 +66,12 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 	@Override
 	public JaxrsOpenApiContextBuilder scannerType(JaxrsScannerType scannerType) {
 		final JaxrsScannerType type = (scannerType != null) ? scannerType : JaxrsScannerType.DEFAULT;
-		return type.getScannerClass().map(sc -> {
+		return JaxrsScannerProvider.getScannerClass(type).map(sc -> {
 			try {
 				return scanner(sc.newInstance());
 			} catch (Exception e) {
-				throw new ApiConfigurationException(
-						"Failed to instantiate the scanner class [" + sc.getName() + "]", e);
+				throw new ApiConfigurationException("Failed to instantiate the scanner class [" + sc.getName() + "]",
+						e);
 			}
 		}).orElseGet(() -> getBuilder());
 	}

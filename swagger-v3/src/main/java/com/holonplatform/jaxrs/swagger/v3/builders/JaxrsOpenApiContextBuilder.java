@@ -17,7 +17,7 @@ package com.holonplatform.jaxrs.swagger.v3.builders;
 
 import javax.ws.rs.core.Application;
 
-import com.holonplatform.jaxrs.swagger.v3.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * JAX-RS {@link OpenApiContextBuilder}.

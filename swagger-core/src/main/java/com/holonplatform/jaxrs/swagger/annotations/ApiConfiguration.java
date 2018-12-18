@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 
 import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
  * Annotation which can be used on a API configuration class to setup the API listing endpoint.
@@ -57,5 +58,14 @@ public @interface ApiConfiguration {
 	 * @return the API listing endpoint type
 	 */
 	ApiEndpointType endpointType() default ApiEndpointType.QUERY_PARAMETER;
+
+	/**
+	 * Get the scanner type to use to detect API resource classes.
+	 * <p>
+	 * Default is {@link JaxrsScannerType#DEFAULT}.
+	 * </p>
+	 * @return the API resource classes scanner type
+	 */
+	JaxrsScannerType scannerType() default JaxrsScannerType.DEFAULT;
 
 }

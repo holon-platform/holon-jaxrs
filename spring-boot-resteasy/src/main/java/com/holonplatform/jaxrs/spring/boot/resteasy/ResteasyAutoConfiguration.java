@@ -140,6 +140,7 @@ public class ResteasyAutoConfiguration {
 		SpringBeanProcessor springBeanProcessor = new SpringBeanProcessor();
 		springBeanProcessor.setProviderFactory(resteasyProviderFactory);
 		springBeanProcessor.setRegistry(resourceMethodRegistry);
+		springBeanProcessor.setOrder(Integer.MAX_VALUE - 10000);
 
 		return springBeanProcessor;
 	}

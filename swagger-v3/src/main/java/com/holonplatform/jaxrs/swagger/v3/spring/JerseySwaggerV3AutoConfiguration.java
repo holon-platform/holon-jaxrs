@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration;
@@ -69,7 +69,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 @ConditionalOnClass(name = { "org.glassfish.jersey.server.ResourceConfig", "io.swagger.v3.oas.models.OpenAPI" })
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE - 1000)
-@AutoConfigureAfter(JerseyAutoConfiguration.class)
+@AutoConfigureAfter(name = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration")
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
 public class JerseySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfiguration<ResourceConfig> {
 
@@ -79,6 +79,14 @@ public class JerseySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfi
 	public JerseySwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
 			ObjectProvider<OpenAPIConfiguration> apiConfigurations) {
 		super(configurationProperties, apiConfigurations);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getDefaultScannerType()
+	 */
+	@Override
+	protected JaxrsScannerType getDefaultScannerType() {
+		return JaxrsScannerType.APPLICATION;
 	}
 
 	@Bean
