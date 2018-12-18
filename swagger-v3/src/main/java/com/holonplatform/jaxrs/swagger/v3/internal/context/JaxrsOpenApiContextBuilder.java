@@ -13,11 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.builders;
+package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
 import javax.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
+
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 
 /**
  * JAX-RS {@link OpenApiContextBuilder}.
@@ -39,5 +41,13 @@ public interface JaxrsOpenApiContextBuilder extends OpenApiContextBuilder<JaxrsO
 	 * @return this
 	 */
 	JaxrsOpenApiContextBuilder scannerType(JaxrsScannerType scannerType);
+
+	/**
+	 * Get a builder to create and configure an {@link OpenApiContext}.
+	 * @return A new {@link JaxrsOpenApiContextBuilder}
+	 */
+	static JaxrsOpenApiContextBuilder create() {
+		return new DefaultJaxrsOpenApiContextBuilder();
+	}
 
 }

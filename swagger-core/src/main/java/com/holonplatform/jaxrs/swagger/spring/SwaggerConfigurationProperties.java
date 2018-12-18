@@ -41,6 +41,19 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	private boolean enabled = true;
 
 	/**
+	 * Whether to include all API resources or to include only the resources with a suitable API definition annotation.
+	 * <p>
+	 * Default is <code>true</code>.
+	 * </p>
+	 * <p>
+	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.ApiOperation</code> annotated
+	 * resource methods will be incuded. For Swagger/OpenAPI V3, only the
+	 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be incuded.
+	 * </p>
+	 */
+	private boolean includeAll = true;
+
+	/**
 	 * The package names to use to filter the API resource classes.
 	 * <p>
 	 * To specify more than one package name, a comma (<code>,</code>) separator con be used
@@ -173,6 +186,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public boolean isIncludeAll() {
+		return includeAll;
+	}
+
+	public void setIncludeAll(boolean includeAll) {
+		this.includeAll = includeAll;
 	}
 
 	@Override
@@ -571,6 +593,20 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private String groupId;
 
 		/**
+		 * Whether to include all API resources or to include only the resources with a suitable API definition
+		 * annotation.
+		 * <p>
+		 * Default is <code>true</code>.
+		 * </p>
+		 * <p>
+		 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.ApiOperation</code> annotated
+		 * resource methods will be incuded. For Swagger/OpenAPI V3, only the
+		 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be incuded.
+		 * </p>
+		 */
+		private boolean includeAll = true;
+
+		/**
 		 * The package names to use to filter the API resource classes.
 		 * <p>
 		 * To specify more than one package name, a comma (<code>,</code>) separator con be used
@@ -668,6 +704,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		public void setGroupId(String groupId) {
 			this.groupId = groupId;
+		}
+
+		@Override
+		public boolean isIncludeAll() {
+			return includeAll;
+		}
+
+		public void setIncludeAll(boolean includeAll) {
+			this.includeAll = includeAll;
 		}
 
 		@Override

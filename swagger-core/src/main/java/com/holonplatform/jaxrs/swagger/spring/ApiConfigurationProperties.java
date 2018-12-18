@@ -37,6 +37,18 @@ public interface ApiConfigurationProperties {
 	boolean isGroupConfiguration();
 
 	/**
+	 * Get whether to include all API resources or to include only the resources with a suitable API definition
+	 * annotation.
+	 * <p>
+	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.ApiOperation</code> annotated
+	 * resource methods will be incuded. For Swagger/OpenAPI V3, only the
+	 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be incuded.
+	 * </p>
+	 * @return whether to include all API resources
+	 */
+	boolean isIncludeAll();
+
+	/**
 	 * Get the package names to use to filter the API resource classes.
 	 * <p>
 	 * To specify more than one package name, a comma separator con be used

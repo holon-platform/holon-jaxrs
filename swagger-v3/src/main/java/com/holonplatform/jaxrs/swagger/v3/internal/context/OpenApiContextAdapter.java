@@ -21,7 +21,8 @@ import java.util.Set;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
+import com.holonplatform.jaxrs.swagger.v3.internal.scanner.OpenApiScannerAdapter;
 
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.oas.integration.GenericOpenApiContext;
@@ -34,7 +35,7 @@ import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * {@link OpenApiContext} adapter to ensure the {@link OpenApi#CONTEXT_READER_LISTENER} class inclusion in the classes
+ * {@link OpenApiContext} adapter to ensure the {@link SwaggerV3#CONTEXT_READER_LISTENER} class inclusion in the classes
  * to read.
  *
  * @since 5.2.0
@@ -57,11 +58,11 @@ public class OpenApiContextAdapter implements OpenApiContext {
 		this.context = context;
 		// check inited
 		getContextReader(context).ifPresent(r -> {
-			context.setOpenApiReader(OpenApi.adapt(r));
+			context.setOpenApiReader(SwaggerV3.adapt(r));
 		});
 		if (context.getId() != null) {
 			getContextScanner(context).ifPresent(s -> {
-				context.setOpenApiScanner(OpenApi.adapt(s, context.getId()));
+				context.setOpenApiScanner(OpenApiScannerAdapter.adapt(s, context.getId()));
 			});
 		}
 	}
@@ -94,7 +95,7 @@ public class OpenApiContextAdapter implements OpenApiContext {
 			// reader
 			final OpenApiReader contextReader = getContextReader(getContext()).orElse(null);
 			if (contextReader != null) {
-				getContext().setOpenApiReader(OpenApi.adapt(contextReader));
+				getContext().setOpenApiReader(SwaggerV3.adapt(contextReader));
 			} else {
 				LOGGER.warn("Failed to obtain the OpenApiReader bound to context [" + getContext()
 						+ "]: the reader won't be adapted");
@@ -103,7 +104,7 @@ public class OpenApiContextAdapter implements OpenApiContext {
 			if (getId() != null) {
 				final OpenApiScanner contextScanner = getContextScanner(getContext()).orElse(null);
 				if (contextScanner != null) {
-					getContext().setOpenApiScanner(OpenApi.adapt(contextScanner, getId()));
+					getContext().setOpenApiScanner(OpenApiScannerAdapter.adapt(contextScanner, getId()));
 				} else {
 					LOGGER.warn("Failed to obtain the OpenApiScanner bound to context [" + getContext()
 							+ "]: the scanner won't be adapted");
@@ -167,7 +168,7 @@ public class OpenApiContextAdapter implements OpenApiContext {
 	@Override
 	public void setOpenApiReader(OpenApiReader openApiReader) {
 		if (openApiReader != null) {
-			getContext().setOpenApiReader(OpenApi.adapt(openApiReader));
+			getContext().setOpenApiReader(SwaggerV3.adapt(openApiReader));
 			adapted = true;
 		} else {
 			getContext().setOpenApiReader(openApiReader);

@@ -17,17 +17,20 @@ package com.holonplatform.jaxrs.swagger.v3.test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
+
 import javax.ws.rs.Path;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -51,10 +54,10 @@ public class TestOpenApiContextAdapter {
 		final ResourceConfig application = new ResourceConfig();
 		application.register(TestResource1.class);
 
-		final OpenApiContext openApiContext = OpenApi.adapt(new JaxrsOpenApiContextBuilder<>().application(application)
+		final OpenApiContext openApiContext = SwaggerV3.adapt(new JaxrsOpenApiContextBuilder<>().application(application)
 				.openApiConfiguration(configuration).ctxId(id).buildContext(true));
 
-		assertTrue(OpenApi.getOpenApiContext(id).isPresent());
+		assertTrue(getOpenApiContext(id).isPresent());
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateTestResourceApi(api, "Title of " + id);
@@ -72,14 +75,18 @@ public class TestOpenApiContextAdapter {
 		final ResourceConfig application = new ResourceConfig();
 		application.register(TestResource1.class);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application)
-				.configuration(configuration).contextId(id).build(true);
+		final OpenApiContext openApiContext = com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBuilder
+				.create().application(application).configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateTestResourceApi(api, "Title of " + id);
 
-		assertTrue(OpenApi.getOpenApiContext(id).isPresent());
+		assertTrue(getOpenApiContext(id).isPresent());
 
+	}
+
+	private static Optional<OpenApiContext> getOpenApiContext(String contextId) {
+		return Optional.ofNullable(OpenApiContextLocator.getInstance().getOpenApiContext(contextId));
 	}
 
 }

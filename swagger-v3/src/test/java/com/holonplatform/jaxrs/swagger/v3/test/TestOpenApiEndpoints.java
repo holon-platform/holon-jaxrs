@@ -29,10 +29,10 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
-import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.AcceptHeaderOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.PathParamOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.QueryParamOpenApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;

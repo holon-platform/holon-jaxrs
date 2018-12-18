@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySetRef;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 import com.holonplatform.jaxrs.swagger.v3.test.model.Model1;
 import com.holonplatform.jaxrs.swagger.v3.test.model.ModelOne;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
@@ -96,7 +96,7 @@ public class TestOpenApiAnnotations {
 
 		Set<Class<?>> classes = new HashSet<>();
 		classes.add(TestResource.class);
-		classes.add(OpenApi.CONTEXT_READER_LISTENER);
+		classes.add(SwaggerV3.CONTEXT_READER_LISTENER);
 
 		Reader reader = new Reader(configuration);
 		final OpenAPI api = reader.read(classes);

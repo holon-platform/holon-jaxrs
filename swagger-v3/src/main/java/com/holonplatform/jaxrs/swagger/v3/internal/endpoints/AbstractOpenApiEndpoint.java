@@ -35,8 +35,8 @@ import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
-import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBuilder;
 
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
@@ -67,7 +67,7 @@ public abstract class AbstractOpenApiEndpoint {
 		// build context
 		if (openApiContext == null) {
 			try {
-				openApiContext = OpenApi.contextBuilder()
+				openApiContext = JaxrsOpenApiContextBuilder.create()
 						// context id
 						.contextId(contextId)
 						// JAX-RS Application

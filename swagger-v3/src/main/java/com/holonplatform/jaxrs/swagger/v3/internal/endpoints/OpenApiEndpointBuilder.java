@@ -25,15 +25,11 @@ import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpoint;
 import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointBuilder;
 import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointConfiguration;
 import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
-import com.holonplatform.jaxrs.swagger.v3.annotations.ApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.AcceptHeaderOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.PathParamOpenApiEndpoint;
-import com.holonplatform.jaxrs.swagger.v3.endpoints.QueryParamOpenApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBuilder;
 
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
@@ -99,7 +95,7 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 				.getLoaded();
 
 		// build context
-		final JaxrsOpenApiContextBuilder contextBuilder = OpenApi.contextBuilder().contextId(contextId);
+		final JaxrsOpenApiContextBuilder contextBuilder = JaxrsOpenApiContextBuilder.create().contextId(contextId);
 		// configuration
 		configuration.getConfiguration().ifPresent(c -> contextBuilder.configuration(c));
 		// config location

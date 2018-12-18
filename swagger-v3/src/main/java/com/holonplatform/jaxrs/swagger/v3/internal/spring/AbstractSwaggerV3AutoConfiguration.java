@@ -139,6 +139,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			cfg.setResourcePackages(packages);
 		}
 		cfg.setPrettyPrint(configurationProperties.isPrettyPrint());
+		cfg.setReadAllResources(configurationProperties.isIncludeAll());
 		// API definition
 		final OpenAPI api = new OpenAPI();
 		// info

@@ -13,13 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.builders;
+package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
 import javax.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsScannerProvider;
 
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.builders;
+package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
 import java.util.Collections;
 import java.util.Set;
@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
-import com.holonplatform.jaxrs.swagger.v3.builders.OpenApiContextBuilder;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -156,7 +155,7 @@ public abstract class AbstractOpenApiContextBuilder<B extends OpenApiContextBuil
 			if (initialize) {
 				context.init();
 			}
-			return OpenApi.adapt(context);
+			return SwaggerV3.adapt(context);
 		} catch (OpenApiConfigurationException e) {
 			throw new ApiConfigurationException("Failed to initialize OpenAPI context", e);
 		}

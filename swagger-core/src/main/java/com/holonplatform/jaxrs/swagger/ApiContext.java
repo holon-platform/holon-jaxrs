@@ -23,7 +23,7 @@ package com.holonplatform.jaxrs.swagger;
 public interface ApiContext {
 
 	/**
-	 * Default context id.
+	 * Default API context id.
 	 */
 	public static final String DEFAULT_CONTEXT_ID = "openapi.context.id.default";
 

@@ -24,7 +24,7 @@ import javax.ws.rs.Path;
 
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 
 import io.swagger.v3.jaxrs2.Reader;
@@ -47,7 +47,7 @@ public class TestPropertyBoxModelConverter {
 
 		Set<Class<?>> classes = new HashSet<>();
 		classes.add(TestResource1.class);
-		classes.add(OpenApi.CONTEXT_READER_LISTENER);
+		classes.add(SwaggerV3.CONTEXT_READER_LISTENER);
 
 		Reader reader = new Reader(configuration);
 		OpenAPI api = reader.read(classes);

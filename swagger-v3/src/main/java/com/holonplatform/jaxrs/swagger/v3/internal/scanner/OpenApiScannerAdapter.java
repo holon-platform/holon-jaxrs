@@ -141,5 +141,16 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 		}
 		return Optional.empty();
 	}
+	
+	/**
+	 * Adapt given {@link OpenApiScanner} to filter API resources according to given <code>contextId</code> using the
+	 * {@link ApiContextId} annotation.
+	 * @param scanner The scanner to adapt (not null)
+	 * @param contextId The API context id
+	 * @return The adapted {@link OpenApiScanner}
+	 */
+	public static OpenApiScanner adapt(OpenApiScanner scanner, String contextId) {
+		return new OpenApiScannerAdapter(scanner, contextId);
+	}
 
 }

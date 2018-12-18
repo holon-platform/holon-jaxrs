@@ -24,7 +24,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
-import com.holonplatform.jaxrs.swagger.v3.OpenApi;
+import com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBuilder;
 import com.holonplatform.jaxrs.swagger.v3.internal.scanner.JaxrsApplicationResourcesScanner;
 import com.holonplatform.jaxrs.swagger.v3.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v3.test.resources.context2.Resource2;
@@ -60,8 +60,8 @@ public class TestOpenApiContextScanner {
 		scanner.setConfiguration(configuration);
 		scanner.setApplication(application);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application).scanner(scanner)
-				.configuration(configuration).contextId(id).build(true);
+		final OpenApiContext openApiContext = JaxrsOpenApiContextBuilder.create().application(application)
+				.scanner(scanner).configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateApi(api, "Title of " + id, 25);
@@ -90,8 +90,8 @@ public class TestOpenApiContextScanner {
 		scanner.setConfiguration(configuration);
 		scanner.setApplication(application);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application).scanner(scanner)
-				.configuration(configuration).contextId(id).build(true);
+		final OpenApiContext openApiContext = JaxrsOpenApiContextBuilder.create().application(application)
+				.scanner(scanner).configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateApi(api, "Title of " + id, 24);
@@ -119,8 +119,8 @@ public class TestOpenApiContextScanner {
 		scanner.setConfiguration(configuration);
 		scanner.setApplication(application);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application).scanner(scanner)
-				.configuration(configuration).contextId(id).build(true);
+		final OpenApiContext openApiContext = JaxrsOpenApiContextBuilder.create().application(application)
+				.scanner(scanner).configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateApi(api, "Title of " + id, 1);
@@ -149,8 +149,8 @@ public class TestOpenApiContextScanner {
 		scanner.setConfiguration(configuration);
 		scanner.setApplication(application);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application).scanner(scanner)
-				.configuration(configuration).contextId(id).build(true);
+		final OpenApiContext openApiContext = JaxrsOpenApiContextBuilder.create().application(application)
+				.scanner(scanner).configuration(configuration).contextId(id).build(true);
 
 		OpenAPI api = openApiContext.read();
 		OpenApiValidation.validateApi(api, "Title of " + id, 2);
@@ -170,7 +170,7 @@ public class TestOpenApiContextScanner {
 		application.register(Resource2.class);
 		application.register(Resource3.class);
 
-		final OpenApiContext openApiContext = OpenApi.contextBuilder().application(application)
+		final OpenApiContext openApiContext = JaxrsOpenApiContextBuilder.create().application(application)
 				.configuration(configuration).contextId(id).scannerType(JaxrsScannerType.APPLICATION).build(true);
 
 		OpenAPI api = openApiContext.read();
