@@ -26,6 +26,12 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.v2.test.model.Model1;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
+@SwaggerDefinition(tags=@Tag(name="MyTag", description="MyTag description"))
+@Api
 @Component
 @Path("resource3")
 public class Resource3 {

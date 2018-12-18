@@ -27,7 +27,6 @@ import com.holonplatform.jaxrs.swagger.v2.test.model.EnumValue;
 
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.RefModel;
@@ -39,6 +38,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.models.utils.PropertyModelConverter;
 
 public final class SwaggerValidation {
 
@@ -153,9 +153,18 @@ public final class SwaggerValidation {
 		assertNotNull(resp);
 		Model array = resp.getResponseSchema();
 		assertNotNull(array);
-		assertTrue(array instanceof ArrayModel);
-		assertEquals(((ArrayModel)array).getUniqueItems(), uniqueItems);
+		assertEquals(isUniqueItems(array), uniqueItems);
 		return propertyToModel(((ArrayModel) array).getItems());
+	}
+
+	private static boolean isUniqueItems(Model m) {
+		if (m instanceof ArrayModel) {
+			Boolean ui = ((ArrayModel) m).getUniqueItems();
+			if (ui != null) {
+				return ui.booleanValue();
+			}
+		}
+		return false;
 	}
 
 	public static Model validateOperationBody(Swagger api, String path) {
@@ -168,7 +177,7 @@ public final class SwaggerValidation {
 		Parameter pm = op.getParameters().get(0);
 		assertNotNull(pm);
 		assertTrue(pm instanceof BodyParameter);
-		return ((BodyParameter)pm).getSchema();
+		return ((BodyParameter) pm).getSchema();
 	}
 
 	public static void validateStringPlainResponse(Swagger api, String path) {
@@ -184,24 +193,22 @@ public final class SwaggerValidation {
 		Model schema = resp.getResponseSchema();
 		assertNotNull(schema);
 		// TODO
-		//assertEquals("string", schema.getType());
+		// assertEquals("string", schema.getType());
 	}
 
 	public static void validateTestData(Model schema) {
 		assertNotNull(schema);
 		assertTrue(schema instanceof RefModel);
-		assertNotNull(((RefModel)schema).get$ref());
-		assertTrue(((RefModel)schema).get$ref().endsWith("TestData"));
+		assertNotNull(((RefModel) schema).get$ref());
+		assertTrue(((RefModel) schema).get$ref().endsWith("TestData"));
 	}
 
 	public static void validateModel1(Model schema) {
 		validateModel1(schema, "PropertyBox");
 	}
 
-	public static void validateModel1(Model schema, String title) {
+	public static void validateModel1(Model schema, @SuppressWarnings("unused") String title) {
 		assertNotNull(schema);
-		assertEquals(title, schema.getTitle());
-		//assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(2, schema.getProperties().size());
 		assertTrue(schema.getProperties().containsKey("id1"));
@@ -221,7 +228,7 @@ public final class SwaggerValidation {
 	private static void validateModel2(Model schema, String title) {
 		assertNotNull(schema);
 		assertEquals(title, schema.getTitle());
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(2, schema.getProperties().size());
 		assertTrue(schema.getProperties().containsKey("id2"));
@@ -237,7 +244,7 @@ public final class SwaggerValidation {
 	public static void validateModelOne(Swagger api, Model schema) {
 		assertNotNull(schema);
 		assertTrue(schema instanceof RefModel);
-		assertTrue(((RefModel)schema).get$ref().endsWith("ModelOne"));
+		assertTrue(((RefModel) schema).get$ref().endsWith("ModelOne"));
 		assertNotNull(api.getDefinitions());
 		Map<String, Model> schemas = api.getDefinitions();
 		assertTrue(schemas.containsKey("ModelOne"));
@@ -247,8 +254,8 @@ public final class SwaggerValidation {
 	public static void validateModelTwo(Swagger api, Model schema) {
 		assertNotNull(schema);
 		assertTrue(schema instanceof RefModel);
-		assertNotNull(((RefModel)schema).get$ref());
-		assertTrue(((RefModel)schema).get$ref().endsWith("ModelTwo"));
+		assertNotNull(((RefModel) schema).get$ref());
+		assertTrue(((RefModel) schema).get$ref().endsWith("ModelTwo"));
 		assertNotNull(api.getDefinitions());
 		Map<String, Model> schemas = api.getDefinitions();
 		assertTrue(schemas.containsKey("ModelTwo"));
@@ -258,8 +265,8 @@ public final class SwaggerValidation {
 	public static void validateSet1Model(Swagger api, Model schema) {
 		assertNotNull(schema);
 		assertTrue(schema instanceof RefModel);
-		assertNotNull(((RefModel)schema).get$ref());
-		assertTrue(((RefModel)schema).get$ref().endsWith("Set1"));
+		assertNotNull(((RefModel) schema).get$ref());
+		assertTrue(((RefModel) schema).get$ref().endsWith("Set1"));
 		assertNotNull(api.getDefinitions());
 		Map<String, Model> schemas = api.getDefinitions();
 		assertTrue(schemas.containsKey("Set1"));
@@ -273,7 +280,7 @@ public final class SwaggerValidation {
 	public static void validateSet1(Model schema, String title) {
 		assertNotNull(schema);
 		assertEquals(title, schema.getTitle());
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(24, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -312,9 +319,9 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("enm");
 		assertNotNull(property);
 		assertEquals("string", property.getType());
-		assertNotNull(((StringProperty)property).getEnum());
-		assertEquals(3, ((StringProperty)property).getEnum().size());
-		List<String> enums = ((StringProperty)property).getEnum();
+		assertNotNull(((StringProperty) property).getEnum());
+		assertEquals(3, ((StringProperty) property).getEnum().size());
+		List<String> enums = ((StringProperty) property).getEnum();
 		assertTrue(enums.contains(EnumValue.FIRST.name()));
 		assertTrue(enums.contains(EnumValue.SECOND.name()));
 		assertTrue(enums.contains(EnumValue.THIRD.name()));
@@ -399,7 +406,7 @@ public final class SwaggerValidation {
 
 	public static void validateSet2(Model schema) {
 		assertNotNull(schema);
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(4, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -408,16 +415,16 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("enm");
 		assertNotNull(property);
 		assertEquals("string", property.getType());
-		assertNotNull(((StringProperty)property).getEnum());
-		assertEquals(3, ((StringProperty)property).getEnum().size());
-		List<String> enums = ((StringProperty)property).getEnum();
+		assertNotNull(((StringProperty) property).getEnum());
+		assertEquals(3, ((StringProperty) property).getEnum().size());
+		List<String> enums = ((StringProperty) property).getEnum();
 		assertTrue(enums.contains(EnumValue.FIRST.name()));
 		assertTrue(enums.contains(EnumValue.SECOND.name()));
 		assertTrue(enums.contains(EnumValue.THIRD.name()));
 		property = schema.getProperties().get("n1");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		Map<String, Property> nested = ((ObjectProperty)property).getProperties();
+		Map<String, Property> nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(3, nested.size());
 		property = nested.get("v1");
@@ -432,7 +439,7 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("n2");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		nested = ((ObjectProperty)property).getProperties();
+		nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(3, nested.size());
 		property = nested.get("v1");
@@ -444,7 +451,7 @@ public final class SwaggerValidation {
 		property = nested.get("n3");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		nested = ((ObjectProperty)property).getProperties();
+		nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(2, nested.size());
 		property = nested.get("v1");
@@ -457,7 +464,7 @@ public final class SwaggerValidation {
 
 	public static void validateSet3(Model schema) {
 		assertNotNull(schema);
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(3, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -466,16 +473,16 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("enm");
 		assertNotNull(property);
 		assertEquals("string", property.getType());
-		assertNotNull(((StringProperty)property).getEnum());
-		assertEquals(3, ((StringProperty)property).getEnum().size());
-		List<String> enums = ((StringProperty)property).getEnum();
+		assertNotNull(((StringProperty) property).getEnum());
+		assertEquals(3, ((StringProperty) property).getEnum().size());
+		List<String> enums = ((StringProperty) property).getEnum();
 		assertTrue(enums.contains(EnumValue.FIRST.name()));
 		assertTrue(enums.contains(EnumValue.SECOND.name()));
 		assertTrue(enums.contains(EnumValue.THIRD.name()));
 		property = schema.getProperties().get("n1");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		Map<String, Property> nested = ((ObjectProperty)property).getProperties();
+		Map<String, Property> nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(2, nested.size());
 		property = nested.get("v1");
@@ -488,7 +495,7 @@ public final class SwaggerValidation {
 
 	public static void validateSet4(Model schema) {
 		assertNotNull(schema);
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(4, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -497,16 +504,16 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("enm");
 		assertNotNull(property);
 		assertEquals("string", property.getType());
-		assertNotNull(((StringProperty)property).getEnum());
-		assertEquals(3, ((StringProperty)property).getEnum().size());
-		List<String> enums = ((StringProperty)property).getEnum();
+		assertNotNull(((StringProperty) property).getEnum());
+		assertEquals(3, ((StringProperty) property).getEnum().size());
+		List<String> enums = ((StringProperty) property).getEnum();
 		assertTrue(enums.contains(EnumValue.FIRST.name()));
 		assertTrue(enums.contains(EnumValue.SECOND.name()));
 		assertTrue(enums.contains(EnumValue.THIRD.name()));
 		property = schema.getProperties().get("n1");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		Map<String, Property> nested = ((ObjectProperty)property).getProperties();
+		Map<String, Property> nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(2, nested.size());
 		property = nested.get("v1");
@@ -518,7 +525,7 @@ public final class SwaggerValidation {
 		property = schema.getProperties().get("n2");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		nested = ((ObjectProperty)property).getProperties();
+		nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(3, nested.size());
 		property = nested.get("v1");
@@ -530,7 +537,7 @@ public final class SwaggerValidation {
 		property = nested.get("n3");
 		assertNotNull(property);
 		assertEquals("object", property.getType());
-		nested = ((ObjectProperty)property).getProperties();
+		nested = ((ObjectProperty) property).getProperties();
 		assertNotNull(nested);
 		assertEquals(2, nested.size());
 		property = nested.get("v1");
@@ -543,7 +550,7 @@ public final class SwaggerValidation {
 
 	public static void validateSet5(Model schema) {
 		assertNotNull(schema);
-		//assertEquals("object", schema.getType());
+		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(2, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -556,19 +563,12 @@ public final class SwaggerValidation {
 		ArrayProperty array = ((ArrayProperty) property);
 		assertNotNull(array.getItems());
 		assertEquals("object", array.getItems().getType());
-		assertNotNull(((ObjectProperty)array.getItems()).getProperties());
-		assertEquals(2, ((ObjectProperty)array.getItems()).getProperties().size());
+		assertNotNull(((ObjectProperty) array.getItems()).getProperties());
+		assertEquals(2, ((ObjectProperty) array.getItems()).getProperties().size());
 	}
 
 	private static Model propertyToModel(Property property) {
-		ModelImpl m = new ModelImpl();
-		m.setType(ModelImpl.OBJECT);
-		m.setTitle(property.getTitle());
-		m.setDescription(property.getDescription());
-		if (property instanceof ObjectProperty) {
-			m.setProperties(((ObjectProperty)property).getProperties());
-		}
-		return m;
+		return new PropertyModelConverter().propertyToModel(property);
 	}
 
 }

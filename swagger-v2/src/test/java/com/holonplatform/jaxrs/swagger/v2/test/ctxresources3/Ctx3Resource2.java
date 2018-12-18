@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
 
+import io.swagger.annotations.Api;
+
+@Api
 @SuppressWarnings("deprecation")
 @Component
 @ApiDefinition("docs2")

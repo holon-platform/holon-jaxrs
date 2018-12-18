@@ -16,9 +16,11 @@
 package com.holonplatform.jaxrs.swagger.v2.internal.extensions;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -45,6 +47,7 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
+import com.holonplatform.jaxrs.swagger.internal.types.SwaggerTypeUtils;
 import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContext;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -88,37 +91,30 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	 */
 	@Override
 	public void decorateOperation(Operation operation, Method method, Iterator<SwaggerExtension> chain) {
-		super.decorateOperation(operation, method, chain);
-
-		// responses property set
+		// check responses
 		final Map<String, Response> responses = operation.getResponses();
-		if (responses != null) {
-			getResponsePropertySet(method).ifPresent(aps -> {
-				PropertySet<?> propertySet = PropertySetRefIntrospector.get().getPropertySet(aps);
+		if (responses != null && !responses.isEmpty()) {
+			// check type
+			if (isPropertyBoxResponseType(method)) {
+				// get the property set
+				final PropertySet<?> propertySet = getResponsePropertySet(method)
+						.map(ref -> PropertySetRefIntrospector.get().getPropertySet(ref)).orElse(null);
 				if (propertySet != null) {
-					ApiPropertySetModel psm = getResponsePropertySetModel(method).orElse(null);
-
-					// responses
-					for (Response response : responses.values()) {
-						ArrayModel ap = isPropertyBoxArrayModelType(response.getResponseSchema());
-						if (ap != null) {
-							final Property propertyBoxProperty = SwaggerV2PropertyBoxModelConverter.modelToProperty(buildPropertyBoxModel(propertySet, true, false,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null));
-							ap.items(propertyBoxProperty);
-							response.setResponseSchema(ap);
-						} else if (isPropertyBoxModelType(response.getResponseSchema())) {
-							final Model propertyBoxModel = buildPropertyBoxModel(propertySet, true, false,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null);
-							response.responseSchema(propertyBoxModel);
+					final Optional<ApiPropertySetModel> apiModel = getResponsePropertySetModel(method);
+					responses.values().forEach(response -> {
+						if (response != null) {
+							parseResponse(propertySet, apiModel, response);
 						}
-					}
+					});
+				} else {
+					LOGGER.warn("Failed to obtain a PropertySet to build the PropertyBox Schema for method ["
+							+ method.getName() + "] response in class [" + method.getDeclaringClass().getName()
+							+ "]. Please check the @PropertySetRef annotation.");
 				}
-			});
+			}
 		}
+		// default behaviour
+		super.decorateOperation(operation, method, chain);
 	}
 
 	/*
@@ -157,13 +153,9 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 							}
 						}
 
-						ApiPropertySetModel psm = hasApiPropertySetModel(annotations);
+						Optional<ApiPropertySetModel> psm = hasApiPropertySetModel(annotations);
 
-						final Model model = buildPropertyBoxModel(propertySet, false,
-								(pbType.isContainerType() && !pbType.isMap()),
-								(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
-								(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
-								(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null);
+						final Model model = getPropertyBoxModel(propertySet, psm);
 						BodyParameter bp = new BodyParameter();
 						bp.setRequired(isParameterRequired(annotations));
 						bp.schema(model);
@@ -182,6 +174,67 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 		}
 
 		return super.extractParameters(annotations, type, typesToSkip, chain);
+	}
+
+	/**
+	 * Parse given response, providing {@link PropertyBox} type schema definition when a temporary
+	 * {@link SwaggerExtensions#MODEL_TYPE} named extension is found.
+	 * @param propertySet The property set to use
+	 * @param apiModel The Optional API model
+	 * @param response The response to parse
+	 */
+	private static void parseResponse(PropertySet<?> propertySet, Optional<ApiPropertySetModel> apiModel,
+			Response response) {
+		if (response.getResponseSchema() != null) {
+			ArrayModel array = isPropertyBoxArrayModelType(response.getResponseSchema());
+			if (array != null) {
+				ArrayModel model = (ArrayModel) array.clone();
+				model.setUniqueItems(array.getUniqueItems());
+				model.setItems(
+						SwaggerV2PropertyBoxModelConverter.modelToProperty(getPropertyBoxModel(propertySet, apiModel)));
+				response.setResponseSchema(model);
+			} else if (isPropertyBoxModelType(response.getResponseSchema())) {
+				response.setResponseSchema(getPropertyBoxModel(propertySet, apiModel));
+			}
+		}
+	}
+
+	/**
+	 * Checks whether to method return type should be parsed as a {@link PropertyBox} type.
+	 * @param method The method
+	 * @return <code>true</code> if is a {@link PropertyBox} response type
+	 */
+	private static boolean isPropertyBoxResponseType(Method method) {
+		if (PropertyBox.class.isAssignableFrom(method.getReturnType())) {
+			return true;
+		}
+		if (PropertyBox[].class.isAssignableFrom(method.getReturnType())) {
+			return true;
+		}
+		if (Collection.class.isAssignableFrom(method.getReturnType())) {
+			return getReturnTypeArgument(method).flatMap(t -> SwaggerTypeUtils.getClassFromType(t))
+					.map(t -> PropertyBox.class.isAssignableFrom(t)).orElse(false);
+		}
+		if (Response.class.isAssignableFrom(method.getReturnType())) {
+			return getAnnotation(method.getAnnotatedReturnType(), PropertySetRef.class).isPresent();
+		}
+		return false;
+	}
+
+	/**
+	 * Get the first type argument of the method return type, if present.
+	 * @param method The method
+	 * @return Optional first type argument of the method return type
+	 */
+	private static Optional<Type> getReturnTypeArgument(Method method) {
+		Type returnType = method.getGenericReturnType();
+		if (returnType != null && returnType instanceof ParameterizedType) {
+			Type[] typeArguments = ((ParameterizedType) returnType).getActualTypeArguments();
+			if (typeArguments != null && typeArguments.length > 0) {
+				return Optional.ofNullable(typeArguments[0]);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -221,12 +274,12 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	 * @param annotations Annotations to scan
 	 * @return If the {@link ApiPropertySetModel} annotation is present in given annotations list, returns it
 	 */
-	private static ApiPropertySetModel hasApiPropertySetModel(List<Annotation> annotations) {
+	private static Optional<ApiPropertySetModel> hasApiPropertySetModel(List<Annotation> annotations) {
 		List<ApiPropertySetModel> as = AnnotationUtils.getAnnotations(annotations, ApiPropertySetModel.class);
 		if (!as.isEmpty()) {
-			return as.get(0);
+			return Optional.of(as.get(0));
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -259,16 +312,15 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	 * @return Optional {@link PropertySetRef} annotation, if available
 	 */
 	private static Optional<PropertySetRef> getResponsePropertySet(Method method) {
-		final AnnotatedType rt = method.getAnnotatedReturnType();
-		if (rt != null) {
-			if (rt.isAnnotationPresent(PropertySetRef.class)) {
-				return Optional.of(rt.getAnnotation(PropertySetRef.class));
-			}
-			// check meta-annotations
-			List<PropertySetRef> annotations = AnnotationUtils.getAnnotations(rt, PropertySetRef.class);
-			if (!annotations.isEmpty()) {
-				return Optional.ofNullable(annotations.get(0));
-			}
+		Optional<PropertySetRef> annotation = getAnnotation(method.getAnnotatedReturnType(), PropertySetRef.class);
+		if (annotation.isPresent()) {
+			return annotation;
+		}
+		// check array
+		if (method.getAnnotatedReturnType() instanceof AnnotatedArrayType) {
+			return getAnnotation(
+					((AnnotatedArrayType) method.getAnnotatedReturnType()).getAnnotatedGenericComponentType(),
+					PropertySetRef.class);
 		}
 		return Optional.empty();
 	}
@@ -280,13 +332,29 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	 * @return Optional {@link ApiPropertySetModel} annotation, if available
 	 */
 	private static Optional<ApiPropertySetModel> getResponsePropertySetModel(Method method) {
-		final AnnotatedType rt = method.getAnnotatedReturnType();
-		if (rt != null) {
-			if (rt.isAnnotationPresent(ApiPropertySetModel.class)) {
-				return Optional.of(rt.getAnnotation(ApiPropertySetModel.class));
+		Optional<ApiPropertySetModel> annotation = getAnnotation(method.getAnnotatedReturnType(),
+				ApiPropertySetModel.class);
+		if (annotation.isPresent()) {
+			return annotation;
+		}
+		// check array
+		if (method.getAnnotatedReturnType() instanceof AnnotatedArrayType) {
+			return getAnnotation(
+					((AnnotatedArrayType) method.getAnnotatedReturnType()).getAnnotatedGenericComponentType(),
+					ApiPropertySetModel.class);
+		}
+		return Optional.empty();
+	}
+
+	private static <A extends Annotation> Optional<A> getAnnotation(java.lang.reflect.AnnotatedType type,
+			Class<A> annotationType) {
+		if (type != null) {
+			// type
+			if (type.isAnnotationPresent(annotationType)) {
+				return Optional.of(type.getAnnotation(annotationType));
 			}
 			// check meta-annotations
-			List<ApiPropertySetModel> annotations = AnnotationUtils.getAnnotations(rt, ApiPropertySetModel.class);
+			List<A> annotations = AnnotationUtils.getAnnotations(type, annotationType);
 			if (!annotations.isEmpty()) {
 				return Optional.ofNullable(annotations.get(0));
 			}
@@ -294,39 +362,21 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 		return Optional.empty();
 	}
 
-	/**
-	 * Build a {@link PropertyBox} type Swagger model using given <code>propertySet</code>.
-	 * @param propertySet Property set
-	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
-	 * @param array <code>true</code> to create an array model type
-	 * @param modelName If not null, define a Model with given name and use a {@link RefModel} to reference it
-	 * @param modelDescription Model description
-	 * @param modelReference Model reference
-	 * @return Swagger model
-	 */
-	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly, boolean array,
-			String modelName, String modelDescription, String modelReference) {
-		Function<Type, io.swagger.models.properties.Property> resolver = t -> io.swagger.converter.ModelConverters.getInstance().readAsProperty(t);
-		Model resolvedModel = SwaggerV2PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver, includeReadOnly);
-		
-		if (array) {
-			// Array model
-			ArrayModel model = new ArrayModel();
-			model.items(SwaggerV2PropertyBoxModelConverter.modelToProperty(resolvedModel));
-			return model;
-		}
-
-		// Check ref model
-		if (modelName != null && !modelName.trim().equals("")) {
-			if (!definePropertySetModel(resolvedModel, modelName, modelDescription)) {
-				LOGGER.warn("Failed to define PropertySet Model named [" + modelName
+	private static Model getPropertyBoxModel(PropertySet<?> propertySet,
+			Optional<ApiPropertySetModel> apiPropertySetModel) {
+		final Function<Type, io.swagger.models.properties.Property> resolver = t -> io.swagger.converter.ModelConverters
+				.getInstance().readAsProperty(t);
+		final Model resolvedModel = SwaggerV2PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver,
+				true);
+		// check API model
+		return apiPropertySetModel.map(apiModel -> {
+			final String name = apiModel.value().trim();
+			if (!definePropertySetModel(resolvedModel, name, AnnotationUtils.getStringValue(apiModel.description()))) {
+				LOGGER.warn("Failed to define PropertySet Model named [" + name
 						+ "]: no Swagger instance available from resolution context.");
 			}
-			return new RefModel(modelName);
-		}
-
-		// Simple model
-		return resolvedModel;
+			return (Model) new RefModel(name);
+		}).orElse(resolvedModel);
 	}
 
 	private static boolean definePropertySetModel(Model model, String name, String description) {
@@ -348,7 +398,7 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 			return true;
 		}).orElse(false);
 	}
-	
+
 	/**
 	 * Checks if given schema name is already defined in the provided Swagger instance.
 	 * @param swagger The Swagger instance
@@ -363,7 +413,7 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Check whether the given property is of {@link PropertyBox} type using the {@link SwaggerExtensions#MODEL_TYPE}
 	 * extension name.

@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 
 import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Component
 @ApiContextId("ctx_resource_1")
 @Path("resource1")

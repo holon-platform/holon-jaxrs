@@ -21,6 +21,9 @@ import org.springframework.stereotype.Component;
 
 import com.holonplatform.jaxrs.swagger.v2.test.model.AbstractTestResource;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Component
 @Path("resource1")
 public class Resource1 extends AbstractTestResource {

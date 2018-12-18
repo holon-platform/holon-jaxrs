@@ -47,6 +47,7 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.internal.resolver.SwaggerPropertySetSerializationTreeResolver;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
+import com.holonplatform.jaxrs.swagger.internal.types.SwaggerTypeUtils;
 import com.holonplatform.json.model.PropertySetSerializationNode;
 import com.holonplatform.json.model.PropertySetSerializationTree;
 
@@ -59,8 +60,9 @@ import io.swagger.models.RefModel;
 import io.swagger.models.properties.AbstractNumericProperty;
 import io.swagger.models.properties.AbstractProperty;
 import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.ObjectProperty;
+import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.StringProperty;
+import io.swagger.models.utils.PropertyModelConverter;
 
 /**
  * A Swagger {@link ModelConverter} to handle {@link PropertyBox} type model objects and setting the
@@ -83,6 +85,32 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	@Override
 	public io.swagger.models.properties.Property resolveProperty(Type type, ModelConverterContext context,
 			Annotation[] annotations, Iterator<ModelConverter> chain) {
+		boolean localTime = SwaggerTypeUtils.getClassFromType(type).map(cls -> LocalTime.class.isAssignableFrom(cls)).orElse(false);
+		if (localTime) {
+			StringProperty lt = new StringProperty();
+			lt.setFormat("time");
+			return lt;
+		}
+		// check PropertyBox type
+		final PropertyBoxTypeInfo pbType = PropertyBoxTypeResolver.resolvePropertyBoxType(type).orElse(null);
+		if (pbType != null) {
+			// container
+			if (pbType.isContainerType()) {
+				if (pbType.isMap()) {
+					MapProperty property = new MapProperty();
+					property.additionalProperties(context.resolveProperty(PropertyBox.class, annotations));
+					return property;
+				} else {
+					ArrayProperty property = new ArrayProperty();
+					property.items(context.resolveProperty(PropertyBox.class, annotations));
+					property.setUniqueItems(pbType.isUniqueItems());
+					return property;
+				}
+			}
+			// simple
+			return modelToProperty(
+					getPropertyBoxSchema(type, context).orElseGet(() -> delegateToExtensionResolution()));
+		}
 		// Default behaviour
 		if (chain.hasNext()) {
 			return chain.next().resolveProperty(type, context, annotations, chain);
@@ -330,11 +358,6 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	 */
 	private static void configureProperty(Model parent, io.swagger.models.properties.Property schema,
 			Property<?> property, String name) {
-		// check local time
-		if (LocalTime.class.isAssignableFrom(property.getType()) && schema instanceof AbstractProperty) {
-			((AbstractProperty) schema).setType("string");
-			((AbstractProperty) schema).setFormat("time");
-		}
 		// check date type
 		if (TypeUtils.isDate(property.getType()) && schema instanceof AbstractProperty) {
 			property.getTemporalType().ifPresent(tt -> {
@@ -455,13 +478,7 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	}
 
 	public static io.swagger.models.properties.Property modelToProperty(Model model) {
-		ObjectProperty p = new ObjectProperty();
-		p.setTitle(model.getTitle());
-		p.setDescription(model.getDescription());
-		p.setExample(model.getExample());
-		p.setProperties(model.getProperties());
-		p.setVendorExtensions(model.getVendorExtensions());
-		return p;
+		return new PropertyModelConverter().modelToProperty(model);
 	}
 
 }
