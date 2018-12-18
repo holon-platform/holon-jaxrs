@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.resolver;
+package com.holonplatform.jaxrs.swagger.internal.resolver;
 
 import java.util.Map;
 import java.util.WeakHashMap;

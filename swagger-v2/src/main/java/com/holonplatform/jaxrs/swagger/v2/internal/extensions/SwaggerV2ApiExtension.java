@@ -21,12 +21,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
@@ -34,7 +34,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.property.PropertySetRefIntrospector;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
@@ -42,13 +41,11 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerExtensions;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
 import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContext;
-import com.holonplatform.jaxrs.swagger.v2.internal.types.SwaggerPropertyFactory;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
@@ -56,16 +53,13 @@ import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
 import io.swagger.jaxrs.ext.SwaggerExtension;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
 import io.swagger.util.ParameterProcessor;
 
 /**
@@ -108,11 +102,10 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 					for (Response response : responses.values()) {
 						ArrayModel ap = isPropertyBoxArrayModelType(response.getResponseSchema());
 						if (ap != null) {
-							final Property propertyBoxProperty = buildPropertyBoxProperty(propertySet, true,
+							final Property propertyBoxProperty = SwaggerV2PropertyBoxModelConverter.modelToProperty(buildPropertyBoxModel(propertySet, true, false,
 									(psm != null) ? AnnotationUtils.getStringValue(psm.value()) : null,
 									(psm != null) ? AnnotationUtils.getStringValue(psm.description()) : null,
-									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null);
-
+									(psm != null) ? AnnotationUtils.getStringValue(psm.reference()) : null));
 							ap.items(propertyBoxProperty);
 							response.setResponseSchema(ap);
 						} else if (isPropertyBoxModelType(response.getResponseSchema())) {
@@ -302,58 +295,6 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	}
 
 	/**
-	 * Get a Swagger name-property map form given <code>propertySet</code>.
-	 * @param propertySet Property set
-	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
-	 * @return Swagger name-property map
-	 */
-	private static Map<String, Property> getPropertySetProperties(PropertySet<?> propertySet, boolean includeReadOnly) {
-
-		final SwaggerPropertyFactory factory = SwaggerPropertyFactory.getDefault();
-
-		Map<String, Property> properties = new LinkedHashMap<>();
-
-		if (propertySet != null) {
-			propertySet.forEach(p -> {
-				if (includeReadOnly || !p.isReadOnly()) {
-					if (Path.class.isAssignableFrom(p.getClass())) {
-						Property sp = factory.create(SwaggerContext.getSwagger().orElse(null), p);
-						if (sp != null) {
-							properties.put(((Path<?>) p).relativeName(), sp);
-						}
-					}
-				}
-			});
-		}
-
-		return properties;
-	}
-
-	/**
-	 * Build a {@link PropertyBox} type Swagger property using given <code>propertySet</code>.
-	 * @param propertySet Property set
-	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
-	 * @param modelName If not null, define a Model with given name and use a {@link RefProperty} to reference it
-	 * @param modelDescription Model description
-	 * @param modelReference Model reference
-	 * @return Swagger property
-	 */
-	private static Property buildPropertyBoxProperty(PropertySet<?> propertySet, boolean includeReadOnly,
-			String modelName, String modelDescription, String modelReference) {
-		if (modelName != null && !modelName.trim().equals("")) {
-			// define model and use a ref
-			return new RefProperty(defineModel(propertySet, modelName, modelDescription, modelReference));
-		}
-		// explicit object definition
-		ObjectProperty property = new ObjectProperty();
-		property.title("PropertyBox");
-		property.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
-				PropertyBox.class.getName());
-		property.properties(getPropertySetProperties(propertySet, includeReadOnly));
-		return property;
-	}
-
-	/**
 	 * Build a {@link PropertyBox} type Swagger model using given <code>propertySet</code>.
 	 * @param propertySet Property set
 	 * @param includeReadOnly Whether to include {@link PropertySet} read-only properties
@@ -365,69 +306,64 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	 */
 	private static Model buildPropertyBoxModel(PropertySet<?> propertySet, boolean includeReadOnly, boolean array,
 			String modelName, String modelDescription, String modelReference) {
-
+		Function<Type, io.swagger.models.properties.Property> resolver = t -> io.swagger.converter.ModelConverters.getInstance().readAsProperty(t);
+		Model resolvedModel = SwaggerV2PropertyBoxModelConverter.buildPropertyBoxSchema(propertySet, resolver, includeReadOnly);
+		
 		if (array) {
 			// Array model
 			ArrayModel model = new ArrayModel();
-			model.items(buildPropertyBoxProperty(propertySet, includeReadOnly, modelName, modelDescription,
-					modelReference));
+			model.items(SwaggerV2PropertyBoxModelConverter.modelToProperty(resolvedModel));
 			return model;
 		}
 
 		// Check ref model
 		if (modelName != null && !modelName.trim().equals("")) {
-			return new RefModel(defineModel(propertySet, modelName, modelDescription, modelReference));
+			if (!definePropertySetModel(resolvedModel, modelName, modelDescription)) {
+				LOGGER.warn("Failed to define PropertySet Model named [" + modelName
+						+ "]: no Swagger instance available from resolution context.");
+			}
+			return new RefModel(modelName);
 		}
 
 		// Simple model
-		ModelImpl model = new ModelImpl();
-		model.type(ModelImpl.OBJECT);
-		model.name("PropertyBox");
-		model.setProperties(getPropertySetProperties(propertySet, includeReadOnly));
-		model.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(), PropertyBox.class.getName());
-		return model;
+		return resolvedModel;
 	}
 
+	private static boolean definePropertySetModel(Model model, String name, String description) {
+		return SwaggerContext.getSwagger().map(swagger -> {
+			// check already defined
+			if (!hasSchema(swagger, name)) {
+				// build and define
+				model.setTitle(name);
+				if (description != null) {
+					model.setDescription(description);
+				}
+				// add schema to include
+				SwaggerContext.getModels().ifPresent(schemas -> {
+					if (!schemas.containsKey(name)) {
+						schemas.put(name, model);
+					}
+				});
+			}
+			return true;
+		}).orElse(false);
+	}
+	
 	/**
-	 * Define a name {@link PropertySet} Model in given {@link Swagger} instance.
-	 * @param propertySet Property set
-	 * @param modelName Model name (not null)
-	 * @param modelDescription Model description
-	 * @param modelReference Model reference
-	 * @return Defined model name
+	 * Checks if given schema name is already defined in the provided Swagger instance.
+	 * @param swagger The Swagger instance
+	 * @param name The schema name
+	 * @return <code>true</code> if the schema name is already defined, <code>false</code> otherwise
 	 */
-	private static String defineModel(PropertySet<?> propertySet, String modelName, String modelDescription,
-			String modelReference) {
-		if (modelName != null) {
-			final Swagger swagger = SwaggerContext.getSwagger().orElse(null);
-
-			if (swagger == null) {
-				LOGGER.warn("Failed to define PropertySet model named [" + modelName
-						+ "]: no Swagger instance available from resolution context.");
-				throw new ApiConfigurationException(
-						"Cannot define Model with name [" + modelName + "]: missing context Swagger instance");
+	private static boolean hasSchema(Swagger swagger, String name) {
+		if (swagger != null && name != null) {
+			if (swagger.getDefinitions() != null) {
+				return swagger.getDefinitions().containsKey(name);
 			}
-			ModelImpl model = new ModelImpl();
-			model.type(ModelImpl.OBJECT);
-			model.name(modelName);
-			model.setProperties(getPropertySetProperties(propertySet, true));
-			model.getVendorExtensions().put(SwaggerExtensions.MODEL_TYPE.getExtensionName(),
-					PropertyBox.class.getName());
-
-			if (modelDescription != null) {
-				model.description(modelDescription);
-			}
-			if (modelReference != null && !modelReference.trim().equals("")) {
-				model.setReference(modelReference);
-			}
-
-			// define
-			swagger.addDefinition(modelName, model);
-			return modelName;
 		}
-		return null;
+		return false;
 	}
-
+	
 	/**
 	 * Check whether the given property is of {@link PropertyBox} type using the {@link SwaggerExtensions#MODEL_TYPE}
 	 * extension name.

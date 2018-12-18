@@ -13,34 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal;
+package com.holonplatform.jaxrs.swagger.v2.internal;
 
 import java.util.Collections;
 import java.util.Set;
 
 import com.holonplatform.jaxrs.swagger.ApiReader;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
+import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.jaxrs2.Reader;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Swagger;
+import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 
 /**
  * Default {@link ApiReader} implementation.
  *
  * @since 5.2.0
  */
-public class DefaultApiReader implements ApiReader<OpenAPI> {
+public class DefaultApiReader implements ApiReader<Swagger> {
 
-	protected final OpenAPIConfiguration configuration;
+	private final SwaggerConfig configuration;
 
-	public DefaultApiReader(OpenAPIConfiguration configuration) {
+	public DefaultApiReader(SwaggerConfig configuration) {
 		super();
-		this.configuration = (configuration != null) ? configuration : new SwaggerConfiguration();
+		this.configuration = (configuration != null) ? configuration : new BeanConfig();
 	}
 
 	/*
@@ -48,12 +48,13 @@ public class DefaultApiReader implements ApiReader<OpenAPI> {
 	 * @see com.holonplatform.jaxrs.swagger.ApiReader#read(java.util.Set)
 	 */
 	@Override
-	public OpenAPI read(Set<Class<?>> classes) throws ApiConfigurationException {
-		try {
-			return SwaggerV3.adapt(new Reader(configuration)).read(classes, Collections.emptyMap());
-		} catch (Exception e) {
-			throw new ApiConfigurationException(e);
+	public Swagger read(Set<Class<?>> classes) throws ApiConfigurationException {
+		Set<Class<?>> cls = (classes != null) ? classes : Collections.emptySet();
+		if (!cls.contains(SwaggerV2.CONTEXT_READER_LISTENER)) {
+			cls.add(SwaggerV2.CONTEXT_READER_LISTENER);
 		}
+		final Reader reader = new Reader(configuration.configure(new Swagger()));
+		return reader.read(cls);
 	}
 
 	/*
@@ -61,7 +62,7 @@ public class DefaultApiReader implements ApiReader<OpenAPI> {
 	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asJson(java.lang.Object, boolean)
 	 */
 	@Override
-	public String asJson(OpenAPI api, boolean pretty) {
+	public String asJson(Swagger api, boolean pretty) {
 		try {
 			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
 		} catch (Exception e) {
@@ -74,9 +75,9 @@ public class DefaultApiReader implements ApiReader<OpenAPI> {
 	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asYaml(java.lang.Object, boolean)
 	 */
 	@Override
-	public String asYaml(OpenAPI api, boolean pretty) {
+	public String asYaml(Swagger api, boolean pretty) {
 		try {
-			return pretty ? Yaml.pretty(api) : Yaml.mapper().writeValueAsString(api);
+			return pretty ? Yaml.pretty().writeValueAsString(api) : Yaml.mapper().writeValueAsString(api);
 		} catch (Exception e) {
 			throw new ApiConfigurationException(e);
 		}

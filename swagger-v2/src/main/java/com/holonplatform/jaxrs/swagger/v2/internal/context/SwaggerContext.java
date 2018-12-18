@@ -64,7 +64,7 @@ public final class SwaggerContext {
 	/**
 	 * Removes the current {@link Swagger} instance.
 	 */
-	public static void removeOpenAPI() {
+	public static void removeSwagger() {
 		_swagger.set(null);
 		_models.set(new LinkedHashMap<>());
 	}

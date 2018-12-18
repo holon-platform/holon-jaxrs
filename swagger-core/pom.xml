@@ -47,6 +47,13 @@
 			<version>${holon.core.version}</version>
 		</dependency>
 
+		<!-- Holon JSON -->
+		<dependency>
+			<groupId>com.holon-platform.json</groupId>
+			<artifactId>holon-json</artifactId>
+			<version>${holon.json.version}</version>
+		</dependency>
+
 		<!-- JAX-RS API -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>

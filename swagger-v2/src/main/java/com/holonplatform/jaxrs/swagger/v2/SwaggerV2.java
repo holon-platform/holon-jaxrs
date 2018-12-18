@@ -15,11 +15,35 @@
  */
 package com.holonplatform.jaxrs.swagger.v2;
 
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.jaxrs.swagger.ApiReader;
+import com.holonplatform.jaxrs.swagger.v2.internal.DefaultApiReader;
+import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContextListener;
+
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.ReaderListener;
+import io.swagger.models.Swagger;
+
 /**
  * Entrypoint interface for Swagger V2 readers and adapters.
  * 
  * @since 5.2.0
  */
 public interface SwaggerV2 {
+
+	/**
+	 * A {@link ReaderListener} class to include in the API classes to enable a consistent API definition generation
+	 * when the {@link PropertyBox} type is used.
+	 */
+	public static Class<? extends ReaderListener> CONTEXT_READER_LISTENER = SwaggerContextListener.class;
+
+	/**
+	 * Create a new {@link ApiReader} to create an {@link Swagger} definition from a set of API resource classes.
+	 * @param configuration The configuration to use
+	 * @return The {@link ApiReader} instance
+	 */
+	static ApiReader<Swagger> reader(SwaggerConfig configuration) {
+		return new DefaultApiReader(configuration);
+	}
 
 }
