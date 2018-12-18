@@ -17,11 +17,14 @@ package com.holonplatform.jaxrs.swagger.v3;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.jaxrs.swagger.ApiReader;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.v3.internal.DefaultApiReader;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextAdapter;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiContextListener;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.OpenApiReaderAdapter;
 
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.ReaderListener;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -48,6 +51,48 @@ public interface SwaggerV3 {
 	 */
 	static ApiReader<OpenAPI> reader(OpenAPIConfiguration configuration) {
 		return new DefaultApiReader(configuration);
+	}
+
+	/**
+	 * Convert given API definition in JSON format.
+	 * @param pretty Whether to pretty format the output
+	 * @return The API definition as JSON
+	 */
+	static String asJson(OpenAPI api, boolean pretty) {
+		try {
+			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
+		} catch (Exception e) {
+			throw new ApiConfigurationException(e);
+		}
+	}
+
+	/**
+	 * Convert given API definition in JSON format.
+	 * @return The API definition as JSON
+	 */
+	static String asJson(OpenAPI api) {
+		return asJson(api, false);
+	}
+
+	/**
+	 * Convert given API definition in YAML format.
+	 * @param pretty Whether to pretty format the output
+	 * @return The API definition as YAML
+	 */
+	static String asYaml(OpenAPI api, boolean pretty) {
+		try {
+			return pretty ? Yaml.pretty(api) : Yaml.mapper().writeValueAsString(api);
+		} catch (Exception e) {
+			throw new ApiConfigurationException(e);
+		}
+	}
+
+	/**
+	 * Convert given API definition in YAML format.
+	 * @return The API definition as YAML
+	 */
+	static String asYaml(OpenAPI api) {
+		return asYaml(api, false);
 	}
 
 	/**

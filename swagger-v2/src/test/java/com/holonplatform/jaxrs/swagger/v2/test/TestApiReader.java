@@ -15,8 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v2.test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 import javax.ws.rs.Path;
 
@@ -27,12 +26,11 @@ import com.holonplatform.jaxrs.swagger.v2.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v2.test.utils.SwaggerValidation;
 
 import io.swagger.annotations.Api;
-import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 
-public class TestPropertyBoxModelConverter {
+public class TestApiReader {
 
 	@Api
 	@Path("resource1")
@@ -41,18 +39,12 @@ public class TestPropertyBoxModelConverter {
 	}
 
 	@Test
-	public void testPropertyBoxConversion() {
+	public void testApiReader() {
 
 		final BeanConfig configuration = new BeanConfig();
 		configuration.setInfo(new Info().title("Test PropertyBox").version("1"));
 
-		Set<Class<?>> classes = new HashSet<>();
-		classes.add(TestResource1.class);
-		classes.add(SwaggerV2.CONTEXT_READER_LISTENER);
-
-		Reader reader = new Reader(configuration.configure(new Swagger()));
-		Swagger api = reader.read(classes);
-		
+		Swagger api = SwaggerV2.reader(configuration).read(Collections.singleton(TestResource1.class));
 		SwaggerValidation.validateTestResourceApi(api, "Test PropertyBox");
 
 	}

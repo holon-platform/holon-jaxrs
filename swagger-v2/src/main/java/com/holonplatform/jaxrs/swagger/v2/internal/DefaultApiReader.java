@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v2.internal;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.holonplatform.jaxrs.swagger.ApiReader;
@@ -26,8 +26,6 @@ import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
-import io.swagger.util.Json;
-import io.swagger.util.Yaml;
 
 /**
  * Default {@link ApiReader} implementation.
@@ -49,38 +47,15 @@ public class DefaultApiReader implements ApiReader<Swagger> {
 	 */
 	@Override
 	public Swagger read(Set<Class<?>> classes) throws ApiConfigurationException {
-		Set<Class<?>> cls = (classes != null) ? classes : Collections.emptySet();
+		Set<Class<?>> cls = new HashSet<>();
+		if (classes != null) {
+			cls.addAll(classes);
+		}
 		if (!cls.contains(SwaggerV2.CONTEXT_READER_LISTENER)) {
 			cls.add(SwaggerV2.CONTEXT_READER_LISTENER);
 		}
 		final Reader reader = new Reader(configuration.configure(new Swagger()));
 		return reader.read(cls);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asJson(java.lang.Object, boolean)
-	 */
-	@Override
-	public String asJson(Swagger api, boolean pretty) {
-		try {
-			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
-		} catch (Exception e) {
-			throw new ApiConfigurationException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asYaml(java.lang.Object, boolean)
-	 */
-	@Override
-	public String asYaml(Swagger api, boolean pretty) {
-		try {
-			return pretty ? Yaml.pretty().writeValueAsString(api) : Yaml.mapper().writeValueAsString(api);
-		} catch (Exception e) {
-			throw new ApiConfigurationException(e);
-		}
 	}
 
 }

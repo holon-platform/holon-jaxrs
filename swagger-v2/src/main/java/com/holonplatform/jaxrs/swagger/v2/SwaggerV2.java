@@ -17,12 +17,15 @@ package com.holonplatform.jaxrs.swagger.v2;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.jaxrs.swagger.ApiReader;
+import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.v2.internal.DefaultApiReader;
 import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContextListener;
 
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 
 /**
  * Entrypoint interface for Swagger V2 readers and adapters.
@@ -44,6 +47,48 @@ public interface SwaggerV2 {
 	 */
 	static ApiReader<Swagger> reader(SwaggerConfig configuration) {
 		return new DefaultApiReader(configuration);
+	}
+
+	/**
+	 * Convert given API definition in JSON format.
+	 * @param pretty Whether to pretty format the output
+	 * @return The API definition as JSON
+	 */
+	static String asJson(Swagger api, boolean pretty) {
+		try {
+			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
+		} catch (Exception e) {
+			throw new ApiConfigurationException(e);
+		}
+	}
+
+	/**
+	 * Convert given API definition in JSON format.
+	 * @return The API definition as JSON
+	 */
+	static String asJson(Swagger api) {
+		return asJson(api, false);
+	}
+
+	/**
+	 * Convert given API definition in YAML format.
+	 * @param pretty Whether to pretty format the output
+	 * @return The API definition as YAML
+	 */
+	static String asYaml(Swagger api, boolean pretty) {
+		try {
+			return pretty ? Yaml.pretty().writeValueAsString(api) : Yaml.mapper().writeValueAsString(api);
+		} catch (Exception e) {
+			throw new ApiConfigurationException(e);
+		}
+	}
+
+	/**
+	 * Convert given API definition in YAML format.
+	 * @return The API definition as YAML
+	 */
+	static String asYaml(Swagger api) {
+		return asYaml(api, false);
 	}
 
 }

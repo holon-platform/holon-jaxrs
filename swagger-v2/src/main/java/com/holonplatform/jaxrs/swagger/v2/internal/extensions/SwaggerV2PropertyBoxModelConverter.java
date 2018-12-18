@@ -47,7 +47,6 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.internal.resolver.SwaggerPropertySetSerializationTreeResolver;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
-import com.holonplatform.jaxrs.swagger.internal.types.SwaggerTypeUtils;
 import com.holonplatform.json.model.PropertySetSerializationNode;
 import com.holonplatform.json.model.PropertySetSerializationTree;
 
@@ -85,8 +84,8 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 	@Override
 	public io.swagger.models.properties.Property resolveProperty(Type type, ModelConverterContext context,
 			Annotation[] annotations, Iterator<ModelConverter> chain) {
-		boolean localTime = SwaggerTypeUtils.getClassFromType(type).map(cls -> LocalTime.class.isAssignableFrom(cls)).orElse(false);
-		if (localTime) {
+		// check LocalTime type
+		if (LocalTime.class == type) {
 			StringProperty lt = new StringProperty();
 			lt.setFormat("time");
 			return lt;

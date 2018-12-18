@@ -22,8 +22,6 @@ import com.holonplatform.jaxrs.swagger.ApiReader;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
@@ -51,32 +49,6 @@ public class DefaultApiReader implements ApiReader<OpenAPI> {
 	public OpenAPI read(Set<Class<?>> classes) throws ApiConfigurationException {
 		try {
 			return SwaggerV3.adapt(new Reader(configuration)).read(classes, Collections.emptyMap());
-		} catch (Exception e) {
-			throw new ApiConfigurationException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asJson(java.lang.Object, boolean)
-	 */
-	@Override
-	public String asJson(OpenAPI api, boolean pretty) {
-		try {
-			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
-		} catch (Exception e) {
-			throw new ApiConfigurationException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.ApiReader#asYaml(java.lang.Object, boolean)
-	 */
-	@Override
-	public String asYaml(OpenAPI api, boolean pretty) {
-		try {
-			return pretty ? Yaml.pretty(api) : Yaml.mapper().writeValueAsString(api);
 		} catch (Exception e) {
 			throw new ApiConfigurationException(e);
 		}

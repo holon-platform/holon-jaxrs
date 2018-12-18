@@ -48,34 +48,4 @@ public interface ApiReader<M> {
 		return read(Arrays.asList(classes).stream().filter(c -> c != null).collect(Collectors.toSet()));
 	}
 
-	/**
-	 * Convert given API definition in JSON format.
-	 * @param pretty Whether to pretty format the output
-	 * @return The API definition as JSON
-	 */
-	String asJson(M api, boolean pretty);
-
-	/**
-	 * Convert given API definition in JSON format.
-	 * @return The API definition as JSON
-	 */
-	default String asJson(M api) {
-		return asJson(api, false);
-	}
-
-	/**
-	 * Convert given API definition in YAML format.
-	 * @param pretty Whether to pretty format the output
-	 * @return The API definition as YAML
-	 */
-	String asYaml(M api, boolean pretty);
-
-	/**
-	 * Convert given API definition in YAML format.
-	 * @return The API definition as YAML
-	 */
-	default String asYaml(M api) {
-		return asYaml(api, false);
-	}
-
 }
