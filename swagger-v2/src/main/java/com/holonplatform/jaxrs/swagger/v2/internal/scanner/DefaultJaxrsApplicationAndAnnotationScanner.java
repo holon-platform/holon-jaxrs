@@ -35,7 +35,7 @@ public class DefaultJaxrsApplicationAndAnnotationScanner extends DefaultJaxrsAnn
 	 */
 	@Override
 	protected Set<Class<?>> scan(Application application) {
-		Set<Class<?>> classes = new HashSet<>(super.classes());
+		Set<Class<?>> classes = new HashSet<>(super.scan(application));
 		classes.addAll(getApplicationClasses(application));
 		return classes;
 	}

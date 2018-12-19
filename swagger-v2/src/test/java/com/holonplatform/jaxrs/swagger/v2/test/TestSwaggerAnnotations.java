@@ -51,7 +51,7 @@ import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.properties.Property;
 
-public class TestOpenApiAnnotations {
+public class TestSwaggerAnnotations {
 
 	@SwaggerDefinition(info = @io.swagger.annotations.Info(title = "Test annotations", version = "0.1.2"))
 	@Path("resource")

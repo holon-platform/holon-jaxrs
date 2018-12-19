@@ -1,0 +1,168 @@
+spring:
+  main:
+    banner-mode: "off"
+   
+---
+spring:
+  profiles: disabled
+  
+holon:
+  swagger:
+    enabled: false
+     
+---
+spring:
+  profiles: path1
+  
+holon:
+  swagger:
+    context-id: 'test-path1'
+    path: 'docs'
+
+---
+spring:
+  profiles: path2
+  
+  jersey:
+    application-path: api
+    
+holon:
+  swagger:
+    context-id: 'test-path2'
+    path: 'docs'
+    type: PATH_PARAMETER
+
+---
+spring:
+  profiles: path3
+  
+  jersey:
+    type: filter
+    
+holon:
+  swagger:
+    context-id: 'test-path3'
+    path: 'docs'
+    type: ACCEPT_HEADER
+
+---
+spring:
+  profiles: packages1
+  
+holon:
+  swagger:
+    context-id: 'test-packages1'
+    resource-package: 'com.holonplatform.jaxrs.swagger.v2.test.resources.context2'
+
+---
+spring:
+  profiles: packages2
+  
+holon:
+  swagger:
+    context-id: 'test-packages2'
+    resource-package: 'com.holonplatform.jaxrs.swagger.v2.test.resources.context2,com.holonplatform.jaxrs.swagger.v2.test.resources.context3'
+
+---
+spring:
+  profiles: config1
+  
+holon:
+  swagger:
+    context-id: 'test-config1'
+    pretty-print: true
+    title: 'Title config1'
+    version: '0.0.1'
+    description: 'Description config1'
+    termsOfServiceUrl: 'https://foo.bar'
+    contact: 
+      name: 'Test Contact'
+      email: 'contact@email.com'
+      url: 'https://foo.bar/contact'
+    license:
+      name: 'My license'
+      url: 'https://foo.bar/license'
+    external-docs:
+      url: 'https://foo.bar/docs'
+      description: 'Ext docs'
+    server:
+      url: 'https://localhost:8080'
+      description: 'Test server'
+
+---
+spring:
+  profiles: config2
+  
+holon:
+  swagger:
+    context-id: 'test-config2'
+    title: 'Title config2'
+    version: '0.0.2'
+    contact: 'Test Contact'
+    license: 'My license'
+    license-url: 'https://foo.bar/license'
+    host: 'localhost:8080'
+    schemes: 'https'
+
+---
+spring:
+  profiles: groups1
+  
+holon:
+  swagger:
+    title: 'Title groups1'
+    version: '0.1.2'
+    api-groups:
+      - group-id: "ctx_grp_1"
+        resource-package: "com.holonplatform.jaxrs.swagger.v2.test.resources.context2"
+        description: "The API group 1"
+        path: docs1
+      - group-id: "ctx_grp_2"
+        resource-package: "com.holonplatform.jaxrs.swagger.v2.test.resources.context3"
+        description: "The API group 2"
+        path: docs2
+
+---
+spring:
+  profiles: groups2
+  
+holon:
+  swagger:
+    title: 'Title groups2'
+    version: '0.1.2'
+    api-groups:
+      - group-id: 'ctx_resource_1'
+        description: 'The API group 1'
+        path: docs1
+      - group-id: 'ctx_resource_2'
+        description: 'The API group 2'
+        path: docs2
+
+
+---
+spring:
+  profiles: groups3_legacy
+  
+holon:
+  swagger:
+    title: 'Title groups3'
+    version: '0.1.3'
+    api-groups:
+      - group-id: 'ctx_legacy_1'
+        description: 'The API group 1'
+        path: docs1
+      - group-id: 'ctx_legacy_2'
+        description: 'The API group 2'
+        path: docs2
+
+---
+spring:
+  profiles: resteasy2
+    
+holon:
+  swagger:
+    context-id: 'test_resteasy_config_context_2'
+    title: 'Title resteasy 2'
+    version: '2.0.0'
+    scanner-type: APPLICATION_AND_ANNOTATION
+        

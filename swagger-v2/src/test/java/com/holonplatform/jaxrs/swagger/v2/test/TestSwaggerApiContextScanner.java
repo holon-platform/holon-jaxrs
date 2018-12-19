@@ -36,7 +36,7 @@ import com.holonplatform.jaxrs.swagger.v2.test.utils.SwaggerValidation;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 
-public class TestOpenApiContextScanner {
+public class TestSwaggerApiContextScanner {
 
 	@Path("resource1")
 	private static class TestResource1 extends AbstractTestResource {
@@ -46,7 +46,7 @@ public class TestOpenApiContextScanner {
 	@Test
 	public void testApplicationScanner() {
 
-		final String id = TestOpenApiContextScanner.class.getName() + "_1";
+		final String id = TestSwaggerApiContextScanner.class.getName() + "_1";
 
 		final DefaultSwaggerConfiguration configuration = new DefaultSwaggerConfiguration();
 		configuration.setInfo(new Info().title("Title of " + id).version("1"));
@@ -69,7 +69,7 @@ public class TestOpenApiContextScanner {
 	@Test
 	public void testApplicationScannerConfigPackages() {
 
-		final String id = TestOpenApiContextScanner.class.getName() + "_3";
+		final String id = TestSwaggerApiContextScanner.class.getName() + "_3";
 
 		final DefaultSwaggerConfiguration configuration = new DefaultSwaggerConfiguration();
 		configuration.setInfo(new Info().title("Title of " + id).version("1"));
@@ -96,7 +96,7 @@ public class TestOpenApiContextScanner {
 	@Test
 	public void testApplicationScannerConfigPackagesMulti() {
 
-		final String id = TestOpenApiContextScanner.class.getName() + "_4";
+		final String id = TestSwaggerApiContextScanner.class.getName() + "_4";
 
 		final DefaultSwaggerConfiguration configuration = new DefaultSwaggerConfiguration();
 		configuration.setInfo(new Info().title("Title of " + id).version("1"));
@@ -124,7 +124,7 @@ public class TestOpenApiContextScanner {
 	@Test
 	public void testScannerType() {
 
-		final String id = TestOpenApiContextScanner.class.getName() + "_5";
+		final String id = TestSwaggerApiContextScanner.class.getName() + "_5";
 
 		final DefaultSwaggerConfiguration configuration = new DefaultSwaggerConfiguration();
 		configuration.setInfo(new Info().title("Title of " + id).version("1"));

@@ -78,6 +78,10 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 		setContextId(config.getContextId());
 		setConfigId(config.getConfigId());
 		setScannerId(config.getScannerId());
+		setPrettyPrint(config.getPrettyPrint());
+		if (config instanceof SwaggerConfiguration) {
+			setExternalDocs(((SwaggerConfiguration) config).getExternalDocs());
+		}
 	}
 
 	/*

@@ -188,6 +188,11 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 					config.setPrettyPrint(getScanner().getPrettyPrint());
 				}
 				setConfiguration(config);
+			} else {
+				// check packages
+				if (config.getResourcePackages() == null || config.getResourcePackages().isEmpty()) {
+					config.setResourcePackages(getResourcePackages());
+				}
 			}
 			// read and register
 			Swagger swagger = scanAndRead(config, contextId);

@@ -119,6 +119,7 @@ public enum SwaggerEndpointBuilder implements ApiEndpointBuilder<SwaggerConfig> 
 						.filter(c -> c instanceof SwaggerConfiguration).map(c -> (SwaggerConfiguration) c).orElse(null);
 				if (sc != null && (sc.getResourcePackages() == null || sc.getResourcePackages().isEmpty())) {
 					sc.setResourcePackages(pkgs);
+					contextBuilder.configuration(sc);
 				} else {
 					contextBuilder.resourcePackages(pkgs);
 				}

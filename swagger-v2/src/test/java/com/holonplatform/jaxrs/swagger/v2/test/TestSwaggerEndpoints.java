@@ -40,7 +40,7 @@ import com.holonplatform.test.JerseyTest5;
 
 import io.swagger.models.Swagger;
 
-public class TestOpenApiEndpoints extends JerseyTest5 {
+public class TestSwaggerEndpoints extends JerseyTest5 {
 
 	private static Client client;
 
