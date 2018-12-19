@@ -75,6 +75,24 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	private String path;
 
 	/**
+	 * The Swagger V2 API specific configuration.
+	 * <p>
+	 * If a {@link Version#path} is configured and the Swagger V2 auto-configuration is enabled, overrides the default
+	 * {@link #path} configuration.
+	 * </p>
+	 */
+	private Version v2;
+
+	/**
+	 * The Swagger/OpenAPI V3 API specific configuration.
+	 * <p>
+	 * If a {@link Version#path} is and the Swagger/OpenAPI V3 auto-configuration is enabled, overrides the default
+	 * {@link #path} configuration.
+	 * </p>
+	 */
+	private Version v3;
+
+	/**
 	 * The API endpoint type.
 	 * <p>
 	 * Must be one of the {@link ApiEndpointType} enumeration values.
@@ -227,6 +245,24 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	@Override
+	public Version getV2() {
+		return v2;
+	}
+
+	public void setV2(Version v2) {
+		this.v2 = v2;
+	}
+
+	@Override
+	public Version getV3() {
+		return v3;
+	}
+
+	public void setV3(Version v3) {
+		this.v3 = v3;
 	}
 
 	@Override
@@ -441,6 +477,28 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	// ------- sub classes
 
 	/**
+	 * API version specific configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class Version {
+
+		/**
+		 * The API endpoint path.
+		 */
+		private String path;
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+	}
+
+	/**
 	 * API contact configuration.
 	 * 
 	 * @since 5.2.0
@@ -642,6 +700,24 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private String path;
 
 		/**
+		 * The Swagger V2 API specific configuration.
+		 * <p>
+		 * If a {@link Version#path} is configured and the Swagger V2 auto-configuration is enabled, overrides the
+		 * default {@link #path} configuration.
+		 * </p>
+		 */
+		private Version v2;
+
+		/**
+		 * The Swagger/OpenAPI V3 API specific configuration.
+		 * <p>
+		 * If a {@link Version#path} is and the Swagger/OpenAPI V3 auto-configuration is enabled, overrides the default
+		 * {@link #path} configuration.
+		 * </p>
+		 */
+		private Version v3;
+
+		/**
 		 * The API endpoint type.
 		 * <p>
 		 * Must be one of the {@link ApiEndpointType} enumeration values.
@@ -759,6 +835,24 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		public void setPath(String path) {
 			this.path = path;
+		}
+
+		@Override
+		public Version getV2() {
+			return v2;
+		}
+
+		public void setV2(Version v2) {
+			this.v2 = v2;
+		}
+
+		@Override
+		public Version getV3() {
+			return v3;
+		}
+
+		public void setV3(Version v3) {
+			this.v3 = v3;
 		}
 
 		@Override

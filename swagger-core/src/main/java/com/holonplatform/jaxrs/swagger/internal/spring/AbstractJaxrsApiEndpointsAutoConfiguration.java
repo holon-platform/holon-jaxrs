@@ -396,11 +396,22 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @return the API endpoint path
 	 */
 	private String getApiEndpointPath(ApiConfigurationProperties configurationProperties, String contextId) {
+		String versionPath = getVersionApiEndpointPath(configurationProperties);
+		if (versionPath != null && !versionPath.trim().equals("")) {
+			return versionPath;
+		}
 		if (configurationProperties.getPath() != null && !configurationProperties.getPath().trim().equals("")) {
 			return configurationProperties.getPath();
 		}
 		return getDefaultApiEndpointPath(contextId, configurationProperties.isGroupConfiguration());
 	}
+
+	/**
+	 * Get the API endpoint path for a specific API definition version.
+	 * @param configurationProperties API configuration properties
+	 * @return the API endpoint path, <code>null</code> if not available
+	 */
+	protected abstract String getVersionApiEndpointPath(ApiConfigurationProperties configurationProperties);
 
 	/**
 	 * Get the API endpoint type.

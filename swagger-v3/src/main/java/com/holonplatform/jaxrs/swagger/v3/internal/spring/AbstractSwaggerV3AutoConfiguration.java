@@ -98,7 +98,20 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 					});
 		};
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#
+	 * getVersionApiEndpointPath(com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties)
+	 */
+	@Override
+	protected String getVersionApiEndpointPath(ApiConfigurationProperties configurationProperties) {
+		if (configurationProperties.getV3() != null) {
+			return configurationProperties.getV3().getPath();
+		}
+		return null;
+	}
+
 	/**
 	 * Configure the API listing endpoints.
 	 * @param application The JAX-RS application (not null)

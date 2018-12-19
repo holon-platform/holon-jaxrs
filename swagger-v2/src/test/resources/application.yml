@@ -47,6 +47,17 @@ holon:
 
 ---
 spring:
+  profiles: path4
+  
+holon:
+  swagger:
+    context-id: 'test-path4'
+    path: 'docs'
+    v2:
+      path: 'docs/v2'
+
+---
+spring:
   profiles: packages1
   
 holon:

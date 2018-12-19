@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties.Version;
 
 /**
  * API listing configuration properties.
@@ -186,5 +187,17 @@ public interface ApiConfigurationProperties {
 	 * @return whether the API output should be formatted
 	 */
 	boolean isPrettyPrint();
+
+	/**
+	 * Get the Swagger V2 specific configuration.
+	 * @return the Swagger V2 specific configuration
+	 */
+	Version getV2();
+
+	/**
+	 * Get the Swagger/OpenAPI V3 specific configuration.
+	 * @return the Swagger/OpenAPI V3 specific configuration
+	 */
+	Version getV3();
 
 }
