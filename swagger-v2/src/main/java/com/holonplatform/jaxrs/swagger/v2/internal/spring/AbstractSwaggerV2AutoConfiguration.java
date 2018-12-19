@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.spring;
+package com.holonplatform.jaxrs.swagger.v2.internal.spring;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -38,16 +38,15 @@ import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpointDefinition;
 import com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.ApiConfigurationProperties;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
-import com.holonplatform.jaxrs.swagger.v3.internal.endpoints.OpenApiEndpointBuilder;
+import com.holonplatform.jaxrs.swagger.v2.internal.DefaultSwaggerConfiguration;
+import com.holonplatform.jaxrs.swagger.v2.internal.endpoints.SwaggerEndpointBuilder;
 
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Contact;
+import io.swagger.models.ExternalDocs;
+import io.swagger.models.Info;
+import io.swagger.models.License;
 
 /**
  * Base Swagger API listing endpoints auto-configuration.
@@ -56,8 +55,8 @@ import io.swagger.v3.oas.models.servers.Server;
  * 
  * @since 5.2.0
  */
-public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
-		extends AbstractJaxrsApiEndpointsAutoConfiguration<A, OpenAPIConfiguration> {
+public abstract class AbstractSwaggerV2AutoConfiguration<A extends Application>
+		extends AbstractJaxrsApiEndpointsAutoConfiguration<A, SwaggerConfig> {
 
 	private static final Map<ClassLoader, List<ApiEndpointDefinition>> API_ENDPOINT_DEFINITIONS = new WeakHashMap<>();
 
@@ -67,9 +66,9 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	 * @param configurations API configurations provider
 	 * @param apiEndpointBuilder API endpoint builder
 	 */
-	public AbstractSwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
-			ObjectProvider<OpenAPIConfiguration> apiConfigurations) {
-		super(configurationProperties, apiConfigurations, OpenApiEndpointBuilder.INSTANCE);
+	public AbstractSwaggerV2AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
+			ObjectProvider<SwaggerConfig> apiConfigurations) {
+		super(configurationProperties, apiConfigurations, SwaggerEndpointBuilder.INSTANCE);
 	}
 
 	/**
@@ -87,18 +86,31 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 
 	@Bean
 	@Order(Integer.MAX_VALUE - 100)
-	public static ApplicationListener<ContextRefreshedEvent> jaxrsApiEndpointsDefinitionsV3InitializerApplicationListenerOnContextRefresh() {
+	public static ApplicationListener<ContextRefreshedEvent> jaxrsApiEndpointsDefinitionsV2InitializerApplicationListenerOnContextRefresh() {
 		return event -> {
 			API_ENDPOINT_DEFINITIONS
 					.getOrDefault(event.getApplicationContext().getClassLoader(), Collections.emptyList())
 					.forEach(d -> {
 						if (d.init()) {
-							LOGGER.info("OpenAPI V3 endpoint definition [" + d.getContextId() + "] initialized.");
+							LOGGER.info("Swagger V2 endpoint definition [" + d.getContextId() + "] initialized.");
 						}
 					});
 		};
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#
+	 * getApiEndpointContextId(java.lang.Object)
+	 */
+	@Override
+	protected String getApiEndpointContextId(SwaggerConfig configuration) {
+		if (configuration instanceof BeanConfig && ((BeanConfig) configuration).getContextId() != null) {
+			return ((BeanConfig) configuration).getContextId();
+		}
+		return super.getApiEndpointContextId(configuration);
+	}
+
 	/**
 	 * Configure the API listing endpoints.
 	 * @param application The JAX-RS application (not null)
@@ -137,7 +149,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			}
 			return sb.toString();
 		}).orElseGet(() -> endpoint.getPath());
-		LOGGER.info("Registered Swagger OpenAPI V3 endpoint type [" + endpoint.getType() + "] to path [" + path
+		LOGGER.info("Registered Swagger V2 endpoint type [" + endpoint.getType() + "] to path [" + path
 				+ "] bound to API context id: [" + endpoint.getContextId() + "] with scanner type ["
 				+ endpoint.getScannerType() + "]");
 	}
@@ -165,9 +177,9 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	}
 
 	@Override
-	protected OpenAPIConfiguration buildConfiguration(ApiConfigurationProperties configurationProperties,
+	protected SwaggerConfig buildConfiguration(ApiConfigurationProperties configurationProperties,
 			ApiConfigurationProperties parent, String applicationPath) {
-		final SwaggerConfiguration cfg = new SwaggerConfiguration();
+		final DefaultSwaggerConfiguration cfg = new DefaultSwaggerConfiguration();
 		// configuration
 		Set<String> packages = configurationProperties.getResourcePackages();
 		if (!packages.isEmpty()) {
@@ -175,11 +187,13 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 		}
 		cfg.setPrettyPrint(configurationProperties.isPrettyPrint());
 		cfg.setReadAllResources(configurationProperties.isIncludeAll());
-		// API definition
-		final OpenAPI api = new OpenAPI();
+		// base path
+		if (applicationPath != null) {
+			cfg.setBasePath(applicationPath);
+		}
 		// info
 		final Info info = new Info();
-		api.setInfo(info);
+		cfg.setInfo(info);
 		getConfigurationProperty(configurationProperties.getTitle()).ifPresent(v -> {
 			info.setTitle(v);
 		});
@@ -224,28 +238,20 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 		});
 		// server
 		getConfigurationProperty(configurationProperties.getServerUrl()).ifPresent(v -> {
-			if (api.getServers() == null) {
-				api.setServers(new LinkedList<>());
-			}
-			final Server server = new Server();
-			server.setUrl(buildServerUrl(v, applicationPath));
-			getConfigurationProperty(configurationProperties.getServerDescription()).ifPresent(d -> {
-				server.setDescription(d);
-			});
-			api.getServers().add(server);
+			cfg.setHost(v);
 		});
 		// external docs
 		getConfigurationProperty(configurationProperties.getExternalDocsUrl()).ifPresent(v -> {
-			if (api.getExternalDocs() == null) {
-				api.setExternalDocs(new ExternalDocumentation());
+			if (cfg.getExternalDocs() == null) {
+				cfg.setExternalDocs(new ExternalDocs());
 			}
-			api.getExternalDocs().setUrl(v);
+			cfg.getExternalDocs().setUrl(v);
 		});
 		getConfigurationProperty(configurationProperties.getExternalDocsDescription()).ifPresent(v -> {
-			if (api.getExternalDocs() == null) {
-				api.setExternalDocs(new ExternalDocumentation());
+			if (cfg.getExternalDocs() == null) {
+				cfg.setExternalDocs(new ExternalDocs());
 			}
-			api.getExternalDocs().setDescription(v);
+			cfg.getExternalDocs().setDescription(v);
 		});
 		// check parent
 		if (parent != null) {
@@ -303,50 +309,29 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 					info.getContact().setUrl(v);
 				});
 			}
-			if (api.getServers() == null || api.getServers().isEmpty()) {
+			if (cfg.getHost() == null) {
 				getConfigurationProperty(parent.getServerUrl()).ifPresent(v -> {
-					if (api.getServers() == null) {
-						api.setServers(new LinkedList<>());
-					}
-					final Server server = new Server();
-					server.setUrl(buildServerUrl(v, applicationPath));
-					getConfigurationProperty(parent.getServerDescription()).ifPresent(d -> {
-						server.setDescription(d);
-					});
-					api.getServers().add(server);
+					cfg.setHost(v);
 				});
 			}
-			if (api.getExternalDocs() == null) {
+			if (cfg.getExternalDocs() == null) {
 				getConfigurationProperty(parent.getExternalDocsUrl()).ifPresent(v -> {
-					if (api.getExternalDocs() == null) {
-						api.setExternalDocs(new ExternalDocumentation());
+					if (cfg.getExternalDocs() == null) {
+						cfg.setExternalDocs(new ExternalDocs());
 					}
-					api.getExternalDocs().setUrl(v);
+					cfg.getExternalDocs().setUrl(v);
 				});
 				getConfigurationProperty(parent.getExternalDocsDescription()).ifPresent(v -> {
-					if (api.getExternalDocs() == null) {
-						api.setExternalDocs(new ExternalDocumentation());
+					if (cfg.getExternalDocs() == null) {
+						cfg.setExternalDocs(new ExternalDocs());
 					}
-					api.getExternalDocs().setDescription(v);
+					cfg.getExternalDocs().setDescription(v);
 				});
 			}
 		}
 
 		// done
-		cfg.setOpenAPI(api);
 		return cfg;
-	}
-
-	private static String buildServerUrl(String url, String applicationPath) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(url);
-		if (applicationPath != null && !"/".equals(applicationPath)) {
-			if (!url.endsWith("/") && !applicationPath.startsWith("/")) {
-				sb.append("/");
-			}
-			sb.append(applicationPath);
-		}
-		return sb.toString();
 	}
 
 	@Deprecated

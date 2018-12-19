@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.spring;
+package com.holonplatform.jaxrs.swagger.v2.spring;
 
 import java.util.Optional;
 
@@ -34,23 +34,23 @@ import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
-import com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration;
+import com.holonplatform.jaxrs.swagger.v2.internal.spring.AbstractSwaggerV2AutoConfiguration;
 
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.jaxrs.config.BeanConfig;
 
 /**
- * Spring Boot Swagger/OpenAPI v3 auto-configuration class for Resteasy runtime.
+ * Spring Boot Swagger v2 auto-configuration class for Resteasy runtime.
  * <p>
  * This class configures API listing endpoints according to one or more API configuration definitions. An API
  * configuration endpoint can be decalred and configured using either:
  * <ul>
- * <li>One or more {@link OpenAPIConfiguration} type beans (using for example the {@link SwaggerConfiguration}
- * implementation). The {@link ApiConfiguration} annotation can be used on each API configuration bean to setup the API
- * listing endpoint, for example to declare the JAX-RS endpoint path. When more then one {@link OpenAPIConfiguration}
- * type bean is declared, the {@link ApiConfiguration#contextId()} attribute should be used to declare a different API
- * context id for each configuration.</li>
- * <li>When no {@link OpenAPIConfiguration} type bean is defined, the {@link SwaggerConfigurationProperties} application
+ * <li>One or more {@link SwaggerConfig} type beans (using for example the {@link BeanConfig} implementation). The
+ * {@link ApiConfiguration} annotation can be used on each API configuration bean to setup the API listing endpoint, for
+ * example to declare the JAX-RS endpoint path. When more then one {@link SwaggerConfig} type bean is declared, the
+ * {@link ApiConfiguration#contextId()} attribute should be used to declare a different API context id for each
+ * configuration.</li>
+ * <li>When no {@link SwaggerConfig} type bean is defined, the {@link SwaggerConfigurationProperties} application
  * properties can be used to configure the API definition and the API listing endpoints. To declare more than one API
  * definition subset, a set of API group can be declared. Each group id will be used as API context id.</li>
  * </ul>
@@ -67,27 +67,21 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
  */
 @Configuration
 @ConditionalOnClass(name = { "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig",
-		"io.swagger.v3.oas.models.OpenAPI" })
+		"io.swagger.models.Swagger" })
 @ConditionalOnBean(type = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig")
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE - 1000)
 @AutoConfigureAfter(name = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration")
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
-public class ResteasySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfiguration<ResteasyConfig> {
+public class ResteasySwaggerV2AutoConfiguration extends AbstractSwaggerV2AutoConfiguration<ResteasyConfig> {
 
 	@Value("${holon.resteasy.application-path:/}")
 	private String applicationPath;
 
-	public ResteasySwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
-			ObjectProvider<OpenAPIConfiguration> openAPIConfigurations) {
+	public ResteasySwaggerV2AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
+			ObjectProvider<SwaggerConfig> openAPIConfigurations) {
 		super(configurationProperties, openAPIConfigurations);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getDefaultScannerType(
-	 * )
-	 */
 	@Override
 	protected JaxrsScannerType getDefaultScannerType() {
 		return JaxrsScannerType.APPLICATION_AND_ANNOTATION;

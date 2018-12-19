@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import io.swagger.config.SwaggerConfig;
+import io.swagger.models.ExternalDocs;
 
 /**
  * Extended Swagger configuration.
@@ -74,5 +75,11 @@ public interface SwaggerConfiguration extends SwaggerConfig {
 	 * @param prettyPrint whether to pretty print the API output
 	 */
 	void setPrettyPrint(boolean prettyPrint);
+	
+	/**
+	 * Get the external docs reference
+	 * @return the external docs
+	 */
+	ExternalDocs getExternalDocs();
 
 }

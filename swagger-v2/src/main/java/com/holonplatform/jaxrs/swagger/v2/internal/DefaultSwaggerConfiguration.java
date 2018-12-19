@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.ExternalDocs;
 
 /**
  * Default {@link SwaggerConfiguration} implementation.
@@ -37,6 +38,8 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 	private Collection<String> ignoredRoutes;
 
 	private boolean readAllResources = true;
+
+	private ExternalDocs externalDocs;
 
 	/**
 	 * Default constructor.
@@ -188,6 +191,23 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 	@Override
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.v2.internal.SwaggerConfiguration#getExternalDocs()
+	 */
+	@Override
+	public ExternalDocs getExternalDocs() {
+		return externalDocs;
+	}
+
+	/**
+	 * Set the external documentation reference.
+	 * @param externalDocs the external docs to set
+	 */
+	public void setExternalDocs(ExternalDocs externalDocs) {
+		this.externalDocs = externalDocs;
 	}
 
 }

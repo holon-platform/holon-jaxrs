@@ -28,6 +28,7 @@ import com.holonplatform.jaxrs.swagger.v2.internal.DefaultSwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.v2.internal.DefaultSwaggerReader;
 import com.holonplatform.jaxrs.swagger.v2.internal.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.v2.internal.scanner.DefaultJaxrsApplicationAndAnnotationScanner;
+import com.holonplatform.jaxrs.swagger.v2.internal.scanner.JaxrsScannerAdapter;
 
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.jaxrs.config.JaxrsScanner;
@@ -189,7 +190,7 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 				setConfiguration(config);
 			}
 			// read and register
-			Swagger swagger = scanAndRead(config);
+			Swagger swagger = scanAndRead(config, contextId);
 			SwaggerConfigLocator.getInstance().putSwagger(contextId, swagger);
 			SwaggerConfigLocator.getInstance().putConfig(contextId, config);
 			return swagger;
@@ -201,9 +202,10 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 	/**
 	 * Scan the API resource classes and read them to generate the API model.
 	 * @param config The API configuration
+	 * @param contextId The context id
 	 * @return The API model
 	 */
-	protected Swagger scanAndRead(final SwaggerConfiguration config) {
+	protected Swagger scanAndRead(final SwaggerConfiguration config, String contextId) {
 		JaxrsScanner scanner = getScanner();
 		if (scanner == null) {
 			scanner = new DefaultJaxrsApplicationAndAnnotationScanner(() -> config);
@@ -215,16 +217,20 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 			readerConfig.setIgnoredRoutes(config.getIgnoredRoutes());
 			reader = new DefaultSwaggerReader(new Swagger(), readerConfig);
 		}
-		final SwaggerReader adapted = new SwaggerReaderAdapter(reader);
+		final JaxrsScanner adaptedScanner = JaxrsScannerAdapter.adapt(scanner, contextId);
+		final SwaggerReader adaptedReader = new SwaggerReaderAdapter(reader);
 		// scan
-		Set<Class<?>> classes = scanner.classesFromContext(getApplication(), null);
+		Set<Class<?>> classes = adaptedScanner.classesFromContext(getApplication(), null);
 		// filter classes
 		if (config.getResourcePackages() != null && !config.getResourcePackages().isEmpty()) {
 			classes = filter(classes, config.getResourcePackages().stream()
 					.filter(p -> p != null && !p.trim().equals("")).collect(Collectors.toSet()));
 		}
 		// read
-		final Swagger api = adapted.read(classes);
+		final Swagger api = adaptedReader.read(classes);
+		if (api.getExternalDocs() == null) {
+			api.setExternalDocs(config.getExternalDocs());
+		}
 		return config.configure(api);
 	}
 

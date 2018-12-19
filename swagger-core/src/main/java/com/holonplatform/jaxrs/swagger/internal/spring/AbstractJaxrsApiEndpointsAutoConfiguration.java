@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
@@ -36,15 +35,11 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.annotation.Order;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
-import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
@@ -80,11 +75,9 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	private final ApiEndpointBuilder<C> apiEndpointBuilder;
 
-	private ClassLoader classLoader;
+	protected ClassLoader classLoader;
 
 	private BeanFactory beanFactory;
-
-	private static final Map<ClassLoader, List<ApiEndpointDefinition>> API_ENDPOINT_DEFINITIONS = new WeakHashMap<>();
 
 	/**
 	 * Constructor.
@@ -99,20 +92,6 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 		this.configurationProperties = configurationProperties;
 		this.apiConfigurations = apiConfigurations;
 		this.apiEndpointBuilder = apiEndpointBuilder;
-	}
-
-	@Bean
-	@Order(Integer.MAX_VALUE - 100)
-	public ApplicationListener<ContextRefreshedEvent> jaxrsApiEndpointsDefinitionsInitializerApplicationListenerOnContextRefresh() {
-		return event -> {
-			API_ENDPOINT_DEFINITIONS
-					.getOrDefault(event.getApplicationContext().getClassLoader(), Collections.emptyList())
-					.forEach(d -> {
-						if (d.init()) {
-							LOGGER.info("API endpoint definition [" + d.getContextId() + "] initialized.");
-						}
-					});
-		};
 	}
 
 	@Bean
@@ -171,21 +150,11 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	}
 
 	/**
-	 * Configure the API listing endpoints.
-	 * @param application The JAX-RS application (not null)
-	 */
-	protected void configure(A application) {
-		final List<ApiEndpointDefinition> definitions = API_ENDPOINT_DEFINITIONS.computeIfAbsent(classLoader,
-				cl -> new LinkedList<>());
-		configureEndpoints(application).forEach(d -> definitions.add(d));
-	}
-
-	/**
 	 * Configure the API listing endpoints, if the configuration is enabled
 	 * @param application The JAX-RS application (not null)
 	 * @return The API endpoint definitions
 	 */
-	private List<ApiEndpointDefinition> configureEndpoints(A application) {
+	protected List<ApiEndpointDefinition> configureEndpoints(A application) {
 		// check disabled
 		if (configurationProperties.isEnabled()) {
 			return registerEndpoints(application);
@@ -378,7 +347,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 * @param configuration The API configuration
 	 * @return the API context id
 	 */
-	private String getApiEndpointContextId(C configuration) {
+	protected String getApiEndpointContextId(C configuration) {
 		return AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
 				.map(a -> AnnotationUtils.getStringValue(a.contextId())).orElse(ApiDefaults.DEFAULT_CONTEXT_ID);
 	}
@@ -525,19 +494,6 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	protected static Optional<String> getConfigurationProperty(String value) {
 		if (value != null && !value.trim().equals("")) {
 			return Optional.of(value.trim());
-		}
-		return Optional.empty();
-	}
-
-	@Deprecated
-	public static Optional<String> getContextIdByPath(ClassLoader classLoader, String path) {
-		if (path != null) {
-			ClassLoader cl = (classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader();
-			for (ApiEndpointDefinition d : API_ENDPOINT_DEFINITIONS.getOrDefault(cl, Collections.emptyList())) {
-				if (path.equals(d.getPath())) {
-					return Optional.ofNullable(d.getContextId());
-				}
-			}
 		}
 		return Optional.empty();
 	}

@@ -13,29 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v3.internal.scanner;
+package com.holonplatform.jaxrs.swagger.v2.internal.scanner;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletConfig;
+import javax.ws.rs.core.Application;
+
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
-import com.holonplatform.jaxrs.swagger.v3.internal.spring.AbstractSwaggerV3AutoConfiguration;
+import com.holonplatform.jaxrs.swagger.v2.internal.spring.AbstractSwaggerV2AutoConfiguration;
 
-import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.v3.oas.integration.api.OpenApiScanner;
+import io.swagger.jaxrs.config.JaxrsScanner;
 
 /**
- * {@link OpenApiScanner} adapter to filter API resources according to the {@link ApiContextId} annotation.
+ * {@link JaxrsScanner} adapter to filter API resources according to the {@link ApiContextId} annotation.
  *
  * @since 5.2.0
  */
-public class OpenApiScannerAdapter implements OpenApiScanner {
+public class JaxrsScannerAdapter implements JaxrsScanner {
 
-	private final OpenApiScanner scanner;
+	private final JaxrsScanner scanner;
 	private final String contextId;
 
 	/**
@@ -43,9 +44,9 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 	 * @param scanner The concrete scanner (not null)
 	 * @param contextId API context id
 	 */
-	public OpenApiScannerAdapter(OpenApiScanner scanner, String contextId) {
+	public JaxrsScannerAdapter(JaxrsScanner scanner, String contextId) {
 		super();
-		ObjectUtils.argumentNotNull(scanner, "OpenApiScanner must be not null");
+		ObjectUtils.argumentNotNull(scanner, "JaxrsScanner must be not null");
 		this.scanner = scanner;
 		this.contextId = contextId;
 	}
@@ -54,7 +55,7 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 	 * Get the concrete scanner.
 	 * @return the concrete scanner
 	 */
-	protected OpenApiScanner getScanner() {
+	protected JaxrsScanner getScanner() {
 		return scanner;
 	}
 
@@ -68,35 +69,52 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiReader#setConfiguration(io.swagger.v3.oas.integration.api.
-	 * OpenAPIConfiguration)
+	 * @see io.swagger.config.Scanner#getPrettyPrint()
 	 */
 	@Override
-	public void setConfiguration(OpenAPIConfiguration openApiConfiguration) {
-		getScanner().setConfiguration(openApiConfiguration);
+	public boolean getPrettyPrint() {
+		return getScanner().getPrettyPrint();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiScanner#classes()
+	 * @see io.swagger.config.Scanner#setPrettyPrint(boolean)
+	 */
+	@Override
+	public void setPrettyPrint(boolean shouldPrettyPrint) {
+		getScanner().setPrettyPrint(shouldPrettyPrint);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see io.swagger.config.Scanner#classes()
 	 */
 	@Override
 	public Set<Class<?>> classes() {
-		Set<Class<?>> classes = getScanner().classes();
+		return filterClasses(getScanner().classes());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see io.swagger.jaxrs.config.JaxrsScanner#classesFromContext(javax.ws.rs.core.Application,
+	 * javax.servlet.ServletConfig)
+	 */
+	@Override
+	public Set<Class<?>> classesFromContext(Application app, ServletConfig sc) {
+		return filterClasses(getScanner().classesFromContext(app, sc));
+	}
+
+	/**
+	 * Filter given classes.
+	 * @param classes The classes to filter
+	 * @return Filtered classes
+	 */
+	private Set<Class<?>> filterClasses(Set<Class<?>> classes) {
 		if (classes != null && getContextId() != null) {
 			return classes.stream().filter(cls -> cls != null && matches(cls, getContextId()))
 					.collect(Collectors.toSet());
 		}
 		return classes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiScanner#resources()
-	 */
-	@Override
-	public Map<String, Object> resources() {
-		return getScanner().resources();
 	}
 
 	/**
@@ -114,8 +132,7 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 						return AnnotationUtils.getStringValue(a.docsPath());
 					}
 					return AnnotationUtils.getStringValue(a.value());
-				}).flatMap(path -> AbstractSwaggerV3AutoConfiguration.getContextIdByPath(cls.getClassLoader(),
-						path));
+				}).flatMap(path -> AbstractSwaggerV2AutoConfiguration.getContextIdByPath(cls.getClassLoader(), path));
 		if (legacyContextId.isPresent()) {
 			return legacyContextId.get().equals(contextId);
 		}
@@ -141,16 +158,16 @@ public class OpenApiScannerAdapter implements OpenApiScanner {
 		}
 		return Optional.empty();
 	}
-	
+
 	/**
-	 * Adapt given {@link OpenApiScanner} to filter API resources according to given <code>contextId</code> using the
+	 * Adapt given {@link JaxrsScanner} to filter API resources according to given <code>contextId</code> using the
 	 * {@link ApiContextId} annotation.
 	 * @param scanner The scanner to adapt (not null)
 	 * @param contextId The API context id
-	 * @return The adapted {@link OpenApiScanner}
+	 * @return The adapted {@link JaxrsScanner}
 	 */
-	public static OpenApiScanner adapt(OpenApiScanner scanner, String contextId) {
-		return new OpenApiScannerAdapter(scanner, contextId);
+	public static JaxrsScanner adapt(JaxrsScanner scanner, String contextId) {
+		return new JaxrsScannerAdapter(scanner, contextId);
 	}
 
 }

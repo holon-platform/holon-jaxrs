@@ -24,6 +24,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
  * configuration endpoint can be decalred and configured using either:
  * <ul>
  * <li>One or more {@link OpenAPIConfiguration} type beans (using for example the {@link SwaggerConfiguration}
- * implementation. The {@link ApiConfiguration} annotation can be used on each API configuration bean to setup the API
+ * implementation). The {@link ApiConfiguration} annotation can be used on each API configuration bean to setup the API
  * listing endpoint, for example to declare the JAX-RS endpoint path. When more then one {@link OpenAPIConfiguration}
  * type bean is declared, the {@link ApiConfiguration#contextId()} attribute should be used to declare a different API
  * context id for each configuration.</li>
@@ -69,7 +70,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 @ConditionalOnClass(name = { "org.glassfish.jersey.server.ResourceConfig", "io.swagger.v3.oas.models.OpenAPI" })
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE - 1000)
-@AutoConfigureAfter(name = "com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration")
+@AutoConfigureAfter(JerseyAutoConfiguration.class)
 @EnableConfigurationProperties(SwaggerConfigurationProperties.class)
 public class JerseySwaggerV3AutoConfiguration extends AbstractSwaggerV3AutoConfiguration<ResourceConfig> {
 
