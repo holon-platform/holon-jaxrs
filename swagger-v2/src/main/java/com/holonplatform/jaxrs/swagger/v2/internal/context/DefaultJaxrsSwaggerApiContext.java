@@ -224,7 +224,8 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 					.filter(p -> p != null && !p.trim().equals("")).collect(Collectors.toSet()));
 		}
 		// read
-		return adapted.read(classes);
+		final Swagger api = adapted.read(classes);
+		return config.configure(api);
 	}
 
 	/**
