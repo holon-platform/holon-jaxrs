@@ -15,12 +15,20 @@
  */
 package com.holonplatform.jaxrs.swagger.v2.internal.endpoints;
 
+import java.util.Collections;
+
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint;
+import com.holonplatform.jaxrs.swagger.v2.internal.SwaggerConfiguration;
+import com.holonplatform.jaxrs.swagger.v2.internal.context.JaxrsSwaggerApiContextBuilder;
 
+import io.swagger.config.SwaggerConfig;
+import io.swagger.core.filter.SpecFilter;
+import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.config.SwaggerConfigLocator;
 import io.swagger.models.Swagger;
 import io.swagger.util.Json;
@@ -46,9 +54,36 @@ public abstract class AbstractSwaggerEndpoint extends AbstractJaxrsApiEndpoint<S
 
 		// build context
 		if (api == null) {
-
+			api = JaxrsSwaggerApiContextBuilder.create()
+					// context id
+					.contextId(contextId)
+					// JAX-RS Application
+					.application(application)
+					// scanner type
+					.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
+					// build and init
+					.build(true).read();
 		}
-		return null;
+
+		final SwaggerConfig config = SwaggerConfigLocator.getInstance().getConfig(contextId);
+		
+		// check filters
+		if (config != null && config.getFilterClass() != null) {
+			try {
+				final SwaggerSpecFilter filter = (SwaggerSpecFilter) Class.forName(config.getFilterClass())
+						.newInstance();
+				api = new SpecFilter().filter(api, filter, Collections.unmodifiableMap(uriInfo.getQueryParameters()),
+						getCookies(headers), Collections.unmodifiableMap(headers.getRequestHeaders()));
+			} catch (Exception e) {
+				LOGGER.warn("Failed to load filter using class [" + config.getFilterClass() + "]", e);
+			}
+		}
+		// check pretty
+		boolean pretty = false;
+		if (config != null && config instanceof SwaggerConfiguration) {
+			pretty = ((SwaggerConfiguration)config).isPrettyPrint();
+		}
+		return ApiDefinition.create(api, pretty);
 	}
 
 	/*

@@ -69,4 +69,10 @@ public interface SwaggerConfiguration extends SwaggerConfig {
 	 */
 	void setResourcePackages(Set<String> resourcePackages);
 
+	/**
+	 * Set whether to pretty print the API output.
+	 * @param prettyPrint whether to pretty print the API output
+	 */
+	void setPrettyPrint(boolean prettyPrint);
+
 }

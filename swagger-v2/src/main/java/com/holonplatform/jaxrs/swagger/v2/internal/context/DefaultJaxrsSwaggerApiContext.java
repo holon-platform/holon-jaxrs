@@ -170,6 +170,10 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 		return api;
 	}
 
+	/**
+	 * Init the context and register the API model and configuration using locators.
+	 * @return The API model
+	 */
 	protected Swagger initAndRegister() {
 		try {
 			// context id
@@ -179,6 +183,9 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 			if (config == null) {
 				config = new DefaultSwaggerConfiguration();
 				config.setResourcePackages(getResourcePackages());
+				if (getScanner() != null) {
+					config.setPrettyPrint(getScanner().getPrettyPrint());
+				}
 				setConfiguration(config);
 			}
 			// read and register
@@ -191,6 +198,11 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 		}
 	}
 
+	/**
+	 * Scan the API resource classes and read them to generate the API model.
+	 * @param config The API configuration
+	 * @return The API model
+	 */
 	protected Swagger scanAndRead(final SwaggerConfiguration config) {
 		JaxrsScanner scanner = getScanner();
 		if (scanner == null) {
@@ -215,6 +227,12 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 		return adapted.read(classes);
 	}
 
+	/**
+	 * Filter given classes using the provided package names.
+	 * @param classes The API resource classes
+	 * @param packages The admitted package names
+	 * @return The filtered classes
+	 */
 	protected Set<Class<?>> filter(Set<Class<?>> classes, Set<String> packages) {
 		Set<Class<?>> output = new HashSet<>();
 		for (Class<?> cls : classes) {
@@ -227,6 +245,10 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 		return output;
 	}
 
+	/**
+	 * Get the context id.
+	 * @return The context id, or {@link ApiDefaults#DEFAULT_CONTEXT_ID} if not configured
+	 */
 	protected String getContextId() {
 		if (getId() == null) {
 			return ApiDefaults.DEFAULT_CONTEXT_ID;
