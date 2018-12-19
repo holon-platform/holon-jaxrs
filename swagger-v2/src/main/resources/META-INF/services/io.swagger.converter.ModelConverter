@@ -1,1 +1,1 @@
-com.holonplatform.jaxrs.swagger.v2.internal.extensions.SwaggerV2PropertyBoxModelConverter
+com.holonplatform.jaxrs.swagger.v2.internal.integration.SwaggerV2PropertyBoxModelConverter

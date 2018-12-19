@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.jaxrs.swagger.v2.internal.extensions;
+package com.holonplatform.jaxrs.swagger.v2.internal.integration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
