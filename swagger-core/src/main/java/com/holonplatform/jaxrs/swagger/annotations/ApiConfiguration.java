@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
@@ -39,16 +39,16 @@ public @interface ApiConfiguration {
 	 * Get the API context id.
 	 * @return the API context id
 	 */
-	String contextId() default ApiContext.DEFAULT_CONTEXT_ID;
+	String contextId() default ApiDefaults.DEFAULT_CONTEXT_ID;
 
 	/**
 	 * Get the API listing endpoint path.
 	 * <p>
-	 * Default is {@link ApiContext#DEFAULT_API_ENDPOINT_PATH}.
+	 * Default is {@link ApiDefaults#DEFAULT_API_ENDPOINT_PATH}.
 	 * </p>
 	 * @return the API listing endpoint path
 	 */
-	String path() default ApiContext.DEFAULT_API_ENDPOINT_PATH;
+	String path() default ApiDefaults.DEFAULT_API_ENDPOINT_PATH;
 
 	/**
 	 * Get the API listing endpoint type.

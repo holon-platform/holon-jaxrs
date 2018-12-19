@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
@@ -69,7 +69,7 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	/**
 	 * The API listing endpoint path.
 	 * <p>
-	 * Default is {@link ApiContext#DEFAULT_API_ENDPOINT_PATH}.
+	 * Default is {@link ApiDefaults#DEFAULT_API_ENDPOINT_PATH}.
 	 * </p>
 	 */
 	private String path;
@@ -95,7 +95,7 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	/**
 	 * The API context id to use.
 	 * <p>
-	 * If not specified, the {@link ApiContext#DEFAULT_CONTEXT_ID} default context id will be used.
+	 * If not specified, the {@link ApiDefaults#DEFAULT_CONTEXT_ID} default context id will be used.
 	 * </p>
 	 * @since 5.2.0
 	 */
@@ -636,7 +636,7 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		/**
 		 * The API listing endpoint path.
 		 * <p>
-		 * Default is {@link ApiContext#DEFAULT_API_ENDPOINT_PATH}.
+		 * Default is {@link ApiDefaults#DEFAULT_API_ENDPOINT_PATH}.
 		 * </p>
 		 */
 		private String path;

@@ -16,11 +16,11 @@
 package com.holonplatform.jaxrs.swagger;
 
 /**
- * API definitions context attributes.
+ * API definitions defaults.
  *
  * @since 5.2.0
  */
-public interface ApiContext {
+public interface ApiDefaults {
 
 	/**
 	 * Default API context id.

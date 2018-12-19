@@ -46,7 +46,7 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
@@ -236,7 +236,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			for (ApiGroupConfiguration group : configurationProperties.getApiGroups()) {
 				String contextId = group.getGroupId();
 				if (contextId == null || contextId.trim().equals("")) {
-					contextId = ApiContext.DEFAULT_CONTEXT_ID;
+					contextId = ApiDefaults.DEFAULT_CONTEXT_ID;
 				}
 				if (configurations.containsKey(contextId)) {
 					throw new ApiConfigurationException("Duplicate Swagger API configuration group id: " + contextId);
@@ -252,7 +252,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 			// default
 			String contextId = configurationProperties.getContextId();
 			configurations.put(
-					(contextId != null && !contextId.trim().equals("")) ? contextId : ApiContext.DEFAULT_CONTEXT_ID,
+					(contextId != null && !contextId.trim().equals("")) ? contextId : ApiDefaults.DEFAULT_CONTEXT_ID,
 					configurationProperties);
 		}
 		return configurations;
@@ -380,7 +380,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 */
 	private String getApiEndpointContextId(C configuration) {
 		return AnnotationUtils.getAnnotation(configuration.getClass(), ApiConfiguration.class)
-				.map(a -> AnnotationUtils.getStringValue(a.contextId())).orElse(ApiContext.DEFAULT_CONTEXT_ID);
+				.map(a -> AnnotationUtils.getStringValue(a.contextId())).orElse(ApiDefaults.DEFAULT_CONTEXT_ID);
 	}
 
 	/**
@@ -511,10 +511,10 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	 */
 	protected String getDefaultApiEndpointPath(String contextId, boolean appendContextId) {
 		if (appendContextId && contextId != null && !contextId.trim().equals("")
-				&& !ApiContext.DEFAULT_CONTEXT_ID.equals(contextId)) {
-			return ApiContext.DEFAULT_API_ENDPOINT_PATH + "/" + contextId;
+				&& !ApiDefaults.DEFAULT_CONTEXT_ID.equals(contextId)) {
+			return ApiDefaults.DEFAULT_API_ENDPOINT_PATH + "/" + contextId;
 		}
-		return ApiContext.DEFAULT_API_ENDPOINT_PATH;
+		return ApiDefaults.DEFAULT_API_ENDPOINT_PATH;
 	}
 
 	/**

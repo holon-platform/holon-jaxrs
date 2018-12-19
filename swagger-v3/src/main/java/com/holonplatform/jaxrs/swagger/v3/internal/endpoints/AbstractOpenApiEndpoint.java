@@ -16,26 +16,13 @@
 package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
 import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.holonplatform.core.internal.Logger;
-import com.holonplatform.core.internal.utils.AnnotationUtils;
-import com.holonplatform.jaxrs.swagger.ApiContext;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
-import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
-import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
-import com.holonplatform.jaxrs.swagger.internal.endpoints.ApiEndpoint;
+import com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint;
 import com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBuilder;
 
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
@@ -51,55 +38,36 @@ import io.swagger.v3.oas.models.OpenAPI;
  *
  * @since 5.2.0
  */
-public abstract class AbstractOpenApiEndpoint {
+public abstract class AbstractOpenApiEndpoint extends AbstractJaxrsApiEndpoint<OpenAPI> {
 
-	private static final Logger LOGGER = SwaggerLogger.create();
-
-	protected Response getOpenApi(HttpHeaders headers, Application application, UriInfo uriInfo, String type)
-			throws Exception {
-
-		// get context id
-		final String contextId = getContextIdOrDefault();
-
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApi(java.lang.String,
+	 * javax.ws.rs.core.Application, javax.ws.rs.core.HttpHeaders, javax.ws.rs.core.UriInfo)
+	 */
+	@Override
+	protected ApiDefinition<OpenAPI> getApi(String contextId, Application application, HttpHeaders headers,
+			UriInfo uriInfo) throws Exception {
 		// check available
 		OpenApiContext openApiContext = OpenApiContextLocator.getInstance().getOpenApiContext(contextId);
 
 		// build context
 		if (openApiContext == null) {
-			try {
-				openApiContext = JaxrsOpenApiContextBuilder.create()
-						// context id
-						.contextId(contextId)
-						// JAX-RS Application
-						.application(application)
-						// config location
-						.configLocation(getConfigLocation().orElse(null))
-						// scanner type
-						.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
-						// build and init
-						.build(true);
-			} catch (ApiConfigurationException ce) {
-				LOGGER.error("Failed to build the OpenAPI context for context id [" + contextId + "]", ce);
-				return Response.status(Status.INTERNAL_SERVER_ERROR)
-						.entity("Failed to build the OpenAPI context for context id [" + contextId + "]").build();
-			}
+			openApiContext = JaxrsOpenApiContextBuilder.create()
+					// context id
+					.contextId(contextId)
+					// JAX-RS Application
+					.application(application)
+					// config location
+					.configLocation(getConfigLocation().orElse(null))
+					// scanner type
+					.scannerType(getJaxrsScannerType().orElse(JaxrsScannerType.DEFAULT))
+					// build and init
+					.build(true);
 		}
 
 		// read the OpenAPI definitions
-		OpenAPI oas = openApiContext.read();
-
-		// check successful
-		if (oas == null) {
-			return Response.status(Status.NOT_FOUND)
-					.entity("No OpenAPI definition available for context id [" + contextId + "]").build();
-		}
-
-		// check pretty print
-		boolean pretty = false;
-		if (openApiContext.getOpenApiConfiguration() != null
-				&& Boolean.TRUE.equals(openApiContext.getOpenApiConfiguration().isPrettyPrint())) {
-			pretty = true;
-		}
+		OpenAPI api = openApiContext.read();
 
 		// check filters
 		if (openApiContext.getOpenApiConfiguration() != null
@@ -108,91 +76,38 @@ public abstract class AbstractOpenApiEndpoint {
 				OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class
 						.forName(openApiContext.getOpenApiConfiguration().getFilterClass()).newInstance();
 				SpecFilter f = new SpecFilter();
-				oas = f.filter(oas, filterImpl, Collections.unmodifiableMap(uriInfo.getQueryParameters()),
+				api = f.filter(api, filterImpl, Collections.unmodifiableMap(uriInfo.getQueryParameters()),
 						getCookies(headers), Collections.unmodifiableMap(headers.getRequestHeaders()));
 			} catch (Exception e) {
 				LOGGER.error("failed to load filter", e);
 			}
 		}
 
-		// check type
-		if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
-			return Response.status(Response.Status.OK)
-					.entity(pretty ? Yaml.pretty(oas) : Yaml.mapper().writeValueAsString(oas)).type("application/yaml")
-					.build();
-		} else {
-			return Response.status(Response.Status.OK)
-					.entity(pretty ? Json.pretty(oas) : Json.mapper().writeValueAsString(oas))
-					.type(MediaType.APPLICATION_JSON_TYPE).build();
+		// check pretty
+		boolean pretty = false;
+		if (openApiContext.getOpenApiConfiguration() != null
+				&& Boolean.TRUE.equals(openApiContext.getOpenApiConfiguration().isPrettyPrint())) {
+			pretty = true;
 		}
+
+		return ApiDefinition.create(api, pretty);
 	}
 
-	/**
-	 * Get the context id to use for this endpoint.
-	 * <p>
-	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
-	 * </p>
-	 * @return the context id, or the default {@link ApiContext#DEFAULT_CONTEXT_ID} value if not available
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApiOutput(com.holonplatform.jaxrs.
+	 * swagger.internal.endpoints.AbstractJaxrsApiEndpoint.OutputType, java.lang.Object, boolean)
 	 */
-	protected String getContextIdOrDefault() {
-		return getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
-	}
-
-	/**
-	 * Get the context id to use for this endpoint, if available.
-	 * <p>
-	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
-	 * </p>
-	 * @return Optional context id
-	 */
-	protected Optional<String> getContextId() {
-		if (getClass().isAnnotationPresent(ApiEndpoint.class)) {
-			return Optional
-					.ofNullable(AnnotationUtils.getStringValue(getClass().getAnnotation(ApiEndpoint.class).value()));
+	@Override
+	protected String getApiOutput(OutputType outputType, OpenAPI api, boolean pretty) throws Exception {
+		switch (outputType) {
+		case YAML:
+			return pretty ? Yaml.pretty(api) : Yaml.mapper().writeValueAsString(api);
+		case JSON:
+		default:
+			return pretty ? Json.pretty(api) : Json.mapper().writeValueAsString(api);
 		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Get the config location to use for this endpoint, if available.
-	 * <p>
-	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
-	 * </p>
-	 * @return Optional config location
-	 */
-	protected Optional<String> getConfigLocation() {
-		if (getClass().isAnnotationPresent(ApiEndpoint.class)) {
-			return Optional.ofNullable(
-					AnnotationUtils.getStringValue(getClass().getAnnotation(ApiEndpoint.class).configLocation()));
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Get the {@link JaxrsScannerType} to use for this endpoint, if available.
-	 * <p>
-	 * By default, the {@link ApiEndpoint} annotation is used, if found on the endpoint class.
-	 * </p>
-	 * @return Optional {@link JaxrsScannerType}
-	 */
-	protected Optional<JaxrsScannerType> getJaxrsScannerType() {
-		if (getClass().isAnnotationPresent(ApiEndpoint.class)) {
-			return Optional.ofNullable(getClass().getAnnotation(ApiEndpoint.class).scannerType());
-		}
-		return Optional.empty();
-	}
-
-	/**
-	 * Get a cookie name-value map.
-	 * @param headers The headers
-	 * @return Cookie name-value map
-	 */
-	private static Map<String, String> getCookies(HttpHeaders headers) {
-		if (headers != null) {
-			return headers.getCookies().entrySet().stream()
-					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getValue()));
-		}
-		return Collections.emptyMap();
 	}
 
 }

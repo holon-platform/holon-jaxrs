@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.spring.SwaggerConfigurationProperties;
@@ -55,7 +55,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
  * definition subset, a set of API group can be declared. Each group id will be used as API context id.</li>
  * </ul>
  * <p>
- * By default, the {@link ApiContext#DEFAULT_API_ENDPOINT_PATH} path is used as JAX-RS API listing endpoint path if not
+ * By default, the {@link ApiDefaults#DEFAULT_API_ENDPOINT_PATH} path is used as JAX-RS API listing endpoint path if not
  * configured otherwise.
  * </p>
  * <p>

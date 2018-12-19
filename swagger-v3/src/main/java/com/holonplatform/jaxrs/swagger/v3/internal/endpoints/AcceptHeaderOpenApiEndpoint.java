@@ -43,15 +43,15 @@ public class AcceptHeaderOpenApiEndpoint extends AbstractOpenApiEndpoint {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Operation(hidden = true)
-	public Response getOpenApiJson(@Context HttpHeaders headers, @Context UriInfo uriInfo) throws Exception {
-		return super.getOpenApi(headers, application, uriInfo, "json");
+	public Response getOpenApiJson(@Context HttpHeaders headers, @Context UriInfo uriInfo) {
+		return getApi(application, headers, uriInfo, OutputType.JSON);
 	}
 
 	@GET
 	@Produces({ "application/yaml" })
 	@Operation(hidden = true)
-	public Response getOpenApiYaml(@Context HttpHeaders headers, @Context UriInfo uriInfo) throws Exception {
-		return super.getOpenApi(headers, application, uriInfo, "yaml");
+	public Response getOpenApiYaml(@Context HttpHeaders headers, @Context UriInfo uriInfo) {
+		return getApi(application, headers, uriInfo, OutputType.YAML);
 	}
 
 }

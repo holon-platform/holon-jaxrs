@@ -41,7 +41,7 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.internal.JaxrsLogger;
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.SwaggerConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
@@ -445,7 +445,7 @@ public abstract class SwaggerApiListingPostProcessor extends AbstractSwaggerConf
 					return path;
 				}
 			}
-			return ApiContext.DEFAULT_API_ENDPOINT_PATH;
+			return ApiDefaults.DEFAULT_API_ENDPOINT_PATH;
 		}
 
 	}

@@ -21,7 +21,7 @@ import javax.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
@@ -73,14 +73,14 @@ public enum OpenApiEndpointBuilder implements ApiEndpointBuilder<OpenAPIConfigur
 		final JaxrsScannerType scannerType = configuration.getScannerType().orElse(JaxrsScannerType.DEFAULT);
 
 		// context id
-		final String contextId = configuration.getContextId().orElse(ApiContext.DEFAULT_CONTEXT_ID);
+		final String contextId = configuration.getContextId().orElse(ApiDefaults.DEFAULT_CONTEXT_ID);
 
 		// path
 		final String path;
 		if (ApiEndpointType.PATH_PARAMETER == type) {
-			path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH) + ".{type:json|yaml}";
+			path = configuration.getPath().orElse(ApiDefaults.DEFAULT_API_ENDPOINT_PATH) + ".{type:json|yaml}";
 		} else {
-			path = configuration.getPath().orElse(ApiContext.DEFAULT_API_ENDPOINT_PATH);
+			path = configuration.getPath().orElse(ApiDefaults.DEFAULT_API_ENDPOINT_PATH);
 		}
 
 		// build endpoint class

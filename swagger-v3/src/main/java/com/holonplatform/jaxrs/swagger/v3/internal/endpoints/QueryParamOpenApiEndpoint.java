@@ -44,9 +44,9 @@ public class QueryParamOpenApiEndpoint extends AbstractOpenApiEndpoint {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, "application/yaml" })
 	@Operation(hidden = true)
-	public Response getOpenApi(@Context HttpHeaders headers, @Context UriInfo uriInfo, @QueryParam("type") String type)
-			throws Exception {
-		return super.getOpenApi(headers, application, uriInfo, type);
+	public Response getOpenApi(@Context HttpHeaders headers, @Context UriInfo uriInfo,
+			@QueryParam("type") String type) {
+		return getApi(application, headers, uriInfo, type);
 	}
 
 }

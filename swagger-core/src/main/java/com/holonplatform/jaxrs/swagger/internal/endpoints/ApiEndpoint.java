@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.holonplatform.jaxrs.swagger.ApiContext;
+import com.holonplatform.jaxrs.swagger.ApiDefaults;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 
 /**
@@ -40,9 +40,9 @@ public @interface ApiEndpoint {
 	 * A context id identifies an API subset, each context id can be bound to a different configuration and/or a
 	 * different API resources set.
 	 * </p>
-	 * @return the API context id, {@link ApiContext#DEFAULT_CONTEXT_ID} by default
+	 * @return the API context id, {@link ApiDefaults#DEFAULT_CONTEXT_ID} by default
 	 */
-	String value() default ApiContext.DEFAULT_CONTEXT_ID;
+	String value() default ApiDefaults.DEFAULT_CONTEXT_ID;
 
 	/**
 	 * Get the location to use to locate the API configuration file.
