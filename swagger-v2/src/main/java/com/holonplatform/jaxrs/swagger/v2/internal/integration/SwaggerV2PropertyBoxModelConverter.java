@@ -432,11 +432,11 @@ public class SwaggerV2PropertyBoxModelConverter implements ModelConverter {
 						.setMaximum(new BigDecimal(validatorDescriptor.getMax().doubleValue()));
 				(((AbstractNumericProperty) schema)).setExclusiveMaximum(validatorDescriptor.isExclusiveMax());
 			} else if (schema instanceof StringProperty) {
-				((StringProperty) property)
+				((StringProperty) schema)
 						.maxLength(validatorDescriptor.isExclusiveMax() ? validatorDescriptor.getMax().intValue() - 1
 								: validatorDescriptor.getMax().intValue());
 			} else if (schema instanceof ArrayProperty) {
-				((ArrayProperty) property)
+				((ArrayProperty) schema)
 						.setMaxItems(validatorDescriptor.isExclusiveMax() ? validatorDescriptor.getMax().intValue() - 1
 								: validatorDescriptor.getMax().intValue());
 			}
