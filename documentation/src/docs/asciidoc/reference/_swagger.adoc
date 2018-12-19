@@ -1,41 +1,69 @@
 [[Swagger]]
-== Swagger integration
+== Swagger / OpenAPI integration
 
-_Maven coordinates_:
+_Swagger V2 Maven coordinates_:
 [source, xml, subs="attributes+"]
 ----
 <groupId>com.holon-platform.jaxrs</groupId>
-<artifactId>holon-jaxrs-swagger</artifactId>
+<artifactId>holon-jaxrs-swagger-v2</artifactId>
 <version>{revnumber}</version>
 ----
 
-This artifact provides a complete integration with link:http://swagger.io[Swagger^] _OpenAPI Specification_, to configure the *API listing* Swagger JAX-RS endpoints and to handle the `PropertyBox` data type as a Swagger _Model_ definition.
+_Swagger/OpenAPI V3 Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.jaxrs</groupId>
+<artifactId>holon-jaxrs-swagger-v3</artifactId>
+<version>{revnumber}</version>
+----
 
-Furthermore, a set of *Spring Boot* auto-configuration classes is provided for Swagger API documentation endpoints auto configuration. 
+The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` provides integration with the  link:http://swagger.io[Swagger^] _OpenAPI Specification_, for the *Swagger Version 2* and the *Swagger/OpenAPI Version 3* specifications respectively.
 
-=== `PropertyBox` support
+The integration facilities concerns the following aspects:
 
-When the `holon-jaxrs-swagger` artifact is in classpath, the Swagger JAX-RS engine is automatically configured to support the `PropertyBox` type as API parameter or return type.
+* A complete integration with the Holon Platform *Property model* data types, specifically with the link:holon-core.html#PropertyBox[PropertyBox] type, ensuring a consistent representation and serialization using the Swagger/OpenAPI definition models.
 
-But to ensure a proper `PropertyBox` type handling in the Swagger API documentation parser, the internal _SwaggerContext_ must be setted up. This can be done either by:
+* A convenient `ApiReader` API to obtain a Swagger/OpenAPI definition from a set of API resource classes.
 
-* Using the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerConfiguration.html[SwaggerConfiguration^] Swagger `BeanConfig` extension class, instead of the standard `BeanConfig` class.
+* A complete and highly configurable *Spring Boot* integration, with auto-configuration facilities for both *Jersey* and *Resteasy* JAX-RS runtimes.
 
-* Or providing the link:{apidir}/com/holonplatform/jaxrs/swagger/SwaggerContextListener.html[SwaggerContextListener^] Swagger `ReaderListener` type class as a Swagger scanned resource class.
+TIP: The Swagger/OpenAPI integration architecture is designed to be highly consistent between the Swagger/OpenAPI versions 2 and 3, so in most cases it is enough to put the `holon-jaxrs-swagger-v2` or the `holon-jaxrs-swagger-v3` artifact in classpath to enable the integration features. Or even both: see <<V2andV3>>.
 
-NOTE: When the <<SwaggerSpringBoot>> is enabled, the Swagger JAX-RS engine is automatically configured by the module auto-configuration classes.
+=== `PropertyBox` data type support
 
-=== `PropertyBox` model definition
+When the `holon-jaxrs-swagger-v2` or the `holon-jaxrs-swagger-v3` artifact is in classpath, the Swagger/OpenAPI reader engine is automatically configured to support the `PropertyBox` type as API operations parameter or return type.
 
-A `PropertyBox` type API parameter or return type is translated in a regular Swagger _object_ definition, listing all the *properties* of the `PropertyBox` property-set which implement the `Path` interface, using the `Path` name as _object_ attribute name and the property type (adapted to a standard JSON type) as attribute type.
+IMPORTANT: If you programmatically use the Swagger/OpenAPI reader or context configuration classes to generate the API definition model, you have to include a proper `ReaderListener` class in the API resource classes to ensure a consistent `PropertyBox` type handling. This class is available from the `CONTEXT_READER_LISTENER` static attribute of the  
+link:{apidir}/com/holonplatform/jaxrs/swagger/v2/SwaggerV2.html[SwaggerV2^] interface for the Swagger V2 integration and of the link:{apidir}/com/holonplatform/jaxrs/swagger/v3/SwaggerV3.html[SwaggerV3^] interface for the Swagger/OpenAPI V3 integration.
 
-The `x-holon-model-type` extension property is added to each Swagger `PropertyBox` type object definition, with the `com.holonplatform.core.property.PropertyBox` value.
+TIP: When the <<SwaggerSpringBoot,Spring Boot integration>> is enabled or an <<ApiReader,ApiReader>> is used, the Swagger/OpenAPI engine is automatically configured for a consistent `PropertyBox` type support.
 
-The link:{coreapidir}/com/holonplatform/core/property/PropertySetRef.html[PropertySetRef^] annotation has to be used in JAX-RS resource methods for `PropertyBox` type parameters or return types to declare the *property set* to be used to serialize a `PropertyBox` declaration.
+==== `PropertyBox` property set decalration
+
+A `PropertyBox` type API parameter or return type is translated in a regular Swagger _object_ definition, listing all the properties of the `PropertyBox` *property set*.
+
+NOTE: By default, only the `Path` type properties are included in the API definition _models_/_schemas_, using the `Path` *name* as model/schema attribute name and the property *type* as model/schema attribute type.
+
+Since a `PropertyBox` type class does not provide a fixed link:holon-core.html#PropertySet[PropertySet] decalration, the link:{coreapidir}/com/holonplatform/core/property/PropertySetRef.html[PropertySetRef^] *annotation has to be used* to declare the `PropertySet` to use to translate the `PropertyBox` type into an API model/schema definition. The annotation has to be placed on the `PropertyBox` type method parameters and/or method return types.
+
+The `PropertySetRef` annotation *value* can be either:
+* A class which contains the `PropertySet` instance as a `public static` field.
+* A `PropertySet` type class: in this case, a new instance of such class will be used.
+
+When the first option is used and more than one `PropertySet` type static field is available in the provided class, the *field* annotation attribute can be used to specify the field name to use.
+
+TBD: examples
+
+==== Creating a Swagger Model/Schema definition for a `PropertyBox` type
+
+TBD
 
 To create a regular Swagger *Model definition*, listed in the _definitions_ section of the Swagger specification and referenced by name by API definitions, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiPropertySetModel.html[ApiPropertySetModel^] annotation can be used in conjuction with the `@PropertySetRef` annotation, using the annotation `value()` attribute to declare the model definition *name* to generate for a `PropertyBox` type object.
 
-CAUTION: Ensure to assign the same model name to `PropertyBox` type parameters and return types which are meant to be used with the same property set and to declare different model names for different property sets.
+[[ApiReader]]
+=== Using the `ApiReader` to generate the API definition model
+
+TBD
 
 [[SwaggerSpringBoot]]
 === Spring Boot integration
@@ -251,3 +279,8 @@ Two Swagger API listing endpoints will be auto-configured:
 * One mapped to the `/docs1` path, which will provide the documentation for both `ExampleEndpoint3a` and `ExampleEndpoint3b` operations. The configured API title will be `Title 1`.
 
 * Another mapped to the `/docs2` path, which will only provide the documentation for the `ExampleEndpoint3c` operations. The configured API title will be `Title 2`.
+
+[[V2andV3]]
+=== Enabling Swagger V2 and V3 API endpoints simultaneously
+
+TBD
