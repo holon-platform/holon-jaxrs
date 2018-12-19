@@ -40,7 +40,7 @@ TIP: When the <<SwaggerSpringBoot,Spring Boot integration>> is enabled or an <<A
 
 ==== `PropertyBox` property set declaration
 
-A `PropertyBox` type API parameter or return type is translated in a regular Swagger _object_ definition, listing all the properties of the `PropertyBox` *property set*.
+A `PropertyBox` type API parameter or return type is translated in a regular Swagger/OpenAPI _object_ type Model/Schema definition, listing all the properties of the `PropertyBox` *property set* as object attributes.
 
 NOTE: By default, only the `Path` type properties are included in the API definition _models_/_schemas_, using the `Path` *name* as model/schema attribute name and the property *type* as model/schema attribute type.
 
