@@ -25,6 +25,7 @@ import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.Swagger;
 
 /**
@@ -35,10 +36,12 @@ import io.swagger.models.Swagger;
 public class DefaultApiReader implements ApiReader<Swagger> {
 
 	private final SwaggerConfig configuration;
+	private final boolean includeAll;
 
-	public DefaultApiReader(SwaggerConfig configuration) {
+	public DefaultApiReader(SwaggerConfig configuration, boolean includeAll) {
 		super();
 		this.configuration = (configuration != null) ? configuration : new BeanConfig();
+		this.includeAll = includeAll;
 	}
 
 	/*
@@ -54,7 +57,9 @@ public class DefaultApiReader implements ApiReader<Swagger> {
 		if (!cls.contains(SwaggerV2.CONTEXT_READER_LISTENER)) {
 			cls.add(SwaggerV2.CONTEXT_READER_LISTENER);
 		}
-		final Reader reader = new Reader(configuration.configure(new Swagger()));
+		final DefaultReaderConfig config = new DefaultReaderConfig();
+		config.setScanAllResources(includeAll);
+		final Reader reader = new Reader(configuration.configure(new Swagger()), config);
 		return reader.read(cls);
 	}
 

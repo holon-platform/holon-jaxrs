@@ -54,6 +54,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	private boolean includeAll = true;
 
 	/**
+	 * The API operation routes to ignore for API definition generation.
+	 */
+	private List<String> ignoredRoutes;
+
+	/**
 	 * The package names to use to filter the API resource classes.
 	 * <p>
 	 * To specify more than one package name, a comma (<code>,</code>) separator con be used
@@ -195,6 +200,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 	public void setIncludeAll(boolean includeAll) {
 		this.includeAll = includeAll;
+	}
+
+	@Override
+	public List<String> getIgnoredRoutes() {
+		return ignoredRoutes;
+	}
+
+	public void setIgnoredRoutes(List<String> ignoredRoutes) {
+		this.ignoredRoutes = ignoredRoutes;
 	}
 
 	@Override
@@ -607,6 +621,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		private boolean includeAll = true;
 
 		/**
+		 * The API operation routes to ignore for API definition generation.
+		 */
+		private List<String> ignoredRoutes;
+
+		/**
 		 * The package names to use to filter the API resource classes.
 		 * <p>
 		 * To specify more than one package name, a comma (<code>,</code>) separator con be used
@@ -713,6 +732,15 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 
 		public void setIncludeAll(boolean includeAll) {
 			this.includeAll = includeAll;
+		}
+
+		@Override
+		public List<String> getIgnoredRoutes() {
+			return ignoredRoutes;
+		}
+
+		public void setIgnoredRoutes(List<String> ignoredRoutes) {
+			this.ignoredRoutes = ignoredRoutes;
 		}
 
 		@Override

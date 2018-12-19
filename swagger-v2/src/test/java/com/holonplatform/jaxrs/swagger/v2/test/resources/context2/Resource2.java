@@ -26,9 +26,6 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.jaxrs.swagger.v2.test.model.Model1;
 
-import io.swagger.annotations.Api;
-
-@Api
 @Component
 @Path("resource2")
 public class Resource2 {

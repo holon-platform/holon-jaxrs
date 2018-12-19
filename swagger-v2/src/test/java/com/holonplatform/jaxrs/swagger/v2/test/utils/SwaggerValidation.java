@@ -192,8 +192,6 @@ public final class SwaggerValidation {
 		assertNotNull(resp);
 		Model schema = resp.getResponseSchema();
 		assertNotNull(schema);
-		// TODO
-		// assertEquals("string", schema.getType());
 	}
 
 	public static void validateTestData(Model schema) {
@@ -228,7 +226,6 @@ public final class SwaggerValidation {
 	private static void validateModel2(Model schema, String title) {
 		assertNotNull(schema);
 		assertEquals(title, schema.getTitle());
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(2, schema.getProperties().size());
 		assertTrue(schema.getProperties().containsKey("id2"));
@@ -280,7 +277,6 @@ public final class SwaggerValidation {
 	public static void validateSet1(Model schema, String title) {
 		assertNotNull(schema);
 		assertEquals(title, schema.getTitle());
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(24, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -406,7 +402,6 @@ public final class SwaggerValidation {
 
 	public static void validateSet2(Model schema) {
 		assertNotNull(schema);
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(4, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -464,7 +459,6 @@ public final class SwaggerValidation {
 
 	public static void validateSet3(Model schema) {
 		assertNotNull(schema);
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(3, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -495,7 +489,6 @@ public final class SwaggerValidation {
 
 	public static void validateSet4(Model schema) {
 		assertNotNull(schema);
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(4, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -550,7 +543,6 @@ public final class SwaggerValidation {
 
 	public static void validateSet5(Model schema) {
 		assertNotNull(schema);
-		// assertEquals("object", schema.getType());
 		assertNotNull(schema.getProperties());
 		assertEquals(2, schema.getProperties().size());
 		Property property = schema.getProperties().get("str");
@@ -567,7 +559,7 @@ public final class SwaggerValidation {
 		assertEquals(2, ((ObjectProperty) array.getItems()).getProperties().size());
 	}
 
-	private static Model propertyToModel(Property property) {
+	public static Model propertyToModel(Property property) {
 		return new PropertyModelConverter().propertyToModel(property);
 	}
 

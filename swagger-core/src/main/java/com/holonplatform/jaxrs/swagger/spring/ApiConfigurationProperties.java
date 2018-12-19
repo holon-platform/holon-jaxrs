@@ -17,6 +17,7 @@ package com.holonplatform.jaxrs.swagger.spring;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,12 @@ public interface ApiConfigurationProperties {
 	 * @return whether to include all API resources
 	 */
 	boolean isIncludeAll();
+
+	/**
+	 * Get the API operation routes to ignore for API definition generation.
+	 * @return the ignored routes
+	 */
+	List<String> getIgnoredRoutes();
 
 	/**
 	 * Get the package names to use to filter the API resource classes.

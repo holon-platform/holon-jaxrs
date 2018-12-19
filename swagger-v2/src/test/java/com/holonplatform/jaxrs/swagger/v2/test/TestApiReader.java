@@ -25,14 +25,12 @@ import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 import com.holonplatform.jaxrs.swagger.v2.test.model.AbstractTestResource;
 import com.holonplatform.jaxrs.swagger.v2.test.utils.SwaggerValidation;
 
-import io.swagger.annotations.Api;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 
 public class TestApiReader {
 
-	@Api
 	@Path("resource1")
 	private static class TestResource1 extends AbstractTestResource {
 

@@ -21,6 +21,7 @@ import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
 import com.holonplatform.jaxrs.swagger.v2.internal.DefaultApiReader;
 import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContextListener;
 
+import io.swagger.annotations.Api;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.ReaderListener;
 import io.swagger.models.Swagger;
@@ -46,7 +47,18 @@ public interface SwaggerV2 {
 	 * @return The {@link ApiReader} instance
 	 */
 	static ApiReader<Swagger> reader(SwaggerConfig configuration) {
-		return new DefaultApiReader(configuration);
+		return new DefaultApiReader(configuration, true);
+	}
+
+	/**
+	 * Create a new {@link ApiReader} to create an {@link Swagger} definition from a set of API resource classes.
+	 * @param configuration The configuration to use
+	 * @param includeAll Whether to include all API resource classes. If <code>false</code>, only the {@link Api}
+	 *        annotated classes will be included in the API definitions.
+	 * @return The {@link ApiReader} instance
+	 */
+	static ApiReader<Swagger> reader(SwaggerConfig configuration, boolean includeAll) {
+		return new DefaultApiReader(configuration, includeAll);
 	}
 
 	/**
