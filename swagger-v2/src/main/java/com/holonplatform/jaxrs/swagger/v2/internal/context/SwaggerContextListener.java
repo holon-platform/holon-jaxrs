@@ -32,7 +32,7 @@ public class SwaggerContextListener implements ReaderListener {
 	 */
 	@Override
 	public void beforeScan(Reader reader, Swagger swagger) {
-		SwaggerContext.setSwagger(swagger);
+		SwaggerResolutionContext.setSwagger(swagger);
 	}
 
 	/*
@@ -41,8 +41,8 @@ public class SwaggerContextListener implements ReaderListener {
 	 */
 	@Override
 	public void afterScan(Reader reader, Swagger swagger) {
-		SwaggerContext.includeModels();
-		SwaggerContext.removeSwagger();
+		SwaggerResolutionContext.includeModels();
+		SwaggerResolutionContext.removeSwagger();
 	}
 
 }

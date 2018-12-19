@@ -48,7 +48,7 @@ import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeInfo;
 import com.holonplatform.jaxrs.swagger.internal.types.PropertyBoxTypeResolver;
 import com.holonplatform.jaxrs.swagger.internal.types.SwaggerTypeUtils;
-import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerContext;
+import com.holonplatform.jaxrs.swagger.v2.internal.context.SwaggerResolutionContext;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
@@ -380,7 +380,7 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 	}
 
 	private static boolean definePropertySetModel(Model model, String name, String description) {
-		return SwaggerContext.getSwagger().map(swagger -> {
+		return SwaggerResolutionContext.getSwagger().map(swagger -> {
 			// check already defined
 			if (!hasSchema(swagger, name)) {
 				// build and define
@@ -389,7 +389,7 @@ public class SwaggerV2ApiExtension extends AbstractSwaggerExtension {
 					model.setDescription(description);
 				}
 				// add schema to include
-				SwaggerContext.getModels().ifPresent(schemas -> {
+				SwaggerResolutionContext.getModels().ifPresent(schemas -> {
 					if (!schemas.containsKey(name)) {
 						schemas.put(name, model);
 					}

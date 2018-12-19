@@ -28,7 +28,7 @@ import io.swagger.models.Swagger;
  * 
  * @since 5.0.0
  */
-public final class SwaggerContext {
+public final class SwaggerResolutionContext {
 
 	/**
 	 * Swagger ThreadLocal instance
