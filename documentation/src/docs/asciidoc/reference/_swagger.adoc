@@ -17,20 +17,21 @@ _Swagger/OpenAPI V3 Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` provides integration with the  link:http://swagger.io[Swagger^] _OpenAPI Specification_, for the *Swagger Version 2* and the *Swagger/OpenAPI Version 3* specifications respectively.
+The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` artifacts provide integration with the  link:http://swagger.io[Swagger^] _OpenAPI Specification_, for the *Swagger Version 2* and the *Swagger/OpenAPI Version 3* specifications respectively.
 
 WARNING: The Holon Platform 5.1.x `holon-jaxrs-swagger` artifact is *deprecated* and should be replaced with the `holon-jaxrs-swagger-v2` artifact. The `holon-jaxrs-swagger` is still available in Holon Platform version 5.2.x, acting as an alias only for backward compatibility purposes.
 
 The integration facilities concerns the following aspects:
 
-* A complete integration with the Holon Platform *Property model* data types, specifically with the link:holon-core.html#PropertyBox[PropertyBox] type, ensuring a consistent representation and serialization using the Swagger/OpenAPI definition models.
+* A complete integration with the Holon Platform *Property model* data types, specifically with the link:holon-core.html#PropertyBox[PropertyBox^] type, ensuring a consistent representation and serialization using the Swagger/OpenAPI definition models. See <<PropertyBoxModel>>.
 
-* A convenient `ApiReader` API to obtain a Swagger/OpenAPI definition from a set of API resource classes.
+* A convenient `ApiReader` API to obtain a Swagger/OpenAPI definition from a set of API resource classes.  See <<ApiReader>>.
 
-* A complete and highly configurable *Spring Boot* integration, with auto-configuration facilities for both *Jersey* and *Resteasy* JAX-RS runtimes.
+* A complete and highly configurable *Spring Boot* integration, with auto-configuration facilities for both *Jersey* and *Resteasy* JAX-RS runtimes. See <<SwaggerSpringBoot>>.
 
 TIP: The Swagger/OpenAPI integration architecture is designed to be highly consistent between the Swagger/OpenAPI versions 2 and 3, so in most cases it is enough to put the `holon-jaxrs-swagger-v2` or the `holon-jaxrs-swagger-v3` artifact in classpath to enable the integration features. Or even both: see <<V2andV3>>.
 
+[[PropertyBoxModel]]
 === `PropertyBox` data type support
 
 When the `holon-jaxrs-swagger-v2` or the `holon-jaxrs-swagger-v3` artifact is in classpath, the Swagger/OpenAPI reader engine is automatically configured to support the `PropertyBox` type as API operations parameter or return type.
@@ -185,6 +186,7 @@ components:
 
 See the next section to learn how to include a `PropertyBox` type model/schema in the Swagger API definition `definitions` (for Swagger V2) or `components/schemas` (for Swagger V3).
 
+[[PropertyBoxModelDefinition]]
 ==== Creating a Swagger Model/Schema definition for a `PropertyBox` type
 
 When the `PropertySetRef` annotation is used, a generic Swagger _object_ type model/schema definition is generated for each API response or API operation parameter, using the property set definition to generate the schema properties.
@@ -353,11 +355,25 @@ include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=
 <4> Serialize the API model using YAML
 
 [[SwaggerSpringBoot]]
-=== Spring Boot integration
+=== Swagger Spring Boot integration and auto configuration
 
-The `holon-jaxrs-swagger` provides Spring Boot auto-configuration classes to automatically configure *Swagger API listing JAX-RS endpoints* in a Spring Boot application.
+The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` artifacts provide a set of *Spring Boot* auto-configuration classes to automatically configure *Swagger API definition JAX-RS endpoints* for Swagger/OpenAPI version 2 and version 3 respectively, using the Spring Boot application JAX-RS API endpoints classes as API definition sources.
 
-The Swagger auto-configuration is triggered when either a `ResourceConfig` type _Jersey_ configuration bean or a `ResteasyConfig` type _Resteasy_ configuration bean is available in Spring context.
+Both *Jersey* and *Resteasy* JAX-RS runtimes are supported.
+
+==== Prerequisites
+
+To enable the Swagger Spring Boot auto-configuration facilities, just include in classpath the `holon-jaxrs-swagger-v2` artifact for Swagger version 2 integration and `holon-jaxrs-swagger-v3` artifact for Swagger/OpenAPI version 3 integration.
+
+NOTE: It is perfectly safe to include *both* `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` artifacts in order to enable the Swagger version 2 and version 3 integration simultaneously. See <<V2andV3>> for JAX-RS API definition endpoints _path_ naming considerations.
+
+The Swagger API definition endpoints auto-configuration is triggered when the following conditions are satisfied:
+
+* When the *Jersey* JAX-RS runtime is used, a `org.glassfish.jersey.server.ResourceConfig` type bean must be available in context.
+
+* When the *Resteasy* JAX-RS runtime is used, a `com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig` type bean must be available in context.
+
+TIP: When the Holon Platform JAX-RS Spring Boot integration is available, a `ResourceConfig` or `ResteasyConfig` type bean can be automatically configured, including the automatic registration of the `@Path` annotated JAX-RS endpoint classes declared as Spring beans. See the link:holon-jaxrs.html#JaxrsSpringBoot[JAX-RS Spring Boot integration documentation^] section.
 
 ==== Swagger API documentation endpoints configuration using properties
 
