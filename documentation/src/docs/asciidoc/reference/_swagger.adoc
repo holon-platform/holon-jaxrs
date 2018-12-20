@@ -361,6 +361,8 @@ The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` artifacts provide a se
 
 Both *Jersey* and *Resteasy* JAX-RS runtimes are supported.
 
+Obviously, all the standard *Swagger annotations* are supported for the API definition configuration. See link:https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X[Swagger specification version 2 annotations^] and link:https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations[Swagger/OpenAPI specification version 3 annotations^] for information about the available annotations.
+
 ==== Prerequisites
 
 To enable the Swagger Spring Boot auto-configuration facilities, just include in classpath the `holon-jaxrs-swagger-v2` artifact for Swagger version 2 integration and `holon-jaxrs-swagger-v3` artifact for Swagger/OpenAPI version 3 integration.
@@ -421,21 +423,58 @@ http://localhost/api-docs?type=yaml
 
 The Swagger Spring Boot integration can be widely configured, either using explicit configuration beans or the `holon.swagger.*` configuration property set. See the next sections for the available configuration options.
 
+[[ApiEndpointType]]
 ==== API definition endpoint types
 
-The following Swagger API definition JAX-RS endpoint types are available:
+The following Swagger API definition JAX-RS endpoint types are available and listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/ApiEndpointType.html[ApiEndpointType^] enumeration:
 
+|===
+|Type |Description |Parameters
 
+|`QUERY_PARAMETER`
+|Swagger API definition endpoint which uses a `type` named URL *query parameter* for the API output format declaration.
+|The `type` query parameter valid values are `json` for JSON format and `yaml` for YAML format. If not specified, the JSON format is used by default.
 
+|`PATH_PARAMETER`
+|Swagger API definition endpoint which uses a *path parameter* for the API output format declaration. The path parameter value must be prefixed by a dot (`.`). For example: `http://localhost/api-docs.json` or `http://localhost/api-docs.yaml`.
+|The path parameter valid values are `json` for JSON format and `yaml` for YAML format. If not specified, the JSON format is used by default.
+
+|`ACCEPT_HEADER`
+|Swagger API definition endpoint which uses the `Accept` *request header* value for the API output format declaration.
+|The `Accept` request header valid values are `application/json` for JSON format and `application/yaml` for YAML format. If not specified, the JSON format is used by default.
+
+|===
+
+The `QUERY_PARAMETER` type is the *default* Swagger API definition endpoint type. See the <<BeanConfiguration>> section or the <<PropertiesConfiguration>> section to learn how to specify the Swagger API definition endpoint type, either using the `@ApiConfiguration` bean annotation or the `holon.swagger.type` application configuration property.
+
+[[JaxrsScannerType]]
 ==== API resources scan strategy
 
+The following strategies are available to detect the JAX-RS API resource classes to include in the Swagger API definition (listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/JaxrsScannerType.html[JaxrsScannerType^] enumeration):
+
+|===
+|Type |Strategy 
+
+|`APPLICATION`
+|Only the `@Path` annotated resource classes registered in the JAX-RS `Application` will be included in the Swagger API definition.
+
+|`ANNOTATION`
+|All the `@Path` annotated resource classes available from the Spring application scan paths will be included in the Swagger API definition.
+
+|`APPLICATION_AND_ANNOTATION`
+|Both the `@Path` annotated resource classes registered in the JAX-RS `Application` and the `@Path` annotated resource classes available from the Spring application scan paths will be included in the Swagger API definition.
+
+|===
+
+By default, the `APPLICATION` type scan strategy is used. See the <<BeanConfiguration>> section or the <<PropertiesConfiguration>> section to learn how to specify the API definition resources scan strategy, either using the `@ApiConfiguration` bean annotation or the `holon.swagger.scanner-type` application configuration property.
+
+[[BeanConfiguration]]
+==== API and endpoints configuration using beans
+
 TBD
 
-==== API configuration using beans
-
-TBD
-
-==== API configuration using application properties
+[[PropertiesConfiguration]]
+==== API and endpoints configuration using application properties
 
 TBD
 
