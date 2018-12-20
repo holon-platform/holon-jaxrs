@@ -375,6 +375,70 @@ The Swagger API definition endpoints auto-configuration is triggered when the fo
 
 TIP: When the Holon Platform JAX-RS Spring Boot integration is available, a `ResourceConfig` or `ResteasyConfig` type bean can be automatically configured, including the automatic registration of the `@Path` annotated JAX-RS endpoint classes declared as Spring beans. See the link:holon-jaxrs.html#JaxrsSpringBoot[JAX-RS Spring Boot integration documentation^] section.
 
+==== Default API endpoints configuration strategy
+
+By default, any `@Path` annotated JAX-RS endpoint class registered in the JAX-RS `javax.ws.rs.core.Application` is included in the Swagger API definition.
+
+A JAX-RS *Swagger API definition* endpoint class in generated and registered in the current JAX-RS runtime to provide the Swagger API definition either in *JSON* or *YAML* format.
+
+By default, the Swagger API definition endpoint will be available at the `/api-docs` path and a `type` named URL *query parameter* can be used to declare the API output format, which can be either `json` or `yaml`.
+
+Depending on the `holon-jaxrs-swagger-v2` or `holon-jaxrs-swagger-v3` artifact presence in classpath, the Swagger API definition output will be provided either in version 2 or version 3 specification format.
+
+For example, given a Maven project whith the following dependencies in the `pom.xml` file:
+
+[source, xml, subs="attributes+"]
+----
+<dependencies>
+  <!-- Optional Holon JAX-RS starter using Jersey -->
+  <dependency>
+    <groupId>com.holon-platform.jaxrs</groupId>
+    <artifactId>holon-starter-jersey</artifactId>
+    <version>{revnumber}</version>
+  </dependency>
+  <!-- Swagger V3 integration -->
+    <dependency>
+      <groupId>com.holon-platform.jaxrs</groupId>
+      <artifactId>holon-jaxrs-swagger-v3</artifactId>
+      <version>{revnumber}</version>
+    </dependency>
+</dependencies>
+----
+
+A Swagger API definition endpoint will be automatically configured and mapped to the `/api-docs` path. Supposing the application is available from `localhost`, the API definition can be obtained from the following URL:
+
+.JSON format:
+[source, text]
+----
+http://localhost/api-docs?type=json
+----
+
+.YAML format:
+[source, text]
+----
+http://localhost/api-docs?type=yaml
+----
+
+The Swagger Spring Boot integration can be widely configured, either using explicit configuration beans or the `holon.swagger.*` configuration property set. See the next sections for the available configuration options.
+
+==== API definition endpoint types
+
+The following Swagger API definition JAX-RS endpoint types are available:
+
+
+
+==== API resources scan strategy
+
+TBD
+
+==== API configuration using beans
+
+TBD
+
+==== API configuration using application properties
+
+TBD
+
 ==== Swagger API documentation endpoints configuration using properties
 
 The Swagger auto-configuration relies on the `holon.swagger.*` configuration properties listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationProperties.html[SwaggerConfigurationProperties^] class to configure the Swagger API endpoints.
