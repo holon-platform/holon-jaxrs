@@ -38,6 +38,7 @@ link:{apidir}/com/holonplatform/jaxrs/swagger/v2/SwaggerV2.html[SwaggerV2^] inte
 
 TIP: When the <<SwaggerSpringBoot,Spring Boot integration>> is enabled or an <<ApiReader,ApiReader>> is used, the Swagger/OpenAPI engine is automatically configured for a consistent `PropertyBox` type support.
 
+[[PropertySetRef]]
 ==== `PropertyBox` property set declaration
 
 A `PropertyBox` type API parameter or return type is translated in a regular Swagger/OpenAPI _object_ type Model/Schema definition, listing all the properties of the `PropertyBox` *property set* as object attributes.
@@ -52,13 +53,265 @@ The `PropertySetRef` annotation *value* can be either:
 
 When the first option is used and more than one `PropertySet` type static field is available in the provided class, the *field* annotation attribute can be used to specify the field name to use.
 
-TBD: examples
+[[Subjects]]
+For example, given the following `SubjectModel` interface, which contains a data model declaration for a simple subject entity:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=model,indent=0]
+----
+<1> `PropertySet` definition
+
+The `SUBJECT` field can be used as `PropertyBox` property set definition in a JAX-RS API endpoint like this:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=propertyset,indent=0]
+----
+<1> Declare the `PropertySet` to use for the `getById` operation *return type*, using the `PropertySetRef` annotation
+<2> Declare the `PropertySet` to use for the `create` operation *body parameter*, using the `PropertySetRef` annotation
+
+Since the `SUBJECT` field is the unique `PropertySet` type static field of the `SubjectModel` interface, no additional *field* name specification is required in the `PropertySetRef` annotation.
+
+In this example, the generated API definition will look like this (using the YAML format):
+
+.Swagger 2 specification:
+[source, yaml]
+----
+swagger: "2.0"
+paths:
+  /subjects/{id}:
+    get:
+      operationId: "getById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          headers: {}
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+                format: "int32"
+              name:
+                type: "string"
+            title: "PropertyBox"
+  /subjects:
+    put:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+              format: "int32"
+            name:
+              type: "string"
+          title: "PropertyBox"
+      responses:
+        default:
+          description: "successful operation"
+definitions: {}
+----
+
+.Swagger/OpenAPI 3 specification:
+[source, yaml]
+----
+openapi: 3.0.1
+paths:
+  /subjects/{id}:
+    get:
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                title: PropertyBox
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int32
+                  name:
+                    type: string
+  /subjects:
+    put:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: PropertyBox
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+components:
+  schemas: {}
+----
+
+See the next section to learn how to include a `PropertyBox` type model/schema in the Swagger API definition `definitions` (for Swagger V2) or `components/schemas` (for Swagger V3).
 
 ==== Creating a Swagger Model/Schema definition for a `PropertyBox` type
 
-TBD
+When the `PropertySetRef` annotation is used, a generic Swagger _object_ type model/schema definition is generated for each API response or API operation parameter, using the property set definition to generate the schema properties.
 
-To create a regular Swagger *Model definition*, listed in the _definitions_ section of the Swagger specification and referenced by name by API definitions, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiPropertySetModel.html[ApiPropertySetModel^] annotation can be used in conjuction with the `@PropertySetRef` annotation, using the annotation `value()` attribute to declare the model definition *name* to generate for a `PropertyBox` type object.
+To include a `PropertyBox` type as a _named_ model/schema in the Swagger API definition (i.e. to create a type declaration in the `definitions` section for Swagger V2 or in the `components/schemas` section for Swagger V3), the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiPropertySetModel.html[ApiPropertySetModel^] annotation can be used.
+
+The `ApiPropertySetModel` *value* attribute is used to specify the model/schema _name_. When a `PropertyBox` type model is declared this way, its name will be used as a _reference_ in the API operation components which use it.
+
+The `ApiPropertySetModel` annotation should be always used in conjunction with the `PropertySetRef` annotation, which provides the property set declaration.
+
+TIP: To make the API enpoints code more readable and to ensure a consistent property set and model name definition, the `PropertySetRef` and `ApiPropertySetModel` annotations can be used as meta-annotations to create specific annotations to be used in the API endpoints code. See below for an example.
+
+Taking the <<Subjects,Subjects>> example endpoint declaration, we can create a `Subject` annotation to declare the `PropertySet` to use and a model/schema definition named `Subject` this way:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=apimodel1,indent=0]
+----
+<1> `PropertySet` reference declaration
+<2> Model/Schema *name* definition
+
+Next, the `Subject` annotation is used in the JAX-RS endpoint instead of the simple `PropertySetRef` annotation:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=apimodel2,indent=0]
+----
+<1> Declare the `Subject` model definition for the `getById` operation *return type*
+<2> Declare the `Subject` model definition for the `create` operation *body parameter*
+
+The generated API definition will include a `Subject` model/schema definition and will look like this:
+
+.Swagger 2 specification:
+[source, yaml]
+----
+swagger: "2.0"
+paths:
+  /subjects/{id}:
+    get:
+      operationId: "getById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          headers: {}
+          schema:
+            $ref: "#/definitions/Subject"
+  /subjects:
+    put:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/Subject"
+      responses:
+        default:
+          description: "successful operation"
+definitions:
+  Subject:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+      name:
+        type: "string"
+    title: "Subject"
+----
+
+.Swagger/OpenAPI 3 specification:
+[source, yaml]
+----
+openapi: 3.0.1
+paths:
+  /subjects/{id}:
+    get:
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+  /subjects:
+    put:
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+components:
+  schemas:
+    Subject:
+      title: Subject
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+----
+
+In the API definition, the API operation return types or body parameters annotated with the `Subject` annotation declarations provide a *reference* to the `Subject` model/schema definition.
 
 [[ApiReader]]
 === Using the `ApiReader` to generate the API definition model

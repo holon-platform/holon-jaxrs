@@ -15,86 +15,99 @@
  */
 package com.holonplatform.jaxrs.examples;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.springframework.stereotype.Component;
+import com.holonplatform.core.property.NumericProperty;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.property.PropertySetRef;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 
-import com.holonplatform.jaxrs.swagger.annotations.ApiDefinition;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
+@SuppressWarnings("unused")
 public class ExampleSwagger {
 
-	// tag::swagger1[]
-	@Api // <1>
-	@ApiDefinition(title = "Example title") // <2>
-	@Path("example")
-	@Component // <3>
-	class ExampleEndpoint1 {
+	// tag::model[]
+	public interface SubjectModel {
 
-		@ApiOperation("Test description") // <4>
+		static final NumericProperty<Integer> ID = NumericProperty.integerType("id");
+		static final StringProperty NAME = StringProperty.create("name");
+
+		static final PropertySet<?> SUBJECT = PropertySet.of(ID, NAME); // <1>
+
+	}
+	// end::model[]
+
+	// tag::propertyset[]
+	@Path("subjects")
+	public class Subjects {
+
 		@GET
-		@Path("test")
-		@Produces(MediaType.TEXT_PLAIN)
-		public String test() {
-			return "test";
+		@Path("{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public @PropertySetRef(SubjectModel.class) PropertyBox getById(@PathParam("id") int id) { // <1>
+			return getSubjectById(id);
+		}
+
+		@PUT
+		@Path("")
+		@Consumes(MediaType.APPLICATION_JSON)
+		public Response create(@PropertySetRef(SubjectModel.class) PropertyBox subject) { // <2>
+			createSubject(subject);
+			return Response.accepted().build();
 		}
 
 	}
-	// end::swagger1[]
+	// end::propertyset[]
 
-	// tag::swagger2[]
-	@Api
-	@ApiDefinition("/docs") // <1>
-	@Path("example")
-	@Component
-	class ExampleEndpoint2 {
+	// tag::apimodel1[]
+	@PropertySetRef(SubjectModel.class) // <1>
+	@ApiPropertySetModel("Subject") // <2>
+	@Target({ ElementType.PARAMETER, ElementType.TYPE, ElementType.TYPE_USE })
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Subject {
 
-		@ApiOperation("Test description")
+	}
+	// end::apimodel1[]
+
+	// tag::apimodel2[]
+	@Path("subjects")
+	public class Subjects2 {
+
 		@GET
-		@Path("test")
-		@Produces(MediaType.TEXT_PLAIN)
-		public String test() {
-			return "test";
+		@Path("{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public @Subject PropertyBox getById(@PathParam("id") int id) { // <1>
+			return null;
+		}
+
+		@PUT
+		@Path("")
+		@Consumes(MediaType.APPLICATION_JSON)
+		public Response create(@Subject PropertyBox subject) { // <2>
+			return Response.accepted().build();
 		}
 
 	}
-	// end::swagger2[]
+	// end::apimodel2[]
 
-	// tag::swagger3[]
-	@Api
-	@ApiDefinition(value = "/docs1", title = "Title 1") // <1>
-	@Path("example3a")
-	@Component
-	class ExampleEndpoint3a {
-
-		/* operations omitted */
-
+	private static PropertyBox getSubjectById(int id) {
+		return null;
 	}
 
-	@Api
-	@ApiDefinition(value = "/docs1") // <2>
-	@Path("example3b")
-	@Component
-	class ExampleEndpoint3b {
-
-		/* operations omitted */
-
+	private static void createSubject(PropertyBox subject) {
 	}
-
-	@Api
-	@ApiDefinition(value = "/docs2", title = "Title 2") // <3>
-	@Path("example3c")
-	@Component
-	class ExampleEndpoint3c {
-
-		/* operations omitted */
-
-	}
-	// end::swagger3[]
 
 }
