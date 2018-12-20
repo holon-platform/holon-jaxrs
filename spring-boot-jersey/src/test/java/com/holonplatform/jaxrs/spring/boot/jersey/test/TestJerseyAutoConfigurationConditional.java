@@ -24,23 +24,22 @@ import javax.ws.rs.client.WebTarget;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.test.resources.TestEndpoint;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-@DirtiesContext
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TestJerseyAutoConfigurationConditional {
+
+	@LocalServerPort
+	private int port;
 
 	@Configuration
 	@EnableAutoConfiguration
@@ -68,7 +67,7 @@ public class TestJerseyAutoConfigurationConditional {
 	@Test
 	public void testEndpoint() {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8888/test").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/test").path("ping");
 		String response = target.request().get(String.class);
 		assertEquals("pong", response);
 	}

@@ -1,9 +1,6 @@
 spring:
   main:
     banner-mode: "off"
-
-server:
-  port: 8888
   
 ---
 spring:

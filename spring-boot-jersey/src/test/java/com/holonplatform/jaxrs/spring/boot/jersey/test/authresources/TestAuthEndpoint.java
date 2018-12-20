@@ -21,7 +21,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.holonplatform.auth.annotations.Authenticate;
@@ -30,7 +29,7 @@ import com.holonplatform.http.HttpHeaders;
 @Authenticate(schemes = HttpHeaders.SCHEME_BASIC)
 @Path("testauth")
 @Component
-@Scope("request")
+//@Scope("request")
 public class TestAuthEndpoint {
 
 	@PermitAll

@@ -26,15 +26,13 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.AuthenticationToken;
@@ -43,10 +41,11 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.spring.boot.jersey.test.authresources.TestAuthEndpoint;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-@DirtiesContext
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TestJerseyAuthAutoConfiguration {
+
+	@LocalServerPort
+	private int port;
 
 	@Configuration
 	@EnableAutoConfiguration
@@ -75,7 +74,7 @@ public class TestJerseyAuthAutoConfiguration {
 	@Test
 	public void testEndpoint() throws UnsupportedEncodingException {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8888/testauth").path("ping");
+		WebTarget target = client.target("http://localhost:" + port + "/testauth").path("ping");
 		String response = target.request()
 				.header(HttpHeaders.AUTHORIZATION,
 						HttpHeaders.SCHEME_BASIC + " "
