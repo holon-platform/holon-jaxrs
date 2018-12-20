@@ -34,7 +34,16 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.jaxrs.swagger.ApiReader;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
+import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
+import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
+
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.Info;
+import io.swagger.models.Swagger;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
 
 @SuppressWarnings("unused")
 public class ExampleSwagger {
@@ -103,11 +112,48 @@ public class ExampleSwagger {
 	}
 	// end::apimodel2[]
 
+	public void apireaderv2() {
+		// tag::apireaderv2[]
+		BeanConfig configuration = new BeanConfig();
+		configuration.setInfo(new Info().title("The title").version("1"));
+
+		ApiReader<Swagger> reader = SwaggerV2.reader(configuration); // <1>
+
+		Swagger api = reader.read(ApiEndpoint1.class, ApiEndpoint2.class); // <2>
+
+		String json = SwaggerV2.asJson(api); // <3>
+		String yaml = SwaggerV2.asYaml(api); // <4>
+		// end::apireaderv2[]
+	}
+
+	public void apireaderv3() {
+		// tag::apireaderv3[]
+		SwaggerConfiguration configuration = new SwaggerConfiguration();
+		configuration.setOpenAPI(
+				new OpenAPI().info(new io.swagger.v3.oas.models.info.Info().title("The title").version("1")));
+
+		ApiReader<OpenAPI> reader = SwaggerV3.reader(configuration); // <1>
+
+		OpenAPI api = reader.read(ApiEndpoint1.class, ApiEndpoint2.class); // <2>
+
+		String json = SwaggerV3.asJson(api); // <3>
+		String yaml = SwaggerV3.asYaml(api); // <4>
+		// end::apireaderv3[]
+	}
+
 	private static PropertyBox getSubjectById(int id) {
 		return null;
 	}
 
 	private static void createSubject(PropertyBox subject) {
+	}
+
+	private static class ApiEndpoint1 {
+
+	}
+
+	private static class ApiEndpoint2 {
+
 	}
 
 }

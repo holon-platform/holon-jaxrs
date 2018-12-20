@@ -19,6 +19,8 @@ _Swagger/OpenAPI V3 Maven coordinates_:
 
 The `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` provides integration with the  link:http://swagger.io[Swagger^] _OpenAPI Specification_, for the *Swagger Version 2* and the *Swagger/OpenAPI Version 3* specifications respectively.
 
+WARNING: The Holon Platform 5.1.x `holon-jaxrs-swagger` artifact is *deprecated* and should be replaced with the `holon-jaxrs-swagger-v2` artifact. The `holon-jaxrs-swagger` is still available in Holon Platform version 5.2.x, acting as an alias only for backward compatibility purposes.
+
 The integration facilities concerns the following aspects:
 
 * A complete integration with the Holon Platform *Property model* data types, specifically with the link:holon-core.html#PropertyBox[PropertyBox] type, ensuring a consistent representation and serialization using the Swagger/OpenAPI definition models.
@@ -316,7 +318,39 @@ In the API definition, the API operation return types or body parameters annotat
 [[ApiReader]]
 === Using the `ApiReader` to generate the API definition model
 
-TBD
+The link:{apidir}/com/holonplatform/jaxrs/swagger/ApiReader.html[ApiReader^] service can be used to directly generate a Swagger API definition model from a set of JAX-RS API resource classes, ensuring a consistent Swagger engine configuration with the Holon Platform property model support.
+
+The `read(Set<Class<?>> classes)` method reads and generates a Swagger API definition model which includes the given API resource classes operations.
+
+==== Swagger version 2 `ApiReader`
+
+The link:{apidir}/com/holonplatform/jaxrs/swagger/v2/SwaggerV2.html[SwaggerV2^] entrypoint interface can be used to obtain an `ApiReader`, using a `SwaggerConfig` type configuration definition and providing a `io.swagger.models.Swagger` type API definition model.
+
+Furthermore, the `SwaggerV2` interface provides a set of convenience methods to serialize the Swagger model using *JSON* (through the `asJson(...)` methods) or *YAML* (through the `asYaml(...)` methods).
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=apireaderv2,indent=0]
+----
+<1> Obtain a `ApiReader` using the provided configuration
+<2> Generate the Swagger API model from given API resource classes
+<3> Serialize the API model using JSON
+<4> Serialize the API model using YAML
+
+==== Swagger/OpenAPI version 3 `ApiReader`
+
+The link:{apidir}/com/holonplatform/jaxrs/swagger/v3/SwaggerV3.html[SwaggerV3^] entrypoint interface can be used to obtain an `ApiReader`, using a `OpenAPIConfiguration` type configuration definition and providing a `io.swagger.v3.oas.models.OpenAPI` type API definition model.
+
+Furthermore, the `SwaggerV3` interface provides a set of convenience methods to serialize the Swagger/OpenAPI model using *JSON* (through the `asJson(...)` methods) or *YAML* (through the `asYaml(...)` methods).
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=apireaderv3,indent=0]
+----
+<1> Obtain a `ApiReader` using the provided configuration
+<2> Generate the OpenAPI model from given API resource classes
+<3> Serialize the API model using JSON
+<4> Serialize the API model using YAML
 
 [[SwaggerSpringBoot]]
 === Spring Boot integration
