@@ -399,11 +399,11 @@ For example, given a Maven project whith the following dependencies in the `pom.
     <version>{revnumber}</version>
   </dependency>
   <!-- Swagger V3 integration -->
-    <dependency>
-      <groupId>com.holon-platform.jaxrs</groupId>
-      <artifactId>holon-jaxrs-swagger-v3</artifactId>
-      <version>{revnumber}</version>
-    </dependency>
+  <dependency>
+    <groupId>com.holon-platform.jaxrs</groupId>
+    <artifactId>holon-jaxrs-swagger-v3</artifactId>
+    <version>{revnumber}</version>
+  </dependency>
 </dependencies>
 ----
 
@@ -487,7 +487,7 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |===
 |Property name |Type |Meaning |Default
 
-|_holon.swagger.*enabled*
+|holon.swagger.*enabled*
 |Whether the Swagger API definition endpoints auto-configuration is enabled
 |Boolean
 |`true`
@@ -499,42 +499,42 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |===
 |Property name |Type |Meaning |Default
 
-|_holon.swagger.*path*
+|holon.swagger.*path*
 |The Swagger API definition endpoint JAX-RS path
 |String
 |`api-docs`
 
-|_holon.swagger.*type*
+|holon.swagger.*type*
 |The Swagger API definition endpoint type. Must be one of the link:{apidir}/com/holonplatform/jaxrs/swagger/ApiEndpointType.html[ApiEndpointType^] enumeration values. See <<ApiEndpointType>>.
 |String
 |`QUERY_PARAMETER`
 
-|_holon.swagger.*scanner-type*
+|holon.swagger.*scanner-type*
 |The Swagger API definition resource classes scan strategy. Must be one of the link:{apidir}/com/holonplatform/jaxrs/swagger/JaxrsScannerType.html[JaxrsScannerType^] enumeration values. See <<JaxrsScannerType>>.
 |String
 |`APPLICATION`
 
-|_holon.swagger.*context-id*
+|holon.swagger.*context-id*
 |The context id to which the generated Swagger API definition is bound.
 |String
 |`openapi.context.id.default`
 
-|_holon.swagger.*resource-package*
+|holon.swagger.*resource-package*
 |The package names to use to filter the API resource classes to be included in the Swagger API definition. More than one package name can be specified using a comma (`,`) as separator.
 |String
 |_None_
 
-|_holon.swagger.*include-all*
+|holon.swagger.*include-all*
 |Whether to include all the available API resource classes in the Swagger API definition. If `false`, only the `io.swagger.annotations.Api` annotated resource classes will be incuded for Swagger V2 or only the `io.swagger.v3.oas.annotations.Operation` annotated resource methods will be included for Swagger V3.
 |Boolean
 |`true`
 
-|_holon.swagger.*ignored-routes*
+|holon.swagger.*ignored-routes*
 |A comma separated list of API operation routes to be ignored for the Swagger API definition generation.
 |String
 |_None_
 
-|_holon.swagger.*pretty-print*
+|holon.swagger.*pretty-print*
 |Whether _pretty_ format the Swagger API definition output provided by the API definition endpoints.
 |Boolean
 |`false`
@@ -546,67 +546,67 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |===
 |Property name |Type |Meaning |Default
 
-|_holon.swagger.*title*
+|holon.swagger.*title*
 |The API definition title.
 |String
 |_None_
 
-|_holon.swagger.*version*
+|holon.swagger.*version*
 |The API definition version.
 |String
 |_None_
 
-|_holon.swagger.*description*
+|holon.swagger.*description*
 |The API definition description.
 |String
 |_None_
 
-|_holon.swagger.*terms-of-service-url*
+|holon.swagger.*terms-of-service-url*
 |The API definition terms of service URL.
 |String
 |_None_
 
-|_holon.swagger.*contact.name*
+|holon.swagger.*contact.name*
 |The API definition contact name.
 |String
 |_None_
 
-|_holon.swagger.*contact.email*
+|holon.swagger.*contact.email*
 |The API definition contact email.
 |String
 |_None_
 
-|_holon.swagger.*contact.url*
+|holon.swagger.*contact.url*
 |The API definition contact URL.
 |String
 |_None_
 
-|_holon.swagger.*license.name*
+|holon.swagger.*license.name*
 |The API definition license name.
 |String
 |_None_
 
-|_holon.swagger.*license.url*
+|holon.swagger.*license.url*
 |The API definition license URL.
 |String
 |_None_
 
-|_holon.swagger.*external-docs.url*
+|holon.swagger.*external-docs.url*
 |The API definition external documentation URL.
 |String
 |_None_
 
-|_holon.swagger.*external-docs.description*
+|holon.swagger.*external-docs.description*
 |The API definition external documentation description.
 |String
 |_None_
 
-|_holon.swagger.*server.url*
+|holon.swagger.*server.url*
 |The API definition server URL.
 |String
 |_None_
 
-|_holon.swagger.*server.description*
+|holon.swagger.*server.description*
 |The API definition server description.
 |String
 |_None_
@@ -618,19 +618,36 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |===
 |Property name |Meaning |Replaced by
 
-|_holon.swagger.*license-url*
+|holon.swagger.*license-url*
 |The API definition license URL.
 |holon.swagger.license.url
 
-|_holon.swagger.*schemes*
+|holon.swagger.*schemes*
 |The API definition server schemes.
 |holon.swagger.server.url
 
-|_holon.swagger.*host*
+|holon.swagger.*host*
 |The API definition server host.
 |holon.swagger.server.url
 
 |===
+
+Example:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    title: 'My title'
+    version: 'v1'
+    path: 'docs'
+    type: PATH_PARAMETER
+    scanner-type: APPLICATION_AND_ANNOTATION
+    pretty-print: true
+----
+
+In the example above the Swagger API definition endpoint will be mapped to the `docs` path. The Swagger API definition endpoint will be of `PATH_PARAMETER` type and the API resources scan strategy to use is setted to `APPLICATION_AND_ANNOTATION`.
 
 [[BeanConfiguration]]
 ==== API and endpoints configuration using beans
@@ -642,223 +659,23 @@ TBD
 
 TBD
 
+[[ResourcePackages]]
 ===== Using a package prefix to group the API resources
 
 TBD
 
+[[ApiContextId]]
 ===== Using the `ApiContextId` annotation to group the API resources
 
 TBD
 
-==== Swagger API documentation endpoints configuration using properties
-
-The Swagger auto-configuration relies on the `holon.swagger.*` configuration properties listed in the link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationProperties.html[SwaggerConfigurationProperties^] class to configure the Swagger API endpoints.
-
-TIP: Just like any other Spring Boot configuration property, the `holon.swagger.*` properties can be specified in your inside your `application.properties` / `application.yml` file or as command line switches.
-
-At least the `holon.swagger.resource-package` property, which specifies the Java _package_ name to scan to detect the JAX-RS API endpoints, must be setted to auto-configure a Swagger API listing endpoint. See <<SwaggerConfigurationProperties>> for a list of all available configuration properties.
-
-By default, the `/api-docs` default path is used to expose the API listing endpoint, but can be changed using the `holon.swagger.path` property.
-
-The API listing endpoint supports the `type` query parameter name to obtain the Swagger API definitions either in *JSON*, using the `json` parameter value (the default format), or in *YAML*, using the `yaml` parameter value.
-
-For example, for a configuration like the following:
-
-.application.yml
-[source, yaml]
-----
-holon:
-  swagger:
-    version: "v1"
-    title: "Test Swagger API"
-    resource-package: "my.api.endpoints"
-    path: "docs"
-    pretty-print: true
-----
-
-The `my.api.endpoints` package is scanned to detect JAX-RS API resources and the API listing endpoint will be available at the `http(s):host/docs` URL.
-
-===== Configure multiple API listing endpoints
-
-Multiple API listing endpoints configuration is supported using the `holon.swagger.api-groups` configuration property, which accept a list of API _groups_, each bound to a specific API _package_ to scan and which can be independently configured using the <<SwaggerConfigurationProperties>>.
-
-For each API group, an API listing endpoint will be available at the base API listing path (`/api-docs` by default, or the one configured with the `holon.swagger.path` property at the root level) followed by the `group-id` property name. For example: `http(s):host/api-docs/one`.
-
-If a `group-id` is not specified, the `default` group id will be used and the API listing endpoint will be available at the base API listing path.
-
-For example, for a configuration like the following:
-
-.application.yml
-[source, yaml]
-----
-holon:
-  swagger:
-    version: "v1"
-    title: "Test Swagger API"
-    
-    api-groups:
-      - group-id: "one" 
-        resource-package: "my.api.endpoints.one"
-        description: "The API group 1"
-        path: docs/one
-      - group-id: "two"
-        resource-package: "my.api.endpoints.two"
-        description: "The API group 2"
-        path: docs/two
-----
-
-Two API groups are defined:
-
-* The group 1, bound to the `my.api.endpoints.one` package and for which the API listing endpoint will be available at the `http(s):host/docs/one` URL.
-* The group 2, bound to the `my.api.endpoints.two` package and for which the API listing endpoint will be available at the `http(s):host/docs/two` URL.
-
-[[SwaggerConfigurationProperties]]
-==== Swagger configuration properties
-
-.Common configuration properties
-|===
-|Name |Meaning
-
-|_holon.swagger._ *enabled*
-|Whether the Swagger API listing endpoints auto-configuration is enabled. Default is `true`.
-
-|_holon.swagger._ *resourcePackage*
-|The package name to scan to detect API endpoints
-
-|_holon.swagger._ *path*
-|API listing endpoint path. When at group level, is appended to the base API listing path.
-
-|_holon.swagger._ *schemes*
-|API supported protocol schemes list (`http`, `https`)
-
-|_holon.swagger._ *title*
-|API title
-
-|_holon.swagger._ *version*
-|API version
-
-|_holon.swagger._ *description*
-|API description
-
-|_holon.swagger._ *termsOfServiceUrl*
-|Terms of Service URL
-
-|_holon.swagger._ *contact*
-|Contact information
-
-|_holon.swagger._ *license*
-|License information
-
-|_holon.swagger._ *licenseUrl*
-|License URL
-
-|_holon.swagger._ *host*
-|API host name
-
-|_holon.swagger._ *pretty-print*
-|Whether to _pretty_ format API listing output (`true` or `false`)
-
-|_holon.swagger._ *api-groups*
-|Optional API groups. Each group can be configured using the properties listed below.
-|===
-
-.API group configuration properties
-|===
-|Name |Meaning
-
-|_holon.swagger.api-groups._ *group-id*
-|API group id, also used as API listing endpoint sub-path is group `path` is not specified
-
-|_holon.swagger.api-groups._ *resourcePackage*
-|The package name to scan to detect API group endpoints
-
-|_holon.swagger.api-groups._ *path*
-|API group listing endpoint path
-
-|_holon.swagger.api-groups._ *schemes*
-|API group supported protocol schemes list (`http`, `https`)
-
-|_holon.swagger.api-groups._ *title*
-|API group title
-
-|_holon.swagger.api-groups._ *version*
-|API group version
-
-|_holon.swagger.api-groups._ *description*
-|API group description
-
-|_holon.swagger.api-groups._ *termsOfServiceUrl*
-|Terms of Service URL
-
-|_holon.swagger.api-groups._ *contact*
-|Contact information
-
-|_holon.swagger.api-groups._ *license*
-|License information
-
-|_holon.swagger.api-groups._ *licenseUrl*
-|License URL
-|===
-
-[[SwaggerAPIEndpointAutoConfiguration]]
-==== Swagger API documentation endpoints auto-configuration
-
-If the `holon.swagger.resourcePackage` configuration property is not provided and no API groups are defined using the `holon.swagger.apiGroups.*` configuration properties, the Holon Swagger integration module will try to auto-configure the Swagger API listing endpoints, relying on the Swagger `@Api` annotation.
-
-IMPORTANT: Any JAX-RS `@Path` resource declared as a Spring bean which is annotated with the Swagger `@Api` annotation will be auto-detected and used to obtain the package name to use as Swagger API listing endpoint source.
-
-The default `/api-docs` path is used as the Swagger API listing mapping.
-
-To configure the API listing path and the API information properties, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiDefinition.html[ApiDefinition^] annotation can be used. The `@ApiDefinition` annotation can be used at package level (annotating a standard `package-info.java` class) or at resource class level.
-
-The `@ApiDefinition` allows to setup the Swagger API documentation general informations, providing attributes to set the same information which can be configured using the <<SwaggerConfigurationProperties>> property set.
-
-For example, given the following endpoint class:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger1,indent=0]
-----
-<1> Standard Swagger `@Api` annotation to scan and include the endopoint class in the API documentation
-<2> The API documentation _title_ is defined using the `@ApiDefinition` annotation
-<3> Declare the endpoint as a Spring bean
-<3> Standard Swagger annotations for the API documentation generation.
-
-A Swagger API listing endpoint will be automatic configured and mapped to the default JAX-RS path: `/api-docs`.
-
-To provide a different API listing endpoint mapping path, the `@ApiDefinition` annotation `value` can be used:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger2,indent=0]
-----
-<1> Map the Swagger API listing endpoint to the `/docs` path
-
-===== Multiple JAX-RS endpoint resources auto-configuration
-
-When more than one JAX-RS endpoint is auto-configured for Swagger API documentation, you must pay attention to the declared Swagger API listing endpoint **paths** declared using the `@ApiDefinition` annotation.
-
-All the JAX-RS endpoint classes bound to the same Swagger API documentation **path** will be merged into a **single Swagger API documentation configuration**. The API documentation configuration properties, if any, will be obtained form the available `@ApiDefinition` annotations which refer to the same path.
-
-WARNING: When the `@ApiDefinition` annotations attributes declared for the same path are not consistent, a configuration exception will be thrown at application startup. For example, if two JAX-RS endpoint classes are annotated with `@ApiDefinition(value="/docs", title = "Title1")` and `@ApiDefinition(value="/docs", title = "Title2")` a configuration exception will be thrown, since a unique API title for the path `/docs` cannot be determined.
-
-For example, given the following JAX-RS endpoints:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=swagger3,indent=0]
-----
-<1> Set the API listing path to `/docs1` and the API title to `Title 1`
-<2> Set the API listing path to `/docs1`
-<3> Set the API listing path to `/docs2` and the API title to `Title 2`
-
-Two Swagger API listing endpoints will be auto-configured:
-
-* One mapped to the `/docs1` path, which will provide the documentation for both `ExampleEndpoint3a` and `ExampleEndpoint3b` operations. The configured API title will be `Title 1`.
-
-* Another mapped to the `/docs2` path, which will only provide the documentation for the `ExampleEndpoint3c` operations. The configured API title will be `Title 2`.
 
 [[V2andV3]]
 === Enabling Swagger V2 and V3 API endpoints simultaneously
 
 TBD
+
+=== ApiDefinition annotation deprecation
+
+TBD 
+
