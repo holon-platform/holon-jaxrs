@@ -46,9 +46,9 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	 * Default is <code>true</code>.
 	 * </p>
 	 * <p>
-	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.ApiOperation</code> annotated
-	 * resource methods will be incuded. For Swagger/OpenAPI V3, only the
-	 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be incuded.
+	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.Api</code> annotated
+	 * resource classes will be included. For Swagger/OpenAPI V3, only the
+	 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be included.
 	 * </p>
 	 */
 	private boolean includeAll = true;
