@@ -41,6 +41,7 @@ import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.ApiReader;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
+import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
@@ -250,6 +251,34 @@ public class ExampleSwagger {
 
 	}
 	// end::multi2[]
+
+	// tag::apicontextid[]
+	@ApiContextId("group1")
+	@Path("resource1")
+	public class Resource1 {
+
+		@GET
+		@Path("ping")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String ping() {
+			return "pong";
+		}
+
+	}
+
+	@ApiContextId("group2")
+	@Path("resource2")
+	public class Resource2 {
+
+		@GET
+		@Path("ping")
+		@Produces(MediaType.TEXT_PLAIN)
+		public String ping() {
+			return "pong";
+		}
+
+	}
+	// end::apicontextid[]
 
 	private static PropertyBox getSubjectById(int id) {
 		return null;

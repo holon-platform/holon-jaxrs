@@ -817,8 +817,39 @@ The `version` property value (`v1`) will be inherited by both the group 1 and gr
 [[ApiContextId]]
 ===== Using the `ApiContextId` annotation to group the API resources
 
-TBD
+As an alternative to the API resources package prefix grouping mode, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiContextId.html[ApiContextId^] annotation can be used to group the API resource classes.
 
+The `@ApiContextId` annotation can be used on API resource classes to specify the API definition *context id* to which the API resource class belongs. Each class will be included in the API definition with a matching context id.
+
+The API context id for a API definition group can be declared in the following way:
+
+* If the bean based API configuration mode is used, the context id can be declared for each API configuration bean through the `contextId` attribute of the `@ApiConfiguration` annotation.
+* If the application properties based API configuration mode is used, the API context id of each API definition group coincides with the *group id*.
+
+For example, given the following configuration:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    api-groups:
+      - group-id: 'group1'
+        title: 'API group 1'
+        path: 'docs1'
+      - group-id: 'group2'
+        title: 'API group 2'
+        path: 'docs2'
+----
+
+And the following API resource classes:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=apicontextid,indent=0]
+----
+
+The `Resource1` class will be included in the `group1` API definition group (and so available from the Swagger API definition endpoint mapped to the `docs1` path), while the `Resource2` class will be included in the `group2` API definition group (and so available from the Swagger API definition endpoint mapped to the `docs2` path).
 
 [[V2andV3]]
 === Enabling Swagger V2 and V3 API endpoints simultaneously
