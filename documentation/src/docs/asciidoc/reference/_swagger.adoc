@@ -539,6 +539,16 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |Boolean
 |`false`
 
+|holon.swagger.*v2.path*
+|Specific API definition endpoint JAX-RS path for Swagger API specification version 2. Overrides the default `holon.swagger.path` when the Swagger V2 integration is available from classpath. See <<V2andV3>>.
+|String
+|_None_
+
+|holon.swagger.*v3.path*
+|Specific API definition endpoint JAX-RS path for Swagger/OpenAPI specification version 3. Overrides the default `holon.swagger.path` when the Swagger V3 integration is available from classpath. See <<V2andV3>>.
+|String
+|_None_
+
 |===
 
 *3. API definition configuration:*
@@ -611,6 +621,11 @@ The link:{apidir}/com/holonplatform/jaxrs/swagger/spring/SwaggerConfigurationPro
 |String
 |_None_
 
+|holon.swagger.*security*
+|The API security requirements definition. See the example below.
+|A List of (String, List<String>) pairs
+|_None_
+
 |===
 
 *4. Deprecated API definition properties*, from version 5.2.x:
@@ -645,6 +660,11 @@ holon:
     type: PATH_PARAMETER
     scanner-type: APPLICATION_AND_ANNOTATION
     pretty-print: true
+    security:
+      - name: 'requirement 1'
+        value: 'value1'
+      - name: 'requirement 2'
+        value: 'value2,value3'
 ----
 
 In the example above the Swagger API definition endpoint will be mapped to the `docs` path. The Swagger API definition endpoint will be of `PATH_PARAMETER` type and the API resources scan strategy to use is setted to `APPLICATION_AND_ANNOTATION`.
