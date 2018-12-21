@@ -82,7 +82,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Constructor.
 	 * @param configurationProperties API configuration properties
-	 * @param configurations API configurations provider
+	 * @param apiConfigurations API configurations provider
 	 * @param apiEndpointBuilder API endpoint builder
 	 */
 	public AbstractJaxrsApiEndpointsAutoConfiguration(SwaggerConfigurationProperties configurationProperties,

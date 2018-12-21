@@ -46,7 +46,7 @@ public class TestJerseyAutoConfigurationDisable {
 
 	@LocalServerPort
 	private int port;
-	
+
 	@Path("test")
 	public static class MyEndpoint {
 

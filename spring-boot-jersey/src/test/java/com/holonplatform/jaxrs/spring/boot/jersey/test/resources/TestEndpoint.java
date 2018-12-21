@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Path("test")
 @Component
-//@Scope("request")
+// @Scope("request")
 public class TestEndpoint {
 
 	@GET

@@ -55,6 +55,7 @@ public interface SwaggerV3 {
 
 	/**
 	 * Convert given API definition in JSON format.
+	 * @param api The API model to serialize
 	 * @param pretty Whether to pretty format the output
 	 * @return The API definition as JSON
 	 */
@@ -68,6 +69,7 @@ public interface SwaggerV3 {
 
 	/**
 	 * Convert given API definition in JSON format.
+	 * @param api The API model to serialize
 	 * @return The API definition as JSON
 	 */
 	static String asJson(OpenAPI api) {
@@ -76,6 +78,7 @@ public interface SwaggerV3 {
 
 	/**
 	 * Convert given API definition in YAML format.
+	 * @param api The API model to serialize
 	 * @param pretty Whether to pretty format the output
 	 * @return The API definition as YAML
 	 */
@@ -89,6 +92,7 @@ public interface SwaggerV3 {
 
 	/**
 	 * Convert given API definition in YAML format.
+	 * @param api The API model to serialize
 	 * @return The API definition as YAML
 	 */
 	static String asYaml(OpenAPI api) {

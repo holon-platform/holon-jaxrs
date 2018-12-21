@@ -29,7 +29,7 @@ import com.holonplatform.http.HttpHeaders;
 @Authenticate(schemes = HttpHeaders.SCHEME_BASIC)
 @Path("testauth")
 @Component
-//@Scope("request")
+// @Scope("request")
 public class TestAuthEndpoint {
 
 	@PermitAll
