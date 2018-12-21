@@ -854,7 +854,50 @@ The `Resource1` class will be included in the `group1` API definition group (and
 [[V2andV3]]
 === Enabling Swagger V2 and V3 API endpoints simultaneously
 
-TBD
+If both Swagger API specification version 2 and version 3 endpoints should be registered in the same application, it is perfectly safe to include *both* the `holon-jaxrs-swagger-v2` and `holon-jaxrs-swagger-v3` artifacts in classpath, enabling the Swagger API version 2 and version 3 integration simultaneously.
+
+When using a property based API definition configuration, you have to ensure each Swagger API definition endpoints is mapped to a *different JAX-RS path*, to avoid path conflicts between the Swagger version 2 and version 3 API definition endpoints.
+
+For this purpose the `holon.swagger.v2.path` and the `holon.swagger.v3.path` configuration properties can be used instead of the default `holon.swagger.path` property, to declare the Swagger version 2 and version 3 API definition endpoint path respectively.
+
+For example:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    title: 'My title'
+    version: '1.0.0'
+    v2:
+      path: 'docs/v2'
+    v3:
+      path: 'docs/v3'
+----
+
+Similarly, the specific v2/v3 configuration property can be used for API definition groups:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    title: 'My title'
+    version: '1.0.0'
+    api-groups:
+      - group-id: 'group1'
+        resource-package: 'my.resource.package.group1'
+        v2:
+          path: 'docs1/v2'
+        v3:
+          path: 'docs1/v3'
+      - group-id: 'group2'
+        resource-package: 'my.resource.package.group2'
+        v2:
+          path: 'docs2/v2'
+        v3:
+          path: 'docs2/v3'
+----
 
 === Disabling the Swagger API endpoints auto-configuration
 
