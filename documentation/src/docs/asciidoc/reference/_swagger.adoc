@@ -901,7 +901,47 @@ holon:
 
 === Disabling the Swagger API endpoints auto-configuration
 
-TBD
+The Spring Boot Swagger API definition endpoints auto configuration can be disabled in the following ways:
+
+*1.* Setting the `holon.swagger.enabled` configuration property to `false`:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    enabled: false
+----
+
+*2.* Excluding the _Jersey_ or _Resteasy_ auto configuration class form the Spring Boot auto configuration classes.
+
+For Swagger API specification *version 2*:
+
+.Jersey
+[source, java]
+----
+@EnableAutoConfiguration(exclude={JerseySwaggerV2AutoConfiguration.class})
+----
+
+.Resteasy
+[source, java]
+----
+@EnableAutoConfiguration(exclude={ResteasySwaggerV2AutoConfiguration.class})
+----
+
+For Swagger/OpenAPI specification *version 3*:
+
+.Jersey
+[source, java]
+----
+@EnableAutoConfiguration(exclude={JerseySwaggerV3AutoConfiguration.class})
+----
+
+.Resteasy
+[source, java]
+----
+@EnableAutoConfiguration(exclude={ResteasySwaggerV3AutoConfiguration.class})
+----
 
 === ApiDefinition annotation deprecation
 
