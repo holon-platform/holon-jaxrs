@@ -943,7 +943,9 @@ For Swagger/OpenAPI specification *version 3*:
 @EnableAutoConfiguration(exclude={ResteasySwaggerV3AutoConfiguration.class})
 ----
 
-=== ApiDefinition annotation deprecation
+[[ApiDefinitionDeprecation]]
+=== `ApiDefinition` annotation deprecation
 
-TBD 
+The `@ApiDefinition` annotation, which can be used until Holon Platform version 5.1.x to group the API resource classes (using the API endpoint path as discriminator) is *deprecated* and should be replaced by the context-based `@ApiContextId` annotation.
 
+See <<ApiContextId>>.
