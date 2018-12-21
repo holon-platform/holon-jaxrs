@@ -679,6 +679,8 @@ The required configuration bean type depends on the Swagger API specification ve
 * For Swagger API specification *version 2*: A `io.swagger.config.SwaggerConfig` bean type is required.
 * For Swagger/OpenAPI specification *version 3*: A `io.swagger.v3.oas.integration.api.OpenAPIConfiguration` bean type is required.
 
+IMPORTANT: When a suitable API configuration bean is available in the application context, it will be used for API definition endpoints auto-configuration and *any `holon.swagger.*` configuration property will be ignored*.
+
 .Swagger V2
 [source, java]
 ----
@@ -732,7 +734,85 @@ See below to learn how to group the API resource classes to create different API
 [[ResourcePackages]]
 ===== Using a package prefix to group the API resources
 
-TBD
+When a *package prefix* is used to group the API resources, each API definition group will contain the API resource classes which package name starts with the specified package prefix.
+
+The package prefix can be specified either using a API configuration bean or using the `holon.swagger.api-groups` configuration property.
+
+*1. Bean based API configuration:* 
+
+One or more package prefix can be configured using a Swagger API configuration bean. See <<BeanConfiguration>> for information about the bean class to use for Swagger API definition version 2 or version 3.
+
+The `@ApiConfiguration` annotation can be used on each API configuration bean to specify the API definition endpoint JAX-RS *path*.
+
+.Swagger V2 API groups configuration
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=multi1,indent=0]
+----
+<1> API group 1 configuration: will include the API resource classes which package name starts with the `my.resource.package.group1` package name. The API definition endpoint is mapped to the `docs1` path.
+<2> API group 2 configuration: will include the API resource classes which package name starts with the `my.resource.package.group2` package name. The API definition endpoint is mapped to the `docs2` path. 
+
+.Swagger V3 API groups configuration
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=multi2,indent=0]
+----
+<1> API group 1 configuration: will include the API resource classes which package name starts with the `my.resource.package.group1` package name. The API definition endpoint is mapped to the `docs1` path.
+<2> API group 2 configuration: will include the API resource classes which package name starts with the `my.resource.package.group2` package name. The API definition endpoint is mapped to the `docs2` path. 
+
+*1. Application properties based API configuration:*
+
+When the Spring Boot application configuration properties are used for Swagger API definition endpoints configuration, the `holon.swagger.api-groups` configuration property can be used to declare a set of API definition groups.
+
+Each group should provide a *group id* (which will be used as API definition context id) and an optional set of API definition and API endpoint configuration properties. The available configuration properties for each group are the same of the default Swagger configuration property set. See <<PropertiesConfiguration>>.
+
+The package prefix to use for each API definition group can be specified using the `resource-package` configuration property. The property allows to specify more than one package prefix for each group, using a comma (`,`) as separator.
+
+For example, given the following configuration:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    api-groups:
+      - group-id: 'group1'
+        title: 'API group 1'
+        resource-package: 'my.resource.package.group1'
+        path: 'docs1'
+      - group-id: 'group2'
+        title: 'API group 2'
+        resource-package: 'my.resource.package.group2'
+        path: 'docs2'
+----
+
+Two API definition endpoints will be configured:
+
+* One for the `group1` API definition with title _API group 1_, including the API resource classes which package name starts with the `my.resource.package.group1` package name, mapped to the `docs1` path.
+* And one for the `group2` API definition with title _API group 2_, including the API resource classes which package name starts with the `my.resource.package.group2` package name, mapped to the `docs2` path.
+
+The _root level_ API configuration properties are *inherited by each API group definition*, if the corresponding property is not explicitly specified in the group property set.
+
+For example, given the following configuration:
+
+.application.yml
+[source, yaml]
+----
+holon:
+  swagger:
+    version: 'v1'
+    api-groups:
+      - group-id: 'group1'
+        title: 'API group 1'
+        resource-package: 'my.resource.package.group1'
+        path: 'docs1'
+      - group-id: 'group2'
+        title: 'API group 2'
+        resource-package: 'my.resource.package.group2'
+        path: 'docs2'
+----
+
+The `version` property value (`v1`) will be inherited by both the group 1 and group 2 API definition. 
 
 [[ApiContextId]]
 ===== Using the `ApiContextId` annotation to group the API resources
@@ -742,6 +822,10 @@ TBD
 
 [[V2andV3]]
 === Enabling Swagger V2 and V3 API endpoints simultaneously
+
+TBD
+
+=== Disabling the Swagger API endpoints auto-configuration
 
 TBD
 

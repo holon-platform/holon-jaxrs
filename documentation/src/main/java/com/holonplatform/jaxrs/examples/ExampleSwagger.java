@@ -19,6 +19,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collections;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -197,6 +198,58 @@ public class ExampleSwagger {
 
 	}
 	// end::beanconfig4[]
+
+	// tag::multi1[]
+	@ApiConfiguration(path = "docs1") // <1>
+	@Component
+	public class ApiConfigV2Group1 extends BeanConfig {
+
+		public ApiConfigV2Group1() {
+			super();
+			setTitle("API group 1");
+			setResourcePackage("my.resource.package.group1");
+		}
+
+	}
+
+	@ApiConfiguration(path = "docs2") // <2>
+	@Component
+	public class ApiConfigV2Group2 extends BeanConfig {
+
+		public ApiConfigV2Group2() {
+			super();
+			setTitle("API group 2");
+			setResourcePackage("my.resource.package.group2");
+		}
+
+	}
+	// end::multi1[]
+
+	// tag::multi2[]
+	@ApiConfiguration(path = "docs1") // <1>
+	@Component
+	public class ApiConfigV3Group1 extends SwaggerConfiguration {
+
+		public ApiConfigV3Group1() {
+			super();
+			setOpenAPI(new OpenAPI().info(new Info().title("API group 1")));
+			setResourcePackages(Collections.singleton("my.resource.package.group1"));
+		}
+
+	}
+
+	@ApiConfiguration(path = "docs2") // <2>
+	@Component
+	public class ApiConfigV3Group2 extends SwaggerConfiguration {
+
+		public ApiConfigV3Group2() {
+			super();
+			setOpenAPI(new OpenAPI().info(new Info().title("API group 2")));
+			setResourcePackages(Collections.singleton("my.resource.package.group2"));
+		}
+
+	}
+	// end::multi2[]
 
 	private static PropertyBox getSubjectById(int id) {
 		return null;
