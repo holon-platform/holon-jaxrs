@@ -66,8 +66,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	/**
 	 * Constructor.
 	 * @param configurationProperties API configuration properties
-	 * @param configurations API configurations provider
-	 * @param apiEndpointBuilder API endpoint builder
+	 * @param apiConfigurations API configurations provider
 	 */
 	public AbstractSwaggerV3AutoConfiguration(SwaggerConfigurationProperties configurationProperties,
 			ObjectProvider<OpenAPIConfiguration> apiConfigurations) {

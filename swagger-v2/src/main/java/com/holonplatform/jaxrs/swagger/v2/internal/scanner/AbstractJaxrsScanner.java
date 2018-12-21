@@ -98,7 +98,7 @@ public abstract class AbstractJaxrsScanner extends AbstractScanner implements Ja
 
 	/**
 	 * Get the JAX-RS {@link Application} resource classes.
-	 * @param The JAX-RS application
+	 * @param application The JAX-RS application
 	 * @return The resource classes
 	 */
 	protected Set<Class<?>> getApplicationClasses(Application application) {
