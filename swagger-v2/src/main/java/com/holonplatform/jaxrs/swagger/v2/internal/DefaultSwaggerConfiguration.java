@@ -18,12 +18,14 @@ package com.holonplatform.jaxrs.swagger.v2.internal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.ExternalDocs;
+import io.swagger.models.SecurityRequirement;
 
 /**
  * Default {@link SwaggerConfiguration} implementation.
@@ -40,6 +42,8 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 	private boolean readAllResources = true;
 
 	private ExternalDocs externalDocs;
+
+	private List<SecurityRequirement> security;
 
 	/**
 	 * Default constructor.
@@ -81,6 +85,7 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 		setPrettyPrint(config.getPrettyPrint());
 		if (config instanceof SwaggerConfiguration) {
 			setExternalDocs(((SwaggerConfiguration) config).getExternalDocs());
+			setSecurity(((SwaggerConfiguration) config).getSecurity());
 		}
 	}
 
@@ -212,6 +217,23 @@ public class DefaultSwaggerConfiguration extends BeanConfig implements SwaggerCo
 	 */
 	public void setExternalDocs(ExternalDocs externalDocs) {
 		this.externalDocs = externalDocs;
+	}
+
+	/**
+	 * Get the security requirements.
+	 * @return the security requirements
+	 */
+	@Override
+	public List<SecurityRequirement> getSecurity() {
+		return security;
+	}
+
+	/**
+	 * Set the security requirements.
+	 * @param security the security requirements to set
+	 */
+	public void setSecurity(List<SecurityRequirement> security) {
+		this.security = security;
 	}
 
 }

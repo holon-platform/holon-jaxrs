@@ -15,8 +15,10 @@
  */
 package com.holonplatform.jaxrs.swagger.spring;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -46,9 +48,9 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	 * Default is <code>true</code>.
 	 * </p>
 	 * <p>
-	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.Api</code> annotated
-	 * resource classes will be included. For Swagger/OpenAPI V3, only the
-	 * <code>io.swagger.v3.oas.annotations.Operation</code> annotated resource methods will be included.
+	 * If <code>false</code>: For Swagger V2, only the <code>io.swagger.annotations.Api</code> annotated resource
+	 * classes will be included. For Swagger/OpenAPI V3, only the <code>io.swagger.v3.oas.annotations.Operation</code>
+	 * annotated resource methods will be included.
 	 * </p>
 	 */
 	private boolean includeAll = true;
@@ -185,6 +187,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	 * The API server configuration
 	 */
 	private Server server;
+
+	/**
+	 * API security requirements.
+	 */
+	private List<Security> security;
 
 	/**
 	 * Whether to <em>pretty</em> format the API listing output.
@@ -461,6 +468,28 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		return null;
 	}
 
+	public List<Security> getSecurity() {
+		return security;
+	}
+
+	public void setSecurity(List<Security> security) {
+		this.security = security;
+	}
+
+	@Override
+	public List<Map<String, List<String>>> getSecurityRequirements() {
+		if (getSecurity() != null) {
+			final List<Map<String, List<String>>> sr = new LinkedList<>();
+			for (Security security : getSecurity()) {
+				if (security.getName() != null && security.getValue() != null && !security.getValue().isEmpty()) {
+					sr.add(Collections.singletonMap(security.getName(), security.getValue()));
+				}
+			}
+			return sr;
+		}
+		return Collections.emptyList();
+	}
+
 	@Override
 	public boolean isPrettyPrint() {
 		return prettyPrint;
@@ -652,6 +681,41 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 	}
 
 	/**
+	 * API security configuration.
+	 * 
+	 * @since 5.2.0
+	 */
+	public static class Security {
+
+		/**
+		 * Security requirement name.
+		 */
+		private String name;
+
+		/**
+		 * Security requirement value.
+		 */
+		private List<String> value;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public List<String> getValue() {
+			return value;
+		}
+
+		public void setValue(List<String> value) {
+			this.value = value;
+		}
+
+	}
+
+	/**
 	 * API group configuration.
 	 */
 	public static class ApiGroupConfiguration implements ApiConfigurationProperties {
@@ -780,6 +844,11 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 		 * The API server configuration
 		 */
 		private Server server;
+
+		/**
+		 * API security requirements.
+		 */
+		private List<Security> security;
 
 		/**
 		 * Whether to <em>pretty</em> format the API listing output.
@@ -1016,6 +1085,28 @@ public class SwaggerConfigurationProperties implements ApiConfigurationPropertie
 				return getServer().getDescription();
 			}
 			return null;
+		}
+
+		public List<Security> getSecurity() {
+			return security;
+		}
+
+		public void setSecurity(List<Security> security) {
+			this.security = security;
+		}
+
+		@Override
+		public List<Map<String, List<String>>> getSecurityRequirements() {
+			if (getSecurity() != null) {
+				final List<Map<String, List<String>>> sr = new LinkedList<>();
+				for (Security security : getSecurity()) {
+					if (security.getName() != null && security.getValue() != null && !security.getValue().isEmpty()) {
+						sr.add(Collections.singletonMap(security.getName(), security.getValue()));
+					}
+				}
+				return sr;
+			}
+			return Collections.emptyList();
 		}
 
 		@Override

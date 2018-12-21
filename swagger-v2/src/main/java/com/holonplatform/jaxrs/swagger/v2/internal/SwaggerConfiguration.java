@@ -16,10 +16,12 @@
 package com.holonplatform.jaxrs.swagger.v2.internal;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import io.swagger.config.SwaggerConfig;
 import io.swagger.models.ExternalDocs;
+import io.swagger.models.SecurityRequirement;
 
 /**
  * Extended Swagger configuration.
@@ -75,11 +77,17 @@ public interface SwaggerConfiguration extends SwaggerConfig {
 	 * @param prettyPrint whether to pretty print the API output
 	 */
 	void setPrettyPrint(boolean prettyPrint);
-	
+
 	/**
 	 * Get the external docs reference
 	 * @return the external docs
 	 */
 	ExternalDocs getExternalDocs();
+
+	/**
+	 * Get the security requirements
+	 * @return the security requirements
+	 */
+	List<SecurityRequirement> getSecurity();
 
 }

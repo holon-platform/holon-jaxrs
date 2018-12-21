@@ -176,4 +176,19 @@ holon:
     title: 'Title resteasy 2'
     version: '2.0.0'
     scanner-type: APPLICATION_AND_ANNOTATION
-        
+                
+---
+spring:
+  profiles: security1
+    
+holon:
+  swagger:
+    context-id: 'test_security_requirements_config_context_1'
+    title: 'Title security 1'
+    version: '3.0.0'
+    security:
+      - name: req1
+        value: val1
+      - name: req2
+        value: val2,val3
+    

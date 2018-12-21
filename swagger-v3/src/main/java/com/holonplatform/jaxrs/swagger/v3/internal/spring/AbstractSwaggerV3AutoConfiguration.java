@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -47,6 +48,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
 
 /**
@@ -260,6 +262,8 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			}
 			api.getExternalDocs().setDescription(v);
 		});
+		// security
+		setSecurityRequirements(api, configurationProperties.getSecurityRequirements());
 		// check parent
 		if (parent != null) {
 			if (info.getTitle() == null) {
@@ -343,6 +347,9 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 					api.getExternalDocs().setDescription(v);
 				});
 			}
+			if (api.getSecurity() == null || api.getSecurity().isEmpty()) {
+				setSecurityRequirements(api, parent.getSecurityRequirements());
+			}
 		}
 
 		// done
@@ -360,6 +367,27 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 			sb.append(applicationPath);
 		}
 		return sb.toString();
+	}
+
+	private static void setSecurityRequirements(OpenAPI api, List<Map<String, List<String>>> security) {
+		if (security != null) {
+			for (Map<String, List<String>> requirement : security) {
+				if (requirement != null) {
+					SecurityRequirement sr = new SecurityRequirement();
+					for (Entry<String, List<String>> entry : requirement.entrySet()) {
+						if (entry.getKey() != null && entry.getValue() != null) {
+							sr.addList(entry.getKey(), entry.getValue());
+						}
+					}
+					if (!sr.isEmpty()) {
+						if (api.getSecurity() == null) {
+							api.setSecurity(new LinkedList<>());
+						}
+						api.getSecurity().add(sr);
+					}
+				}
+			}
+		}
 	}
 
 	@Deprecated

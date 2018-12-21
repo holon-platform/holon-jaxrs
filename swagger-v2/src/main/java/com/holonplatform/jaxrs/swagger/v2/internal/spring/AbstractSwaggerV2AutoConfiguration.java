@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -47,6 +48,7 @@ import io.swagger.models.Contact;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import io.swagger.models.SecurityRequirement;
 
 /**
  * Base Swagger API listing endpoints auto-configuration.
@@ -266,6 +268,7 @@ public abstract class AbstractSwaggerV2AutoConfiguration<A extends Application>
 			}
 			cfg.getExternalDocs().setDescription(v);
 		});
+		setSecurityRequirements(cfg, configurationProperties.getSecurityRequirements());
 		// check parent
 		if (parent != null) {
 			if (info.getTitle() == null) {
@@ -341,10 +344,35 @@ public abstract class AbstractSwaggerV2AutoConfiguration<A extends Application>
 					cfg.getExternalDocs().setDescription(v);
 				});
 			}
+			if (cfg.getSecurity() == null || cfg.getSecurity().isEmpty()) {
+				setSecurityRequirements(cfg, parent.getSecurityRequirements());
+			}
 		}
 
 		// done
 		return cfg;
+	}
+
+	private static void setSecurityRequirements(DefaultSwaggerConfiguration cfg,
+			List<Map<String, List<String>>> security) {
+		if (security != null) {
+			for (Map<String, List<String>> requirement : security) {
+				if (requirement != null) {
+					SecurityRequirement sr = new SecurityRequirement();
+					for (Entry<String, List<String>> entry : requirement.entrySet()) {
+						if (entry.getKey() != null && entry.getValue() != null) {
+							sr.setRequirements(entry.getKey(), entry.getValue());
+						}
+					}
+					if (!sr.getRequirements().isEmpty()) {
+						if (cfg.getSecurity() == null) {
+							cfg.setSecurity(new LinkedList<>());
+						}
+						cfg.getSecurity().add(sr);
+					}
+				}
+			}
+		}
 	}
 
 	@Deprecated

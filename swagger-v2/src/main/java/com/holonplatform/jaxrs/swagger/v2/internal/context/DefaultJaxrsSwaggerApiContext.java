@@ -16,6 +16,7 @@
 package com.holonplatform.jaxrs.swagger.v2.internal.context;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -233,8 +234,17 @@ public class DefaultJaxrsSwaggerApiContext implements JaxrsSwaggerApiContext {
 		}
 		// read
 		final Swagger api = adaptedReader.read(classes);
+		// check additional configuration
 		if (api.getExternalDocs() == null) {
 			api.setExternalDocs(config.getExternalDocs());
+		}
+		if (api.getSecurity() == null || api.getSecurity().isEmpty()) {
+			if (config.getSecurity() != null) {
+				if (api.getSecurity() == null) {
+					api.setSecurity(new LinkedList<>());
+				}
+				config.getSecurity().forEach(s -> api.getSecurity().add(s));
+			}
 		}
 		return config.configure(api);
 	}

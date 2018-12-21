@@ -18,6 +18,7 @@ package com.holonplatform.jaxrs.swagger.spring;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -181,6 +182,12 @@ public interface ApiConfigurationProperties {
 	 * @return the API server description
 	 */
 	String getServerDescription();
+
+	/**
+	 * Get the API security requirements.
+	 * @return the API security requirements
+	 */
+	public List<Map<String, List<String>>> getSecurityRequirements();
 
 	/**
 	 * Get whether the API output should be formatted.
