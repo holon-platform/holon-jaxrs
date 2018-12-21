@@ -719,7 +719,15 @@ Swagger API specification version 2 and 3 type configuration beans can coexist i
 [[MultipleEnpoints]]
 ==== Multiple API endpoints configuration
 
-TBD
+More than one Swagger API definition endpoint can be configured for the same application. This can be typically used to provide an API definition for a *different API resources subset* for each endpoint.
+
+IMPORTANT: Each API definition endpoint registered in the same application must be mapped to a *different JAX-RS path*.
+
+In this scenario, the default JAX-RS path (`api-docs`) cannot be used for every API definition endpoint when more than one is registered to avoid path conflicts.
+
+The API definition endpoint JAX-RS path can be declared using the `holon.swagger.path` configuration property (see <<PropertiesConfiguration>>) or the `path` attribute of the `@ApiConfiguration` annotation, if a bean based configuration is used (see <<BeanConfiguration>>).
+
+See below to learn how to group the API resource classes to create different API definition subsets.
 
 [[ResourcePackages]]
 ===== Using a package prefix to group the API resources
