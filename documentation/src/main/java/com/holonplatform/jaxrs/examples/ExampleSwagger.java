@@ -29,21 +29,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.stereotype.Component;
+
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.ApiReader;
+import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
+import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
 import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 
 @SuppressWarnings("unused")
 public class ExampleSwagger {
@@ -115,7 +120,8 @@ public class ExampleSwagger {
 	public void apireaderv2() {
 		// tag::apireaderv2[]
 		BeanConfig configuration = new BeanConfig();
-		configuration.setInfo(new Info().title("The title").version("1"));
+		configuration.setTitle("The title");
+		configuration.setVersion("1");
 
 		ApiReader<Swagger> reader = SwaggerV2.reader(configuration); // <1>
 
@@ -129,8 +135,7 @@ public class ExampleSwagger {
 	public void apireaderv3() {
 		// tag::apireaderv3[]
 		SwaggerConfiguration configuration = new SwaggerConfiguration();
-		configuration.setOpenAPI(
-				new OpenAPI().info(new io.swagger.v3.oas.models.info.Info().title("The title").version("1")));
+		configuration.setOpenAPI(new OpenAPI().info(new Info().title("The title").version("1")));
 
 		ApiReader<OpenAPI> reader = SwaggerV3.reader(configuration); // <1>
 
@@ -140,6 +145,58 @@ public class ExampleSwagger {
 		String yaml = SwaggerV3.asYaml(api); // <4>
 		// end::apireaderv3[]
 	}
+
+	// tag::beanconfig1[]
+	@Component
+	public class ApiConfigV2 extends BeanConfig {
+
+		public ApiConfigV2() {
+			super();
+			setTitle("Test bean config");
+			setVersion("1.0.0");
+		}
+
+	}
+	// end::beanconfig1[]
+
+	// tag::beanconfig2[]
+	@Component
+	public class ApiConfigV3 extends SwaggerConfiguration {
+
+		public ApiConfigV3() {
+			super();
+			setOpenAPI(new OpenAPI().info(new Info().title("Test bean config").version("1.0.0")));
+		}
+
+	}
+	// end::beanconfig2[]
+
+	// tag::beanconfig3[]
+	@ApiConfiguration(contextId = "my_context_id", path = "docs", endpointType = ApiEndpointType.ACCEPT_HEADER, scannerType = JaxrsScannerType.APPLICATION_AND_ANNOTATION)
+	@Component
+	public class ApiConfigV2b extends BeanConfig {
+
+		public ApiConfigV2b() {
+			super();
+			setTitle("Test bean config");
+			setVersion("1.0.0");
+		}
+
+	}
+	// end::beanconfig3[]
+
+	// tag::beanconfig4[]
+	@ApiConfiguration(contextId = "my_context_id", path = "docs", endpointType = ApiEndpointType.ACCEPT_HEADER, scannerType = JaxrsScannerType.APPLICATION_AND_ANNOTATION)
+	@Component
+	public class ApiConfigV3b extends SwaggerConfiguration {
+
+		public ApiConfigV3b() {
+			super();
+			setOpenAPI(new OpenAPI().info(new Info().title("Test bean config").version("1.0.0")));
+		}
+
+	}
+	// end::beanconfig4[]
 
 	private static PropertyBox getSubjectById(int id) {
 		return null;

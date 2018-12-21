@@ -672,7 +672,49 @@ In the example above the Swagger API definition endpoint will be mapped to the `
 [[BeanConfiguration]]
 ==== API and endpoints configuration using beans
 
-TBD
+Besides the <<PropertiesConfiguration>>, the API endpoints and the API definition can be configured using an appropriate configuration class, declared as a *Spring bean* in the application context.
+
+The required configuration bean type depends on the Swagger API specification version:
+
+* For Swagger API specification *version 2*: A `io.swagger.config.SwaggerConfig` bean type is required.
+* For Swagger/OpenAPI specification *version 3*: A `io.swagger.v3.oas.integration.api.OpenAPIConfiguration` bean type is required.
+
+.Swagger V2
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=beanconfig1,indent=0]
+----
+
+.Swagger V3
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=beanconfig2,indent=0]
+----
+
+For what concern the API definition endpoint, the link:{apidir}/com/holonplatform/jaxrs/swagger/annotations/ApiConfiguration.html[ApiConfiguration^] annotation can be used on the configuration bean classes.
+
+The `@ApiConfiguration` annotation allows to configure:
+
+* The API *context id* to which the API definition endpoint is bound, using the `contextId` attribute.
+* The JAX-RS *path* to which the API definition endpoint is mapped, using the `path` attribute.
+* The API definition *endpoint type*, using the `endpointType` attribute. See <<ApiEndpointType>>.
+* The *scanner type* to use to detect the API resource classes, using the `scannerType` attribute. See <<JaxrsScannerType>>.
+
+.Swagger V2 with ApiConfiguration annotation
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=beanconfig3,indent=0]
+----
+
+.Swagger V3 with ApiConfiguration annotation
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/jaxrs/examples/ExampleSwagger.java[tag=beanconfig4,indent=0]
+----
+
+More than one API configuration bean can be declared to register multiple Swagger API definition endpoints, see <<MultipleEnpoints>>.
+
+Swagger API specification version 2 and 3 type configuration beans can coexist in the same application context: see <<V2andV3>>.
 
 [[MultipleEnpoints]]
 ==== Multiple API endpoints configuration
