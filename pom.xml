@@ -58,13 +58,13 @@
 		<bintray.package>holon-jaxrs</bintray.package>
 
 		<!-- Holon core -->
-		<holon.core.version>5.2.0-rc1</holon.core.version>
+		<holon.core.version>5.2.0-rc2</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.2.0-rc1</holon.json.version>
+		<holon.json.version>5.2.0-rc2</holon.json.version>
 
 		<!-- Holon reactor -->
-		<holon.reactor.version>5.2.0-rc1</holon.reactor.version>
+		<holon.reactor.version>5.2.0-rc2</holon.reactor.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
