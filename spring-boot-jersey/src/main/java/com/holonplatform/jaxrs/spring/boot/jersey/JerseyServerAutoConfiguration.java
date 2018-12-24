@@ -26,8 +26,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.web.filter.RequestContextFilter;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostProcessor;
 
@@ -53,6 +56,16 @@ import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostPr
 @AutoConfigureBefore(JerseyAutoConfiguration.class)
 @EnableConfigurationProperties(JerseyConfigurationProperties.class)
 public class JerseyServerAutoConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean(name = { "requestContextFilter" })
+	public static FilterRegistrationBean<RequestContextFilter> requestContextFilter() {
+		FilterRegistrationBean<RequestContextFilter> registration = new FilterRegistrationBean<>();
+		registration.setFilter(new RequestContextFilter());
+		registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		registration.setName("requestContextFilter");
+		return registration;
+	}
 
 	@Configuration
 	@ConditionalOnMissingBean(ResourceConfig.class)
