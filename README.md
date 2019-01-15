@@ -74,9 +74,14 @@ public class SubjectEndpoint {
 ```
 
 _JAX-RS API documentation using Swagger:_
+```yaml
+holon:
+  swagger:
+    path: 'docs'
+    title: 'API title'
+    version: 'v1'
+```
 ```java
-@ApiDefinition(value = "/api-docs", title = "API Documentation title", version="1.0")
-@Api
 @Path("example")
 @Component
 public class Endpoint {
@@ -203,9 +208,9 @@ This module is tested against [Jersey](https://github.com/jersey) version __2.x_
 
 See [releases](https://github.com/holon-platform/holon-jaxrs/releases) for the available releases. Each release tag provides a link to the closed issues.
 
-#### 5.1.x release notes
+#### 5.2.x release notes
 
-See [What's new in version 5.1.x](https://docs.holon-platform.com/current/reference/holon-jaxrs.html#WhatsNew51x) to learn about the new features and API operations of the 5.1 minor release.
+See [What's new in version 5.2.x](https://docs.holon-platform.com/current/reference/holon-jaxrs.html#WhatsNew52x) to learn about the new features and API operations of the 5.2 minor release.
 
 ### Obtain the artifacts
 
@@ -219,7 +224,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.jaxrs</groupId>
         <artifactId>holon-jaxrs-bom</artifactId>
-        <version>5.1.2</version>
+        <version>5.2.0</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
