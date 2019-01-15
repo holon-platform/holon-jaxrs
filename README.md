@@ -1,14 +1,14 @@
 # Holon platform JAX-RS module
 
-> Latest release: [5.1.2](#obtain-the-artifacts)
+> Latest release: [5.2.0](#obtain-the-artifacts)
 
 This is the __JAX-RS__ module of the [Holon Platform](https://holon-platform.com), which provides support, components and configuration helpers concerning the [JAX-RS](https://github.com/jax-rs/spec/blob/master/spec.pdf) - _Java API for RESTful Web Service_ standard.
 
 The module main features are:
 
-* A _JAX-RS_ implementation of the core platform `RestClient` API, a complete and easy to use _RESTful web services_ Java client.
+* A _JAX-RS_ implementation of the core platform `RestClient` API, a complete and easy to use _RESTful web services_ Java client, including an __asynchronous__ and a __reactive__ (using Project Reactor) version.
 * A set of standard _JAX-RS_ components to implement server-side API __authentication and authorization__ using platform core APIs and services, such as `Realm` and `AuthContext`, in addition to standard `javax.annotation.security` standard annotations.
-* A complete integration with [Swagger](http://swagger.io) (_OpenAPI Specification_), including support for the `PropertyBox` core platform data container interface (to be exposed as a Swagger _Model_ definition) and for Swagger API listing endpoints (both in _JSON_ and _YAML_ formats) configuration.
+* A complete integration with [Swagger](http://swagger.io) _OpenAPI Specification_, __both for version 2 and 3__, including support for the `PropertyBox` core platform data container interface (to be exposed as a Swagger _Model_ definition) and for Swagger API listing endpoints (both in _JSON_ and _YAML_ formats) configuration.
 * __Spring Boot__ auto-configuration classes to automatically register suitable __Spring beans__ (for example beans annotated with `@Path` or `@Provider`) as resources in a _JAX-RS_ compliant server. 
 * __Spring Boot__ auto-configuration artifact to automatically enable and configure a [Resteasy](http://resteasy.jboss.org) server with Spring integration.
 * A set of __Spring Boot starters__ to setup _JAX-RS_ compliant clients and servers:
@@ -85,15 +85,15 @@ public class Endpoint {
 ```
 
 _JAX-RS authentication using JWT and Spring Boot:_
-```java
-// application.yml
+```yaml
 holon:
   jwt:
     signature-algorithm: HS256
     sharedkey-base64: eWGZLlCrUjtBZwxgzcLPnA
     expire-hours: 1
     issuer: example-issuer
-		
+```
+```java		
 // Ream with JWT authentication support
 @Bean
 public Realm realm(JwtConfiguration jwtConfiguration) {
