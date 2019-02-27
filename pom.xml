@@ -76,9 +76,9 @@
 		<resteasy.version>3.6.3.Final</resteasy.version>
 
 		<!-- Swagger V2 -->
-		<swagger.v2.version>1.5.21</swagger.v2.version>
+		<swagger.v2.version>1.5.22</swagger.v2.version>
 		<!-- Swagger V3 -->
-		<swagger.v3.version>2.0.6</swagger.v3.version>
+		<swagger.v3.version>2.0.7</swagger.v3.version>
 
 		<!-- ByteBuddy -->
 		<bytebuddy.version>1.9.10</bytebuddy.version>
