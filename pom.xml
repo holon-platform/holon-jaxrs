@@ -73,7 +73,7 @@
 		<jersey.version>2.27</jersey.version>
 
 		<!-- Resteasy -->
-		<resteasy.version>3.6.2.Final</resteasy.version>
+		<resteasy.version>3.6.3.Final</resteasy.version>
 
 		<!-- Swagger V2 -->
 		<swagger.v2.version>1.5.21</swagger.v2.version>
@@ -81,7 +81,7 @@
 		<swagger.v3.version>2.0.6</swagger.v3.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.9.7</bytebuddy.version>
+		<bytebuddy.version>1.9.10</bytebuddy.version>
 
 		<!-- Test -->
 		<jackson.test.version>2.9.8</jackson.test.version>
