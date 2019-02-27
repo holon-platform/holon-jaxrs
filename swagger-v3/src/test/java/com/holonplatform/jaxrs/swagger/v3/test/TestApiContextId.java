@@ -35,6 +35,7 @@ import com.holonplatform.jaxrs.swagger.v3.internal.context.JaxrsOpenApiContextBu
 import com.holonplatform.jaxrs.swagger.v3.test.model.Model1;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
+import io.swagger.v3.jaxrs2.integration.JaxrsApplicationScanner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -101,10 +102,12 @@ public class TestApiContextId {
 		// context 1
 		final SwaggerConfiguration configuration1 = new SwaggerConfiguration();
 		configuration1.setOpenAPI(new OpenAPI().info(new Info().title("Title of " + CONTEXT_1).version("1")));
+		configuration1.setScannerClass(JaxrsApplicationScanner.class.getName());
 
 		final OpenApiContext openApiContext1 = SwaggerV3
 				.adapt(new io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder<>().application(application)
-						.openApiConfiguration(configuration1).ctxId(CONTEXT_1).buildContext(true));
+						.openApiConfiguration(configuration1).ctxId(CONTEXT_1)
+						.buildContext(true));
 		OpenAPI api = openApiContext1.read();
 		validateApiContext1(api);
 

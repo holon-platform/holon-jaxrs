@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySetRef;
+import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 import com.holonplatform.jaxrs.swagger.v3.test.model.Model1;
 import com.holonplatform.jaxrs.swagger.v3.test.model.ModelOne;
@@ -52,6 +53,9 @@ import io.swagger.v3.oas.models.info.Info;
 
 public class TestOpenApiAnnotations {
 
+	private static final String CONTEXT = "com.holonplatform.jaxrs.swagger.v3.test.TestOpenApiAnnotations";
+	
+	@ApiContextId(CONTEXT)
 	@OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(title = "Test annotations", version = "0.1.2"))
 	@Path("resource")
 	private static class TestResource {

@@ -55,6 +55,7 @@ public class TestOpenApiEndpoints extends JerseyTest5 {
 
 	}
 
+	@ApiEndpoint(scannerType=JaxrsScannerType.APPLICATION)
 	@Path("openapi/query")
 	static class QueryOpenApiEndpoint extends QueryParamOpenApiEndpoint {
 
