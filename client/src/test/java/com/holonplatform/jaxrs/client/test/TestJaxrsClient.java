@@ -18,6 +18,7 @@ package com.holonplatform.jaxrs.client.test;
 import static com.holonplatform.core.property.PathProperty.create;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -63,7 +64,6 @@ import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.jaxrs.client.JaxrsRestClient;
 import com.holonplatform.test.JerseyTest5;
-import com.holonplatform.test.TestUtils;
 
 public class TestJaxrsClient extends JerseyTest5 {
 
@@ -372,7 +372,7 @@ public class TestJaxrsClient extends JerseyTest5 {
 		assertNotNull(error);
 		assertEquals("ERR000", error.getCode());
 
-		TestUtils.expectedException(UnsuccessfulResponseException.class, () -> {
+		assertThrows(UnsuccessfulResponseException.class, () -> {
 			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
 					.orElse(null);
 		});
