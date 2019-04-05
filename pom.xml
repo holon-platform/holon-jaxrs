@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.1.1</version>
+		<version>1.1.2</version>
 	</parent>
 
 	<groupId>com.holon-platform.jaxrs</groupId>
@@ -54,17 +56,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- pre-releases package name -->
-		<bintray.package>holon-jaxrs</bintray.package>
-
 		<!-- Holon core -->
-		<holon.core.version>5.2.1</holon.core.version>
+		<holon.core.version>5.2.2</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.2.1</holon.json.version>
+		<holon.json.version>5.2.2</holon.json.version>
 
 		<!-- Holon reactor -->
-		<holon.reactor.version>5.2.1</holon.reactor.version>
+		<holon.reactor.version>5.2.2</holon.reactor.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
@@ -143,7 +142,7 @@
 						<phase>package</phase>
 						<inherited>false</inherited>
 						<goals>
-							<goal>aggregate-jar</goal>
+							<goal>aggregate-no-fork</goal>
 						</goals>
 						<configuration>
 							<show>public</show>
