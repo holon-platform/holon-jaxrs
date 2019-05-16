@@ -2,7 +2,7 @@
 :description: Holon platform JAX-RS module reference documentation. \
 It concerns the platform JAX-RS and REST services support, including authentication and authorization, JWT support, Jersey and Resteasy integration, Swagger OpenAPI support, Spring framework integration and Spring Boot auto-configuration.
 :revnumber: {project-version}
-:apidir: ../api/holon-jax-rs
+:apidir: ../api/holon-jaxrs
 :coreapidir: ../api/holon-core
 :linkattrs:
 :sectnums:
