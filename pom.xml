@@ -75,7 +75,7 @@
 		<!-- Swagger V2 -->
 		<swagger.v2.version>1.5.22</swagger.v2.version>
 		<!-- Swagger V3 -->
-		<swagger.v3.version>2.0.7</swagger.v3.version>
+		<swagger.v3.version>2.0.8</swagger.v3.version>
 
 		<!-- ByteBuddy -->
 		<bytebuddy.version>1.9.12</bytebuddy.version>
