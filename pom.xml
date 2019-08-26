@@ -55,13 +55,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Holon core -->
-		<holon.core.version>5.2.3</holon.core.version>
+		<holon.core.version>5.3.0</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.2.3</holon.json.version>
+		<holon.json.version>5.3.0</holon.json.version>
 
 		<!-- Holon reactor -->
-		<holon.reactor.version>5.2.3</holon.reactor.version>
+		<holon.reactor.version>5.3.0</holon.reactor.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
