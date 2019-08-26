@@ -78,7 +78,7 @@
 		<swagger.v3.version>2.0.8</swagger.v3.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.9.12</bytebuddy.version>
+		<bytebuddy.version>1.10.1</bytebuddy.version>
 
 		<!-- Test -->
 		<jackson.test.version>2.9.9</jackson.test.version>
