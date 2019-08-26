@@ -67,7 +67,7 @@
 		<jax-rs.api.version>2.1</jax-rs.api.version>
 
 		<!-- Jersey -->
-		<jersey.version>2.27</jersey.version>
+		<jersey.version>2.29</jersey.version>
 
 		<!-- Resteasy -->
 		<resteasy.version>3.8.1.Final</resteasy.version>
