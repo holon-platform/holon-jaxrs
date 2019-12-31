@@ -1,6 +1,6 @@
 # Holon platform JAX-RS module
 
-> Latest release: [5.3.0](#obtain-the-artifacts)
+> Latest release: [5.4.1](#obtain-the-artifacts)
 
 This is the __JAX-RS__ module of the [Holon Platform](https://holon-platform.com), which provides support, components and configuration helpers concerning the [JAX-RS](https://github.com/jax-rs/spec/blob/master/spec.pdf) - _Java API for RESTful Web Service_ standard.
 
@@ -208,10 +208,6 @@ This module is tested against [Jersey](https://github.com/jersey) version __2.x_
 
 See [releases](https://github.com/holon-platform/holon-jaxrs/releases) for the available releases. Each release tag provides a link to the closed issues.
 
-#### 5.2.x release notes
-
-See [What's new in version 5.2.x](https://docs.holon-platform.com/current/reference/holon-jaxrs.html#WhatsNew52x) to learn about the new features and API operations of the 5.2 minor release.
-
 ### Obtain the artifacts
 
 The [Holon Platform](https://holon-platform.com) is open source and licensed under the [Apache 2.0 license](LICENSE.md). All the artifacts (including binaries, sources and javadocs) are available from the [Maven Central](https://mvnrepository.com/repos/central) repository.
@@ -224,7 +220,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.jaxrs</groupId>
         <artifactId>holon-jaxrs-bom</artifactId>
-        <version>5.3.0</version>
+        <version>5.4.1</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
