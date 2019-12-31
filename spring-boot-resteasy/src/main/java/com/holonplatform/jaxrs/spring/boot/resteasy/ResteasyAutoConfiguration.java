@@ -60,26 +60,31 @@ import org.springframework.util.StringUtils;
 import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapListener;
 
 /**
- * Spring boot auto configuration to setup Resteasy using a {@link ResteasyConfig} JAX-RS Application bean and
- * automatically register any JAX-RS resource which is declared as a Spring bean, such as {@link Path} and
+ * Spring boot auto configuration to setup Resteasy using a
+ * {@link ResteasyConfig} JAX-RS Application bean and automatically register any
+ * JAX-RS resource which is declared as a Spring bean, such as {@link Path} and
  * {@link Provider} annotated beans.
  * 
  * <p>
- * If a {@link ResteasyConfig} bean is not provided in Spring context, a default one will be created and registered
- * automatically. You can use {@link ResteasyConfig} class to explicitly register JAX-RS endpoint/provider classes,
- * singleton resources and configuration properties.
+ * If a {@link ResteasyConfig} bean is not provided in Spring context, a default
+ * one will be created and registered automatically. You can use
+ * {@link ResteasyConfig} class to explicitly register JAX-RS endpoint/provider
+ * classes, singleton resources and configuration properties.
  * </p>
  * 
  * <p>
- * The {@link ResteasyConfigCustomizer} interface can be used to customize application resources registration. Any
- * Spring bean which implements such interface is automatically detected and the
+ * The {@link ResteasyConfigCustomizer} interface can be used to customize
+ * application resources registration. Any Spring bean which implements such
+ * interface is automatically detected and the
  * {@link ResteasyConfigCustomizer#customize(ResteasyConfig)} method is invoked.
  * </p>
  * 
  * <p>
- * The Resteasy JAX-RS application path can be defined either using the {@link ApplicationPath} annotation on the
- * {@link ResteasyConfig} bean class or through the <code>holon.resteasy.application-path</code> configuration property.
- * See {@link ResteasyConfigurationProperties} for a list of available configuration properties.
+ * The Resteasy JAX-RS application path can be defined either using the
+ * {@link ApplicationPath} annotation on the {@link ResteasyConfig} bean class
+ * or through the <code>holon.resteasy.application-path</code> configuration
+ * property. See {@link ResteasyConfigurationProperties} for a list of available
+ * configuration properties.
  * </p>
  * 
  * @since 5.0.0
@@ -134,7 +139,7 @@ public class ResteasyAutoConfiguration {
 
 	@Bean
 	public static SpringBeanProcessor resteasySpringBeanProcessor() {
-		final ResteasyProviderFactory resteasyProviderFactory = new ResteasyProviderFactory();
+		final ResteasyProviderFactory resteasyProviderFactory = ResteasyProviderFactory.getInstance();
 		final ResourceMethodRegistry resourceMethodRegistry = new ResourceMethodRegistry(resteasyProviderFactory);
 
 		SpringBeanProcessor springBeanProcessor = new SpringBeanProcessor();

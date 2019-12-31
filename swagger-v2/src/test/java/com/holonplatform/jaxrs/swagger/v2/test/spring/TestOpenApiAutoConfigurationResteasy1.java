@@ -94,7 +94,8 @@ public class TestOpenApiAutoConfigurationResteasy1 {
 	@SuppressWarnings("resource")
 	@Test
 	public void testOpenApi() {
-		final Client client = new ResteasyClientBuilder().build();
+		final Client client = ResteasyClientBuilder.newClient();
+
 		// json
 		Response response = client.target("http://localhost:" + port).path("api-docs").queryParam("type", "json")
 				.request().get();
