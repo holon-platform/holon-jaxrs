@@ -35,15 +35,15 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 
 	private static final long serialVersionUID = 930451863047563827L;
 
-	private ClassLoader classLoader;
-	private Application application;
+	private transient ClassLoader classLoader;
+	private transient Application application;
 	private Set<String> rootResourcePackages;
 	private ApiEndpointType type;
 	private JaxrsScannerType scannerType;
 	private String contextId;
 	private String path;
 	private String configurationLocation;
-	private C configuration;
+	private transient C configuration;
 
 	public DefaultApiEndpointConfiguration() {
 		super();

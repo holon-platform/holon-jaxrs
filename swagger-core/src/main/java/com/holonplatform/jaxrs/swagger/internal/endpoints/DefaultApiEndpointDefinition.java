@@ -36,7 +36,7 @@ public class DefaultApiEndpointDefinition implements ApiEndpointDefinition {
 	private final JaxrsScannerType scannerType;
 	private final String path;
 	private final String contextId;
-	private final Callable<Void> initializer;
+	private final transient Callable<Void> initializer;
 
 	private boolean initialized = false;
 

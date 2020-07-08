@@ -82,8 +82,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Constructor.
 	 * @param configurationProperties API configuration properties
-	 * @param apiConfigurations API configurations provider
-	 * @param apiEndpointBuilder API endpoint builder
+	 * @param apiConfigurations       API configurations provider
+	 * @param apiEndpointBuilder      API endpoint builder
 	 */
 	public AbstractJaxrsApiEndpointsAutoConfiguration(SwaggerConfigurationProperties configurationProperties,
 			ObjectProvider<C> apiConfigurations, ApiEndpointBuilder<C> apiEndpointBuilder) {
@@ -116,8 +116,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Build an API configuration using given configuration properties.
 	 * @param configurationProperties The API configuration properties
-	 * @param parent Optional parent configuration properties
-	 * @param applicationPath Application path
+	 * @param parent                  Optional parent configuration properties
+	 * @param applicationPath         Application path
 	 * @return The API configuration
 	 */
 	protected abstract C buildConfiguration(ApiConfigurationProperties configurationProperties,
@@ -126,13 +126,16 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Register given endpoint class in the JAX-RS application.
 	 * @param application The JAX-RS application
-	 * @param endpoint The endpoint definition to register
+	 * @param endpoint    The endpoint definition to register
 	 */
 	protected abstract void registerEndpoint(A application, ApiEndpointDefinition endpoint);
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.springframework.beans.factory.BeanClassLoaderAware#setBeanClassLoader(java.lang.ClassLoader)
+	 * 
+	 * @see
+	 * org.springframework.beans.factory.BeanClassLoaderAware#setBeanClassLoader(
+	 * java.lang.ClassLoader)
 	 */
 	@Override
 	public void setBeanClassLoader(ClassLoader classLoader) {
@@ -141,8 +144,9 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
+	 * 
+	 * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.
+	 * springframework.beans.factory.BeanFactory)
 	 */
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -227,6 +231,13 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 		return configurations;
 	}
 
+	/**
+	 * Get legacy API definitions
+	 * @param application JAX-RS Application
+	 * @return The contextId - configuration properties, empty if none
+	 * @deprecated Use <code>ApiConfigurationProperties</code> from Swagger
+	 *             configuration properties
+	 */
 	@Deprecated
 	private Map<String, ApiConfigurationProperties> getApiDefinitionConfigurations(A application) {
 		Map<String, ApiConfigurationProperties> cfgs = new HashMap<>();
@@ -274,9 +285,9 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/**
 	 * Register an API listing endpoint using given configuration.
-	 * @param application The JAX-RS application
+	 * @param application   The JAX-RS application
 	 * @param configuration The API configuration
-	 * @param contextId The API context id
+	 * @param contextId     The API context id
 	 * @return The API endpoint definition
 	 */
 	private ApiEndpointDefinition configureAndRegisterEndpoint(A application, C configuration, String contextId) {
@@ -307,10 +318,10 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/**
 	 * Register an API listing endpoint using given configuration properties.
-	 * @param application The JAX-RS application
+	 * @param application             The JAX-RS application
 	 * @param configurationProperties The API configuration properties
-	 * @param parent Optional parent configuration properties
-	 * @param contextId The API context id
+	 * @param parent                  Optional parent configuration properties
+	 * @param contextId               The API context id
 	 * @return The API endpoint definition
 	 */
 	private ApiEndpointDefinition configureAndRegisterEndpoint(A application,
@@ -355,7 +366,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Get the API endpoint path.
 	 * @param configuration The API configuration
-	 * @param contextId The API context id
+	 * @param contextId     The API context id
 	 * @return the API endpoint path
 	 */
 	private String getApiEndpointPath(C configuration, String contextId) {
@@ -391,8 +402,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	/**
 	 * Get the API endpoint path.
 	 * @param configurationProperties API configuration properties
-	 * @param contextId The API context id
-	 * @param appendContextId Whether to append the context id, if available
+	 * @param contextId               The API context id
+	 * @param appendContextId         Whether to append the context id, if available
 	 * @return the API endpoint path
 	 */
 	private String getApiEndpointPath(ApiConfigurationProperties configurationProperties, String contextId) {
@@ -485,7 +496,7 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 
 	/**
 	 * Get the default API listing endpoint path.
-	 * @param contextId Optional API context id
+	 * @param contextId       Optional API context id
 	 * @param appendContextId Whether to append the context id, if available
 	 * @return the default API listing endpoint path
 	 */
@@ -498,7 +509,8 @@ public abstract class AbstractJaxrsApiEndpointsAutoConfiguration<A extends Appli
 	}
 
 	/**
-	 * Get a configuration property value, only if it is not <code>null</code> and not blank.
+	 * Get a configuration property value, only if it is not <code>null</code> and
+	 * not blank.
 	 * @param value The value
 	 * @return Optional configuration property value
 	 */
