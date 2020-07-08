@@ -15,33 +15,25 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
-import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.ReaderListener;
+import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * A {@link ReaderListener} to provide the current {@link OpenAPI} resolution context.
+ * A {@link ReaderListener} to provide the current {@link OpenAPI} resolution
+ * context.
  *
  * @since 5.2.0
  */
 public class OpenApiContextListener implements ReaderListener {
 
-	/*
-	 * (non-Javadoc)
-	 * @see io.swagger.v3.jaxrs2.ReaderListener#beforeScan(io.swagger.v3.jaxrs2.Reader,
-	 * io.swagger.v3.oas.models.OpenAPI)
-	 */
 	@Override
-	public void beforeScan(Reader reader, OpenAPI openAPI) {
+	public void beforeScan(OpenApiReader reader, OpenAPI openAPI) {
 		OpenApiResolutionContext.setOpenAPI(openAPI);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see io.swagger.v3.jaxrs2.ReaderListener#afterScan(io.swagger.v3.jaxrs2.Reader, io.swagger.v3.oas.models.OpenAPI)
-	 */
 	@Override
-	public void afterScan(Reader reader, OpenAPI openAPI) {
+	public void afterScan(OpenApiReader reader, OpenAPI openAPI) {
 		OpenApiResolutionContext.includeSchemas();
 		OpenApiResolutionContext.removeOpenAPI();
 	}
