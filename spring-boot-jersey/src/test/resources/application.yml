@@ -4,24 +4,30 @@ spring:
   
 ---
 spring:
-  profiles: path
+  config:
+    activate:
+      on-profile: path
   
   jersey:
     application-path: api
     
 ---
 spring:
-  profiles: filter
-  
+  config:
+    activate:
+      on-profile: filter
+      
   jersey:
-    type: filter
+    type: servlet
 
 ---
 spring:
-  profiles: filter2
+  config:
+    activate:
+      on-profile: filter2
   
   jersey:
-    type: filter
+    type: servlet
     
 holon:
   jersey:

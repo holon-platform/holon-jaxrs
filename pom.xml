@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.1.6</version>
+		<version>1.2.0</version>
 	</parent>
 
 	<groupId>com.holon-platform.jaxrs</groupId>
@@ -55,19 +55,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Holon core -->
-		<holon.core.version>5.5.0</holon.core.version>
+		<holon.core.version>5.7.0</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.5.0</holon.json.version>
+		<holon.json.version>5.7.0</holon.json.version>
 
 		<!-- Holon reactor -->
-		<holon.reactor.version>5.5.0</holon.reactor.version>
+		<holon.reactor.version>5.7.1</holon.reactor.version>
 
 		<!-- JAX-RS API -->
 		<jax-rs.api.version>2.1</jax-rs.api.version>
 
 		<!-- Jersey -->
-		<jersey.version>2.31</jersey.version>
+		<jersey.version>2.35</jersey.version>
 
 		<!-- Resteasy -->
 		<resteasy.version>4.5.5.Final</resteasy.version>
@@ -78,13 +78,13 @@
 		<swagger.v3.version>2.1.3</swagger.v3.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.10.13</bytebuddy.version>
+		<bytebuddy.version>1.12.23</bytebuddy.version>
 
 		<!-- Test -->
-		<jackson.test.version>2.11.1</jackson.test.version>
+		<jackson.test.version>2.13.5</jackson.test.version>
 
 		<!-- Optional -->
-		<slf4j.version>1.7.30</slf4j.version>
+		<slf4j.version>1.7.36</slf4j.version>
 
 	</properties>
 

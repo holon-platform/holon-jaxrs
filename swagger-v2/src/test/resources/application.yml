@@ -4,15 +4,18 @@ spring:
    
 ---
 spring:
-  profiles: disabled
-  
+  config:
+    activate:
+      on-profile: disabled  
 holon:
   swagger:
     enabled: false
      
 ---
 spring:
-  profiles: path1
+  config:
+    activate:
+      on-profile: path1
   
 holon:
   swagger:
@@ -21,7 +24,9 @@ holon:
 
 ---
 spring:
-  profiles: path2
+  config:
+    activate:
+      on-profile: path2
   
   jersey:
     application-path: api
@@ -34,10 +39,12 @@ holon:
 
 ---
 spring:
-  profiles: path3
+  config:
+    activate:
+      on-profile: path3
   
   jersey:
-    type: filter
+    type: servlet
     
 holon:
   swagger:
@@ -47,7 +54,9 @@ holon:
 
 ---
 spring:
-  profiles: path4
+  config:
+    activate:
+      on-profile: path4
   
 holon:
   swagger:
@@ -58,7 +67,9 @@ holon:
 
 ---
 spring:
-  profiles: packages1
+  config:
+    activate:
+      on-profile: packages1
   
 holon:
   swagger:
@@ -67,7 +78,9 @@ holon:
 
 ---
 spring:
-  profiles: packages2
+  config:
+    activate:
+      on-profile: packages2
   
 holon:
   swagger:
@@ -76,7 +89,9 @@ holon:
 
 ---
 spring:
-  profiles: config1
+  config:
+    activate:
+      on-profile: config1
   
 holon:
   swagger:
@@ -102,7 +117,9 @@ holon:
 
 ---
 spring:
-  profiles: config2
+  config:
+    activate:
+      on-profile: config2
   
 holon:
   swagger:
@@ -117,7 +134,9 @@ holon:
 
 ---
 spring:
-  profiles: groups1
+  config:
+    activate:
+      on-profile: groups1
   
 holon:
   swagger:
@@ -135,7 +154,9 @@ holon:
 
 ---
 spring:
-  profiles: groups2
+  config:
+    activate:
+      on-profile: groups2
   
 holon:
   swagger:
@@ -152,7 +173,9 @@ holon:
 
 ---
 spring:
-  profiles: groups3_legacy
+  config:
+    activate:
+      on-profile: groups3_legacy
   
 holon:
   swagger:
@@ -168,7 +191,9 @@ holon:
 
 ---
 spring:
-  profiles: resteasy2
+  config:
+    activate:
+      on-profile: resteasy2
     
 holon:
   swagger:
@@ -179,7 +204,9 @@ holon:
                 
 ---
 spring:
-  profiles: security1
+  config:
+    activate:
+      on-profile: security1
     
 holon:
   swagger:
