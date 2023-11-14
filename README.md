@@ -1,6 +1,6 @@
 # Holon platform JAX-RS module
 
-> Latest release: [5.5.0](#obtain-the-artifacts)
+> Latest release: [5.7.0](#obtain-the-artifacts)
 
 This is the __JAX-RS__ module of the [Holon Platform](https://holon-platform.com), which provides support, components and configuration helpers concerning the [JAX-RS](https://github.com/jax-rs/spec/blob/master/spec.pdf) - _Java API for RESTful Web Service_ standard.
 
@@ -198,7 +198,7 @@ See [Holon Platform code structure and conventions](https://github.com/holon-pla
 
 ### System requirements
 
-The Holon Platform is built using __Java 8__, so you need a JRE/JDK version 8 or above to use the platform artifacts.
+The Holon Platform is built using __Java 11__, so you need a JRE/JDK version 11 or above to use the platform artifacts.
 
 The __JAX-RS__ specification version __2.0 or above__ is required.
 
@@ -220,7 +220,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.jaxrs</groupId>
         <artifactId>holon-jaxrs-bom</artifactId>
-        <version>5.5.0</version>
+        <version>5.7.0</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
