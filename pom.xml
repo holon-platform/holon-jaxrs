@@ -75,8 +75,6 @@
 		<!-- Resteasy -->
 		<resteasy.version>6.2.12.Final</resteasy.version>
 
-		<!-- Swagger V2 -->
-		<swagger.v2.version>1.6.15</swagger.v2.version>
 		<!-- Swagger V3 -->
 		<swagger.v3.version>2.2.30</swagger.v3.version>
 
@@ -98,8 +96,6 @@
 		<module>server</module>
 		<module>spring-security</module>
 		<module>swagger-core</module>
-		<module>swagger</module> <!-- Deprecated -->
-		<module>swagger-v2</module>
 		<module>swagger-v3</module>
 		<module>spring-boot-client</module>
 		<module>spring-boot-jersey</module>

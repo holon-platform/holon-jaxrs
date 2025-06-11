@@ -42,21 +42,9 @@
 			</dependency>
 
 			<!-- Swagger integration -->
-			<!-- <dependency>
-				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-jaxrs-swagger-v2</artifactId>
-				<version>${project.version}</version>
-			</dependency> -->
 			<dependency>
 				<groupId>com.holon-platform.jaxrs</groupId>
 				<artifactId>holon-jaxrs-swagger-v3</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<!-- Deprecated -->
-			<dependency>
-				<groupId>com.holon-platform.jaxrs</groupId>
-				<artifactId>holon-jaxrs-swagger</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

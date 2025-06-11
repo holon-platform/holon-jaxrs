@@ -89,14 +89,7 @@
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		
-		<!-- <dependency>
-			<groupId>com.holon-platform.jaxrs</groupId>
-			<artifactId>holon-jaxrs-swagger-v2</artifactId>
-			<version>5.7.0</version>
-		</dependency>-->
-		
+		</dependency>		
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-swagger-v3</artifactId>

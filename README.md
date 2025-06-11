@@ -290,7 +290,6 @@ Artifact id | Description
 `holon-jaxrs-client-reactor` | Reactive `RestClient` API JAX-RS implementation using Project Reactor
 `holon-jaxrs-server` | JAX-RS server-side __authentication and authorization__ features using platform core APIs and services, such as `Realm` and `AuthContext`
 `holon-jaxrs-swagger-core` | Core Swagger integration API and annotations
-`holon-jaxrs-swagger-v2` | [Swagger](http://swagger.io) specification version 2 integration: JAX-RS API listing endpoints auto-configuration with `PropertyBox` support
 `holon-jaxrs-swagger-v3` | [Swagger/OpenAPI](http://swagger.io) specification version 3 integration: JAX-RS API listing endpoints auto-configuration with `PropertyBox` support
 `holon-jaxrs-spring-boot-client` | `JaxrsClientBuilder` __Spring Boot__ auto-configuration
 `holon-jaxrs-spring-boot-jersey` | [Jersey](https://github.com/jersey) auto-configuration with automatic registration of Spring beans as JAX-RS resources 
