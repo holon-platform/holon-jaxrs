@@ -30,24 +30,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -67,6 +49,24 @@ import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.jaxrs.client.reactor.JaxrsReactiveRestClient;
 import com.holonplatform.reactor.http.ReactiveRestClient;
 import com.holonplatform.test.JerseyTest5;
+
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.container.AsyncResponse;
+import jakarta.ws.rs.container.Suspended;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.StreamingOutput;
 
 public class TestReactiveJaxrsClient extends JerseyTest5 {
 
@@ -309,7 +309,7 @@ public class TestReactiveJaxrsClient extends JerseyTest5 {
 						.getForEntity(PropertyBox.class))
 				.doOnSuccess(box -> {
 					assertNotNull(box);
-					assertEquals(new Integer(1), box.getValue(CODE));
+					assertEquals(Integer.valueOf(1), box.getValue(CODE));
 					assertEquals("value1", box.getValue(VALUE));
 				}).then(client.request().path("test").path("box/{id}").resolve("id", 1).propertySet(PROPERTIES)
 						.get(PropertyBox.class))
@@ -317,7 +317,7 @@ public class TestReactiveJaxrsClient extends JerseyTest5 {
 					assertEquals(HttpStatus.OK, rsp2.getStatus());
 					PropertyBox box = rsp2.getPayload().orElse(null);
 					assertNotNull(box);
-					assertEquals(new Integer(1), box.getValue(CODE));
+					assertEquals(Integer.valueOf(1), box.getValue(CODE));
 					assertEquals("value1", box.getValue(VALUE));
 				}).then(client.request().path("test").path("boxes").propertySet(PROPERTIES).getAsList(PropertyBox.class)
 						.collectList())
@@ -327,12 +327,12 @@ public class TestReactiveJaxrsClient extends JerseyTest5 {
 
 					PropertyBox box = boxes.get(0);
 					assertNotNull(box);
-					assertEquals(new Integer(1), box.getValue(CODE));
+					assertEquals(Integer.valueOf(1), box.getValue(CODE));
 					assertEquals("value1", box.getValue(VALUE));
 
 					box = boxes.get(1);
 					assertNotNull(box);
-					assertEquals(new Integer(2), box.getValue(CODE));
+					assertEquals(Integer.valueOf(2), box.getValue(CODE));
 					assertEquals("value2", box.getValue(VALUE));
 				})
 				.then(client.request().path("test").path("boxes").propertySet(PROPERTIES).getAsList(PropertyBox.class)

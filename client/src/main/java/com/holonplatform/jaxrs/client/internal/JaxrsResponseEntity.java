@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.NoContentException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.NoContentException;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.exceptions.HttpEntityProcessingException;

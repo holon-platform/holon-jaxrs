@@ -22,16 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
@@ -54,7 +54,7 @@ public class TestFormData extends JerseyTest5 {
 		A, B;
 	}
 
-	static final Property<String> STR = PathProperty.create("str", String.class);
+	static final Property<String> STR1 = PathProperty.create("str", String.class);
 	static final Property<Integer> INT = PathProperty.create("itg", Integer.class);
 	static final Property<Double> DBL = PathProperty.create("dbl", Double.class);
 	static final Property<Boolean> BLN = PathProperty.create("bln", Boolean.class);
@@ -62,7 +62,7 @@ public class TestFormData extends JerseyTest5 {
 	static final Property<Date> DAT1 = PathProperty.create("dat1", Date.class);
 	static final Property<Date> DAT2 = PathProperty.create("dat2", Date.class).temporalType(TemporalType.DATE);
 
-	public static final PropertySet<?> SET = PropertySet.of(STR, INT, DBL, BLN, ENM, DAT1, DAT2);
+	public static final PropertySet<?> SET = PropertySet.of(STR1, INT, DBL, BLN, ENM, DAT1, DAT2);
 
 	@BeforeAll
 	static void setup() {
@@ -76,7 +76,7 @@ public class TestFormData extends JerseyTest5 {
 		@Path("get/{id}")
 		@Produces(MediaType.APPLICATION_FORM_URLENCODED)
 		public PropertyBox getBox(@PathParam("id") int id) {
-			return PropertyBox.builder(SET).set(INT, id).set(STR, "" + id).set(DBL, (id + 0.5)).build();
+			return PropertyBox.builder(SET).set(INT, id).set(STR1, "" + id).set(DBL, (id + 0.5)).build();
 		}
 
 		@POST
@@ -107,7 +107,7 @@ public class TestFormData extends JerseyTest5 {
 		assertNotNull(box);
 		assertEquals(Integer.valueOf(1), box.getValue(INT));
 		assertEquals(Double.valueOf(1.5), box.getValue(DBL));
-		assertEquals("1", box.getValue(STR));
+		assertEquals("1", box.getValue(STR1));
 
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.MILLISECOND, 0);
@@ -118,7 +118,7 @@ public class TestFormData extends JerseyTest5 {
 		c.set(Calendar.MONTH, 2);
 		c.set(Calendar.YEAR, 2020);
 
-		box = PropertyBox.builder(SET).set(INT, 1).set(STR, "value1").set(DBL, 7.5).set(BLN, true).set(ENM, TestEnum.B)
+		box = PropertyBox.builder(SET).set(INT, 1).set(STR1, "value1").set(DBL, 7.5).set(BLN, true).set(ENM, TestEnum.B)
 				.set(DAT1, c.getTime()).set(DAT2, c.getTime()).build();
 
 		try (Response response = target("/test/post").request()
@@ -129,7 +129,7 @@ public class TestFormData extends JerseyTest5 {
 			box = SET.execute(() -> response.readEntity(PropertyBox.class));
 			assertEquals(Integer.valueOf(1), box.getValue(INT));
 			assertEquals(Double.valueOf(7.5), box.getValue(DBL));
-			assertEquals("value1", box.getValue(STR));
+			assertEquals("value1", box.getValue(STR1));
 			assertTrue(box.getValue(BLN));
 			assertEquals(TestEnum.B, box.getValue(ENM));
 

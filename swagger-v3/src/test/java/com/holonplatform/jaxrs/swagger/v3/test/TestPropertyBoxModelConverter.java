@@ -20,7 +20,7 @@ import static com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation.va
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.junit.jupiter.api.Test;
 

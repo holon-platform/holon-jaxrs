@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,7 +29,6 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.ResourceConfigCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 import com.holonplatform.jaxrs.swagger.ApiDefaults;
@@ -66,7 +66,7 @@ import io.swagger.jaxrs.config.BeanConfig;
  *
  * @since 5.2.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(name = { "org.glassfish.jersey.server.ResourceConfig", "io.swagger.models.Swagger" })
 @ConditionalOnBean(type = "org.glassfish.jersey.server.ResourceConfig")
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE - 1000)

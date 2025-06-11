@@ -17,12 +17,12 @@ package com.holonplatform.jaxrs.server.internal.auth;
 
 import java.io.IOException;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Providers;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.ext.Providers;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.exceptions.AuthenticationException;
@@ -63,7 +63,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.container.ContainerRequestFilter#filter(javax.ws.rs.container.ContainerRequestContext)
+	 * @see jakarta.ws.rs.container.ContainerRequestFilter#filter(jakarta.ws.rs.container.ContainerRequestContext)
 	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {

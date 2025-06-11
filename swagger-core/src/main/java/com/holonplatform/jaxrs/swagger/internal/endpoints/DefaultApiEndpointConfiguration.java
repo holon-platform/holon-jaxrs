@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
@@ -266,7 +266,7 @@ public class DefaultApiEndpointConfiguration<C> implements ApiEndpointConfigurat
 		/*
 		 * (non-Javadoc)
 		 * @see
-		 * com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#application(javax.ws.rs.core.Application)
+		 * com.holonplatform.jaxrs.swagger.ApiEndpointConfiguration.Builder#application(jakarta.ws.rs.core.Application)
 		 */
 		@Override
 		public Builder<C> application(Application application) {

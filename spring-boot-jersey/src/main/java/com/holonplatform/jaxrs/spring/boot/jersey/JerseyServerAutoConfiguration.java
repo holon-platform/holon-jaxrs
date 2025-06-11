@@ -15,11 +15,9 @@
  */
 package com.holonplatform.jaxrs.spring.boot.jersey;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,16 +29,20 @@ import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostProcessor;
 
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.ext.Provider;
+
 /**
  * Jersey JAX-RS server auto configuration.
  * <p>
- * If a {@link ResourceConfig} type bean is not already defined, a standard {@link ResourceConfig} bean is automatically
- * registered.
+ * If a {@link ResourceConfig} type bean is not already defined, a standard {@link ResourceConfig}
+ * bean is automatically registered.
  * </p>
  * <p>
- * Any bean annotated with {@link Path} or {@link Provider} is detected and automatically registered as a JAX-RS
- * resource. To disable automatic resource scan and registration, the <code>holon.jersey.bean-scan</code> configuration
- * property with a <code>false</code> value can be used.
+ * Any bean annotated with {@link Path} or {@link Provider} is detected and automatically registered
+ * as a JAX-RS resource. To disable automatic resource scan and registration, the
+ * <code>holon.jersey.bean-scan</code> configuration property with a <code>false</code> value can be
+ * used.
  * </p>
  * <p>
  * Note that {@link Provider} annotated bean must be <em>singleton</em> scoped.
@@ -48,7 +50,7 @@ import com.holonplatform.jaxrs.spring.boot.jersey.internal.JerseyResourcesPostPr
  * 
  * @since 5.0.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(ResourceConfig.class)
 @AutoConfigureBefore(JerseyAutoConfiguration.class)
 @EnableConfigurationProperties(JerseyConfigurationProperties.class)

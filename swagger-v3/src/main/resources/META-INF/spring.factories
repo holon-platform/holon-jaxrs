@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.holonplatform.jaxrs.swagger.v3.spring.JerseySwaggerV3AutoConfiguration,\
-com.holonplatform.jaxrs.swagger.v3.spring.ResteasySwaggerV3AutoConfiguration

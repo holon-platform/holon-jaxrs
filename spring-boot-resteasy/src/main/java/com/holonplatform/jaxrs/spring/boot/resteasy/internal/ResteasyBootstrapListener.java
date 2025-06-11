@@ -15,9 +15,9 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy.internal;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import org.jboss.resteasy.core.AsynchronousDispatcher;
 import org.jboss.resteasy.core.ResourceMethodRegistry;
@@ -51,7 +51,7 @@ public class ResteasyBootstrapListener implements ServletContextListener {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+	 * @see jakarta.servlet.ServletContextListener#contextInitialized(jakarta.servlet.ServletContextEvent)
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -89,7 +89,7 @@ public class ResteasyBootstrapListener implements ServletContextListener {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+	 * @see jakarta.servlet.ServletContextListener#contextDestroyed(jakarta.servlet.ServletContextEvent)
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {

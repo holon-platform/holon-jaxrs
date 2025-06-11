@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.test.resources.context1;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.springframework.stereotype.Component;
 

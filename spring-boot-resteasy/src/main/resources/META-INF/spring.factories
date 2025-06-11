@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAutoConfiguration,\
-com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfigAutoConfiguration,\
-com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyAuthAutoConfiguration

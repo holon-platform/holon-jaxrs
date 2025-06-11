@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.client;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 import com.holonplatform.async.http.AsyncRestClient;
 import com.holonplatform.jaxrs.client.internal.JaxrsClientAsyncRestClient;

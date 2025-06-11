@@ -17,9 +17,9 @@ package com.holonplatform.jaxrs.client.internal;
 
 import java.io.IOException;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.ext.ReaderInterceptor;
-import javax.ws.rs.ext.ReaderInterceptorContext;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.ext.ReaderInterceptor;
+import jakarta.ws.rs.ext.ReaderInterceptorContext;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -55,7 +55,7 @@ public class PropertyBoxReaderInterceptor implements ReaderInterceptor {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.ext.ReaderInterceptor#aroundReadFrom(javax.ws.rs.ext.ReaderInterceptorContext)
+	 * @see jakarta.ws.rs.ext.ReaderInterceptor#aroundReadFrom(jakarta.ws.rs.ext.ReaderInterceptorContext)
 	 */
 	@Override
 	public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {

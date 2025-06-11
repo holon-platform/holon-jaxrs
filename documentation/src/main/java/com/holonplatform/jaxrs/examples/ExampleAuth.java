@@ -17,12 +17,12 @@ package com.holonplatform.jaxrs.examples;
 
 import java.util.Optional;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
@@ -128,7 +128,7 @@ public class ExampleAuth {
 	@GET
 	@Path("name")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getPrincipalName(@javax.ws.rs.core.Context SecurityContext securityContext) {
+	public String getPrincipalName(@jakarta.ws.rs.core.Context SecurityContext securityContext) {
 		JaxrsAuthenticationInspector inspector = JaxrsAuthenticationInspector.of(securityContext); // <1>
 
 		boolean isAuthenticated = inspector.isAuthenticated(); // <2>

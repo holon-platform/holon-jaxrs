@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Optional;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationInspector;

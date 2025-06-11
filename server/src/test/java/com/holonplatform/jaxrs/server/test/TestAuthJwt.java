@@ -21,28 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.crypto.SecretKey;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Providers;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -68,8 +47,28 @@ import com.holonplatform.jaxrs.server.ResourceUtils;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 import com.holonplatform.test.JerseyTest5;
 
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
+import io.jsonwebtoken.Jwts;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Providers;
 
 public class TestAuthJwt extends JerseyTest5 {
 
@@ -192,7 +191,7 @@ public class TestAuthJwt extends JerseyTest5 {
 			return Optional.ofNullable(account);
 		};
 
-		final SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
+		final SecretKey key = Jwts.SIG.HS256.key().build();
 
 		final JwtConfiguration cfg = JwtConfiguration.builder().issuer("AuthIssuer").includeDetails(true)
 				.includePermissions(true).signatureAlgorithm(JwtSignatureAlgorithm.HS256).sharedKey(key.getEncoded())

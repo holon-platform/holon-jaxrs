@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.spring.boot;
 
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.ClientBuilder;
 
 /**
  * Callback interface that can be used to customize a JAX-RS {@link ClientBuilder} obtained with a

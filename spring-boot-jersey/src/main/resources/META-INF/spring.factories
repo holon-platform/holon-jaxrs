@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.holonplatform.jaxrs.spring.boot.jersey.JerseyServerAutoConfiguration,\
-com.holonplatform.jaxrs.spring.boot.jersey.JerseyAuthAutoConfiguration

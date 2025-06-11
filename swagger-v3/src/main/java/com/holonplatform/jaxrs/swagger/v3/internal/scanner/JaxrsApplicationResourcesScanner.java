@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -68,7 +68,7 @@ public class JaxrsApplicationResourcesScanner implements JaxrsOpenApiScanner {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner#setApplication(javax.ws.rs.core.Application)
+	 * @see io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner#setApplication(jakarta.ws.rs.core.Application)
 	 */
 	@Override
 	public void setApplication(Application application) {

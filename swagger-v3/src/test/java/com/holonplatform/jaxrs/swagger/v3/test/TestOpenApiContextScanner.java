@@ -18,7 +18,7 @@ package com.holonplatform.jaxrs.swagger.v3.test;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;

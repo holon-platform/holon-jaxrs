@@ -17,7 +17,7 @@ package com.holonplatform.jaxrs.spring.boot.internal;
 
 import java.util.Optional;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.Logger;

@@ -24,8 +24,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationListener;
@@ -126,7 +126,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#registerEndpoint(javax
+	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#registerEndpoint(jakarta
 	 * .ws.rs.core.Application, com.holonplatform.jaxrs.swagger.ApiEndpointDefinition)
 	 */
 	@Override
@@ -160,7 +160,7 @@ public abstract class AbstractSwaggerV3AutoConfiguration<A extends Application>
 	 * (non-Javadoc)
 	 * @see
 	 * com.holonplatform.jaxrs.swagger.internal.spring.AbstractJaxrsApiEndpointsAutoConfiguration#getApplicationPath(
-	 * javax.ws.rs.core.Application)
+	 * jakarta.ws.rs.core.Application)
 	 */
 	@Override
 	protected Optional<String> getApplicationPath(A application) {

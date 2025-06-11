@@ -18,8 +18,8 @@ package com.holonplatform.jaxrs.server;
 import java.io.Serializable;
 import java.util.Optional;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Providers;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Providers;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.ClassUtils;

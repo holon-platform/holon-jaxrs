@@ -17,9 +17,9 @@ package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
 import java.util.Collections;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.UriInfo;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint;
@@ -42,8 +42,10 @@ public abstract class AbstractOpenApiEndpoint extends AbstractJaxrsApiEndpoint<O
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApi(java.lang.String,
-	 * javax.ws.rs.core.Application, javax.ws.rs.core.HttpHeaders, javax.ws.rs.core.UriInfo)
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApi(java.lang.
+	 * String, jakarta.ws.rs.core.Application, jakarta.ws.rs.core.HttpHeaders,
+	 * jakarta.ws.rs.core.UriInfo)
 	 */
 	@Override
 	protected ApiDefinition<OpenAPI> getApi(String contextId, Application application, HttpHeaders headers,
@@ -74,7 +76,8 @@ public abstract class AbstractOpenApiEndpoint extends AbstractJaxrsApiEndpoint<O
 				&& openApiContext.getOpenApiConfiguration().getFilterClass() != null) {
 			try {
 				OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class
-						.forName(openApiContext.getOpenApiConfiguration().getFilterClass()).newInstance();
+						.forName(openApiContext.getOpenApiConfiguration().getFilterClass()).getDeclaredConstructor()
+						.newInstance();
 				SpecFilter f = new SpecFilter();
 				api = f.filter(api, filterImpl, Collections.unmodifiableMap(uriInfo.getQueryParameters()),
 						getCookies(headers), Collections.unmodifiableMap(headers.getRequestHeaders()));
@@ -96,8 +99,9 @@ public abstract class AbstractOpenApiEndpoint extends AbstractJaxrsApiEndpoint<O
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApiOutput(com.holonplatform.jaxrs.
-	 * swagger.internal.endpoints.AbstractJaxrsApiEndpoint.OutputType, java.lang.Object, boolean)
+	 * com.holonplatform.jaxrs.swagger.internal.endpoints.AbstractJaxrsApiEndpoint#getApiOutput(com.
+	 * holonplatform.jaxrs. swagger.internal.endpoints.AbstractJaxrsApiEndpoint.OutputType,
+	 * java.lang.Object, boolean)
 	 */
 	@Override
 	protected String getApiOutput(OutputType outputType, OpenAPI api, boolean pretty) throws Exception {

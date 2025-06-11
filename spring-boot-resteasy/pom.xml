@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -11,9 +13,15 @@
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Holon JAX-RS Resteasy server auto-configuration using Spring Boot</description>
+	<description>Holon JAX-RS Resteasy server auto-configuration using Spring
+		Boot</description>
 
 	<url>https://holon-platform.com</url>
+
+	<properties>
+		<!-- Resteasy Spring -->
+		<resteasy-spring.version>3.2.0.Final</resteasy-spring.version>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -63,16 +71,16 @@
 			<version>${resteasy.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
+			<groupId>org.jboss.resteasy.spring</groupId>
 			<artifactId>resteasy-spring</artifactId>
-			<version>${resteasy.version}</version>
+			<version>${resteasy-spring.version}</version>
 		</dependency>
 
 		<!-- Servlet -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -122,7 +130,8 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>com.holonplatform.jaxrs.spring.boot.resteasy</Automatic-Module-Name>
+							<Automatic-Module-Name>
+								com.holonplatform.jaxrs.spring.boot.resteasy</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>

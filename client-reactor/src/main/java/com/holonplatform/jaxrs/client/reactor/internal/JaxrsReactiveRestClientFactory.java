@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.client.reactor.internal;
 
-import javax.annotation.Priority;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.client.ClientBuilder;
 
 import com.holonplatform.async.http.AsyncRestClientFactory;
 import com.holonplatform.http.exceptions.RestClientCreationException;

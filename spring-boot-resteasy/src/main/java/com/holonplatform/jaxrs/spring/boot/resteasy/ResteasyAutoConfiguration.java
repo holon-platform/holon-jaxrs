@@ -20,17 +20,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletException;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
-
 import org.jboss.resteasy.core.ResourceMethodRegistry;
 import org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher;
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
@@ -38,6 +27,7 @@ import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.spring.SpringBeanProcessor;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -51,7 +41,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
@@ -59,39 +48,46 @@ import org.springframework.util.StringUtils;
 
 import com.holonplatform.jaxrs.spring.boot.resteasy.internal.ResteasyBootstrapListener;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.ServletException;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.ext.Provider;
+
 /**
- * Spring boot auto configuration to setup Resteasy using a
- * {@link ResteasyConfig} JAX-RS Application bean and automatically register any
- * JAX-RS resource which is declared as a Spring bean, such as {@link Path} and
- * {@link Provider} annotated beans.
+ * Spring boot auto configuration to setup Resteasy using a {@link ResteasyConfig} JAX-RS
+ * Application bean and automatically register any JAX-RS resource which is declared as a Spring
+ * bean, such as {@link Path} and {@link Provider} annotated beans.
  * 
  * <p>
- * If a {@link ResteasyConfig} bean is not provided in Spring context, a default
- * one will be created and registered automatically. You can use
- * {@link ResteasyConfig} class to explicitly register JAX-RS endpoint/provider
- * classes, singleton resources and configuration properties.
+ * If a {@link ResteasyConfig} bean is not provided in Spring context, a default one will be created
+ * and registered automatically. You can use {@link ResteasyConfig} class to explicitly register
+ * JAX-RS endpoint/provider classes, singleton resources and configuration properties.
  * </p>
  * 
  * <p>
- * The {@link ResteasyConfigCustomizer} interface can be used to customize
- * application resources registration. Any Spring bean which implements such
- * interface is automatically detected and the
+ * The {@link ResteasyConfigCustomizer} interface can be used to customize application resources
+ * registration. Any Spring bean which implements such interface is automatically detected and the
  * {@link ResteasyConfigCustomizer#customize(ResteasyConfig)} method is invoked.
  * </p>
  * 
  * <p>
- * The Resteasy JAX-RS application path can be defined either using the
- * {@link ApplicationPath} annotation on the {@link ResteasyConfig} bean class
- * or through the <code>holon.resteasy.application-path</code> configuration
- * property. See {@link ResteasyConfigurationProperties} for a list of available
- * configuration properties.
+ * The Resteasy JAX-RS application path can be defined either using the {@link ApplicationPath}
+ * annotation on the {@link ResteasyConfig} bean class or through the
+ * <code>holon.resteasy.application-path</code> configuration property. See
+ * {@link ResteasyConfigurationProperties} for a list of available configuration properties.
  * </p>
  * 
  * @since 5.0.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(name = { "org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap",
-		"javax.servlet.ServletRegistration" })
+		"jakarta.servlet.ServletRegistration" })
 @ConditionalOnWebApplication
 @AutoConfigureBefore(DispatcherServletAutoConfiguration.class)
 @AutoConfigureAfter(JacksonAutoConfiguration.class)

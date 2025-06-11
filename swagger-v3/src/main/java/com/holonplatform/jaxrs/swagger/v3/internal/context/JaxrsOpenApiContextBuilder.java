@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 

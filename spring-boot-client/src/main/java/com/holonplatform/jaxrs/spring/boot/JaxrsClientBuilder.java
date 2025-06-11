@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.spring.boot;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 /**
  * Builder that can be used to configure and create a JAX-RS {@link Client}.

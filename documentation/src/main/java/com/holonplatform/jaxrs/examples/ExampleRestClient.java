@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;

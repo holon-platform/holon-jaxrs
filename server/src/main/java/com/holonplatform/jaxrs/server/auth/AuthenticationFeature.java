@@ -15,11 +15,11 @@
  */
 package com.holonplatform.jaxrs.server.auth;
 
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.RuntimeType;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
@@ -76,7 +76,7 @@ public class AuthenticationFeature implements Feature {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
+	 * @see jakarta.ws.rs.core.Feature#configure(jakarta.ws.rs.core.FeatureContext)
 	 */
 	@Override
 	public boolean configure(FeatureContext context) {

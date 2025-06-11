@@ -15,9 +15,9 @@
  */
 package com.holonplatform.jaxrs.media;
 
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.property.PropertyBox;
@@ -36,7 +36,7 @@ public class FormDataPropertyBoxFeature implements Feature {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
+	 * @see jakarta.ws.rs.core.Feature#configure(jakarta.ws.rs.core.FeatureContext)
 	 */
 	@Override
 	public boolean configure(FeatureContext context) {

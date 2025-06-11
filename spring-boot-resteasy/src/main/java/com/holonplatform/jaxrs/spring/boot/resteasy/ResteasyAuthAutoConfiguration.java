@@ -15,10 +15,7 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.ws.rs.ext.ContextResolver;
-
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -28,19 +25,24 @@ import org.springframework.context.annotation.Configuration;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.jaxrs.server.auth.AuthenticationFeature;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.ws.rs.ext.ContextResolver;
+
 /**
  * Resteasy authentication and authorization auto configuration based on {@link Realm}.
  * <p>
- * If a Resteasy {@link ResteasyConfig} bean and a {@link Realm} bean are available form Spring context, the following
- * operations are performed:
+ * If a Resteasy {@link ResteasyConfig} bean and a {@link Realm} bean are available form Spring
+ * context, the following operations are performed:
  * <ul>
- * <li>A {@link Realm} type {@link ContextResolver} providing the {@link Realm} bean instance is registered</li>
+ * <li>A {@link Realm} type {@link ContextResolver} providing the {@link Realm} bean instance is
+ * registered</li>
  * <li>The {@link AuthenticationFeature} is registered</li>
  * </ul>
  * 
  * @since 5.0.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnBean(ResteasyConfig.class)
 @AutoConfigureAfter(ResteasyAutoConfiguration.class)
 public class ResteasyAuthAutoConfiguration {

@@ -15,9 +15,9 @@
  */
 package com.holonplatform.jaxrs.client.internal;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpMethod;
@@ -83,7 +83,7 @@ public class JaxrsClientRestClient extends AbstractRestClient implements JaxrsRe
 		requestDefinition.getHeaders().forEach((n, v) -> builder.header(n, v));
 
 		// invocation
-		final javax.ws.rs.client.Invocation invocation = JaxrsRestClientOperations.buildRequestEntity(requestEntity)
+		final jakarta.ws.rs.client.Invocation invocation = JaxrsRestClientOperations.buildRequestEntity(requestEntity)
 				.map(r -> builder.build(method.getMethodName(), r)).orElse(builder.build(method.getMethodName()));
 
 		// invoke

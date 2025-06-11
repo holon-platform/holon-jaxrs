@@ -15,9 +15,9 @@
  */
 package com.holonplatform.jaxrs.server;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.UriInfo;
 
 import com.holonplatform.http.HttpRequest;
 import com.holonplatform.jaxrs.server.internal.DefaultJaxrsHttpRequest;

@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.2.0</version>
+		<version>2.0.0</version>
 	</parent>
 
 	<groupId>com.holon-platform.jaxrs</groupId>
@@ -47,7 +49,8 @@
 	<scm>
 		<connection>scm:git:https://github.com/holon-platform/holon-jaxrs.git</connection>
 		<url>https://github.com/holon-platform/holon-jaxrs</url>
-		<developerConnection>scm:git:https://github.com/holon-platform/holon-jaxrs.git</developerConnection>
+		<developerConnection>
+			scm:git:https://github.com/holon-platform/holon-jaxrs.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -55,36 +58,36 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Holon core -->
-		<holon.core.version>5.7.0</holon.core.version>
+		<holon.core.version>6.0.0</holon.core.version>
 
 		<!-- Holon json -->
-		<holon.json.version>5.7.0</holon.json.version>
+		<holon.json.version>6.0.0</holon.json.version>
 
 		<!-- Holon reactor -->
-		<holon.reactor.version>5.7.1</holon.reactor.version>
+		<holon.reactor.version>6.0.0</holon.reactor.version>
 
 		<!-- JAX-RS API -->
-		<jax-rs.api.version>2.1</jax-rs.api.version>
+		<jax-rs.api.version>3.1.0</jax-rs.api.version>
 
 		<!-- Jersey -->
-		<jersey.version>2.35</jersey.version>
+		<jersey.version>3.1.10</jersey.version>
 
 		<!-- Resteasy -->
-		<resteasy.version>4.5.5.Final</resteasy.version>
+		<resteasy.version>6.2.12.Final</resteasy.version>
 
 		<!-- Swagger V2 -->
-		<swagger.v2.version>1.6.2</swagger.v2.version>
+		<swagger.v2.version>1.6.15</swagger.v2.version>
 		<!-- Swagger V3 -->
-		<swagger.v3.version>2.1.3</swagger.v3.version>
+		<swagger.v3.version>2.2.30</swagger.v3.version>
 
 		<!-- ByteBuddy -->
-		<bytebuddy.version>1.12.23</bytebuddy.version>
+		<bytebuddy.version>1.15.11</bytebuddy.version>
 
 		<!-- Test -->
-		<jackson.test.version>2.13.5</jackson.test.version>
+		<jackson.test.version>2.18.3</jackson.test.version>
 
 		<!-- Optional -->
-		<slf4j.version>1.7.36</slf4j.version>
+		<slf4j.version>2.0.17</slf4j.version>
 
 	</properties>
 
@@ -149,6 +152,7 @@
 							<show>public</show>
 							<excludePackageNames>*.internal.*;*.examples.*</excludePackageNames>
 							<quiet>true</quiet>
+							<sourcepath>src/main/java</sourcepath>
 						</configuration>
 					</execution>
 				</executions>

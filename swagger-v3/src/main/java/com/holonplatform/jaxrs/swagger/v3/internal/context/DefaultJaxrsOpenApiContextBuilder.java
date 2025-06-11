@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.swagger.v3.internal.context;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.exceptions.ApiConfigurationException;
@@ -39,7 +39,8 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.v3.internal.builders.AbstractOpenApiContextBuilder#getBuilder()
+	 * @see
+	 * com.holonplatform.jaxrs.swagger.v3.internal.builders.AbstractOpenApiContextBuilder#getBuilder()
 	 */
 	@Override
 	protected JaxrsOpenApiContextBuilder getBuilder() {
@@ -49,7 +50,8 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder#application(javax.ws.rs.core.Application)
+	 * com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder#application(jakarta.ws.rs.
+	 * core.Application)
 	 */
 	@Override
 	public JaxrsOpenApiContextBuilder application(Application application) {
@@ -59,15 +61,15 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder#scannerType(com.holonplatform.jaxrs.
-	 * swagger.v3.JaxrsScannerType)
+	 * @see com.holonplatform.jaxrs.swagger.v3.builders.JaxrsOpenApiContextBuilder#scannerType(com.
+	 * holonplatform.jaxrs. swagger.v3.JaxrsScannerType)
 	 */
 	@Override
 	public JaxrsOpenApiContextBuilder scannerType(JaxrsScannerType scannerType) {
 		final JaxrsScannerType type = (scannerType != null) ? scannerType : JaxrsScannerType.DEFAULT;
 		return JaxrsScannerProvider.getScannerClass(type).map(sc -> {
 			try {
-				return scanner(sc.newInstance());
+				return scanner(sc.getDeclaredConstructor().newInstance());
 			} catch (Exception e) {
 				throw new ApiConfigurationException("Failed to instantiate the scanner class [" + sc.getName() + "]",
 						e);
@@ -78,8 +80,8 @@ public class DefaultJaxrsOpenApiContextBuilder extends
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.swagger.v3.internal.builders.AbstractOpenApiContextBuilder#configure(io.swagger.v3.oas.
-	 * integration.api.OpenApiContext)
+	 * com.holonplatform.jaxrs.swagger.v3.internal.builders.AbstractOpenApiContextBuilder#configure(io.
+	 * swagger.v3.oas. integration.api.OpenApiContext)
 	 */
 	@Override
 	protected OpenApiContext configure(OpenApiContext context) {

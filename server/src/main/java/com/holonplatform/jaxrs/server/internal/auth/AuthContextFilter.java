@@ -15,10 +15,10 @@
  */
 package com.holonplatform.jaxrs.server.internal.auth;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Realm;

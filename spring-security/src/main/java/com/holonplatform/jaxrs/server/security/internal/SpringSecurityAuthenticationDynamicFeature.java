@@ -17,8 +17,8 @@ package com.holonplatform.jaxrs.server.security.internal;
 
 import java.lang.reflect.AnnotatedElement;
 
-import javax.ws.rs.Priorities;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.core.FeatureContext;
 
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.jaxrs.server.internal.auth.AbstractAuthenticationDynamicFeature;
@@ -33,7 +33,7 @@ public class SpringSecurityAuthenticationDynamicFeature extends AbstractAuthenti
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.jaxrs.server.internal.auth.AbstractAuthenticationDynamicFeature#processElement(javax.ws.rs.core
+	 * com.holonplatform.jaxrs.server.internal.auth.AbstractAuthenticationDynamicFeature#processElement(jakarta.ws.rs.core
 	 * .FeatureContext, java.lang.reflect.AnnotatedElement, com.holonplatform.auth.annotations.Authenticate)
 	 */
 	@Override

@@ -18,7 +18,7 @@ package com.holonplatform.jaxrs.examples;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;

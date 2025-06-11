@@ -17,10 +17,11 @@ package com.holonplatform.jaxrs.spring.boot;
 
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +50,7 @@ import com.holonplatform.jaxrs.spring.boot.internal.DefaultJaxrsClientBuilder;
  * 
  * @since 5.0.0
  */
-@Configuration
+@AutoConfiguration
 public class JaxrsClientBuilderAutoConfiguration {
 
 	@Configuration

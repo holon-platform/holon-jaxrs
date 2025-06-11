@@ -15,7 +15,7 @@
  */
 package com.holonplatform.jaxrs.server.auth;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationInspector;

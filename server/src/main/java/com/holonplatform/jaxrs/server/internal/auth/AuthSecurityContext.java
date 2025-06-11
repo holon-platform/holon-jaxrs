@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Optional;
 
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.SecurityContext;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
@@ -83,7 +83,7 @@ public class AuthSecurityContext implements AuthContext, SecurityContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.SecurityContext#isUserInRole(java.lang.String)
+	 * @see jakarta.ws.rs.core.SecurityContext#isUserInRole(java.lang.String)
 	 */
 	@Override
 	public boolean isUserInRole(String role) {
@@ -92,7 +92,7 @@ public class AuthSecurityContext implements AuthContext, SecurityContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.SecurityContext#isSecure()
+	 * @see jakarta.ws.rs.core.SecurityContext#isSecure()
 	 */
 	@Override
 	public boolean isSecure() {
@@ -101,7 +101,7 @@ public class AuthSecurityContext implements AuthContext, SecurityContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.SecurityContext#getAuthenticationScheme()
+	 * @see jakarta.ws.rs.core.SecurityContext#getAuthenticationScheme()
 	 */
 	@Override
 	public String getAuthenticationScheme() {

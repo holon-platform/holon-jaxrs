@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySetRef;
@@ -159,7 +159,7 @@ public abstract class AbstractTestResource {
 	@Path("test18")
 	@Produces(MediaType.APPLICATION_JSON)
 	public @PropertySetRef(value = ModelTest.class, field = "SET1") PropertyBox test18() {
-		return PropertyBox.builder(ModelTest.SET1).set(ModelTest.STR, "test").build();
+		return PropertyBox.builder(ModelTest.SET1).set(ModelTest.STR1, "test").build();
 	}
 
 	@PUT
@@ -174,28 +174,28 @@ public abstract class AbstractTestResource {
 	@Path("test20")
 	@Produces(MediaType.APPLICATION_JSON)
 	public @PropertySetRef(value = ModelTest.class, field = "SET2") PropertyBox test20() {
-		return PropertyBox.builder(ModelTest.SET2).set(ModelTest.STR, "test").build();
+		return PropertyBox.builder(ModelTest.SET2).set(ModelTest.STR1, "test").build();
 	}
 
 	@GET
 	@Path("test21")
 	@Produces(MediaType.APPLICATION_JSON)
 	public @PropertySetRef(value = ModelTest.class, field = "SET3") PropertyBox test21() {
-		return PropertyBox.builder(ModelTest.SET3).set(ModelTest.STR, "test").build();
+		return PropertyBox.builder(ModelTest.SET3).set(ModelTest.STR1, "test").build();
 	}
 
 	@GET
 	@Path("test22")
 	@Produces(MediaType.APPLICATION_JSON)
 	public @PropertySetRef(value = ModelTest.class, field = "SET4") PropertyBox test22() {
-		return PropertyBox.builder(ModelTest.SET4).set(ModelTest.STR, "test").build();
+		return PropertyBox.builder(ModelTest.SET4).set(ModelTest.STR1, "test").build();
 	}
 
 	@GET
 	@Path("test23")
 	@Produces(MediaType.APPLICATION_JSON)
 	public @PropertySetRef(value = ModelTest.class, field = "SET5") PropertyBox test23() {
-		return PropertyBox.builder(ModelTest.SET5).set(ModelTest.STR, "test").build();
+		return PropertyBox.builder(ModelTest.SET5).set(ModelTest.STR1, "test").build();
 	}
 
 }

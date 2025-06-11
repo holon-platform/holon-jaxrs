@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.ext.Provider;
 
 /**
  * Resteasy JAX-RS {@link Application} configuration.
@@ -100,7 +100,7 @@ public class ResteasyConfig extends Application {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Application#getClasses()
+	 * @see jakarta.ws.rs.core.Application#getClasses()
 	 */
 	@Override
 	public Set<Class<?>> getClasses() {
@@ -109,7 +109,7 @@ public class ResteasyConfig extends Application {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Application#getSingletons()
+	 * @see jakarta.ws.rs.core.Application#getSingletons()
 	 */
 	@Override
 	public Set<Object> getSingletons() {
@@ -118,7 +118,7 @@ public class ResteasyConfig extends Application {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Application#getProperties()
+	 * @see jakarta.ws.rs.core.Application#getProperties()
 	 */
 	@Override
 	public Map<String, Object> getProperties() {

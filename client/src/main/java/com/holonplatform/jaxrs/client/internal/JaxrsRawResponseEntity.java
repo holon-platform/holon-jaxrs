@@ -18,7 +18,7 @@ package com.holonplatform.jaxrs.client.internal;
 import java.io.InputStream;
 import java.util.Optional;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.http.exceptions.HttpEntityProcessingException;

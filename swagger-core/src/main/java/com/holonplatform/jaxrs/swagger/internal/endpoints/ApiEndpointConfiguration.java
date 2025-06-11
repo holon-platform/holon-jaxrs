@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import com.holonplatform.jaxrs.swagger.ApiEndpointType;
 import com.holonplatform.jaxrs.swagger.JaxrsScannerType;

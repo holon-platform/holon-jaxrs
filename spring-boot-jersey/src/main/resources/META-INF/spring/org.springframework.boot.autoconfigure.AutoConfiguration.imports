@@ -1,0 +1,2 @@
+com.holonplatform.jaxrs.spring.boot.jersey.JerseyServerAutoConfiguration
+com.holonplatform.jaxrs.spring.boot.jersey.JerseyAuthAutoConfiguration

@@ -18,11 +18,11 @@ package com.holonplatform.jaxrs.client.internal;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import javax.ws.rs.client.AsyncInvoker;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.InvocationCallback;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.AsyncInvoker;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.InvocationCallback;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.async.http.AsyncRestClient;
 import com.holonplatform.async.http.internal.AbstractAsyncRestClient;
@@ -125,7 +125,7 @@ public class JaxrsClientAsyncRestClient extends AbstractAsyncRestClient implemen
 
 		/*
 		 * (non-Javadoc)
-		 * @see javax.ws.rs.client.InvocationCallback#completed(java.lang.Object)
+		 * @see jakarta.ws.rs.client.InvocationCallback#completed(java.lang.Object)
 		 */
 		@Override
 		public void completed(Response response) {
@@ -139,7 +139,7 @@ public class JaxrsClientAsyncRestClient extends AbstractAsyncRestClient implemen
 
 		/*
 		 * (non-Javadoc)
-		 * @see javax.ws.rs.client.InvocationCallback#failed(java.lang.Throwable)
+		 * @see jakarta.ws.rs.client.InvocationCallback#failed(java.lang.Throwable)
 		 */
 		@Override
 		public void failed(Throwable throwable) {

@@ -17,7 +17,7 @@ package com.holonplatform.jaxrs.swagger.v3.internal.endpoints;
 
 import java.util.Set;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;

@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -57,15 +59,15 @@
 					<artifactId>javax.annotation-api</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>javax.validation</groupId>
-					<artifactId>validation-api</artifactId>
+					<groupId>jakarta.validation</groupId>
+					<artifactId>jakarta.validation-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- Jersey Spring integration -->
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring5</artifactId>
+			<artifactId>jersey-spring6</artifactId>
 			<version>${jersey.version}</version>
 			<exclusions>
 				<exclusion>
@@ -93,8 +95,8 @@
 					<artifactId>javax.annotation-api</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>javax.validation</groupId>
-					<artifactId>validation-api</artifactId>
+					<groupId>jakarta.validation</groupId>
+					<artifactId>jakarta.validation-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -107,23 +109,23 @@
 
 		<!-- JAX-RS -->
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
 			<version>${jax-rs.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<!-- Validation API -->
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
 		</dependency>
 
 		<!-- Servlet -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -182,13 +184,13 @@
 				</exclusion>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.module</groupId>
-					<artifactId>jackson-module-jaxb-annotations</artifactId>
+					<artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
 			<version>${jackson.test.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -204,7 +206,8 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>com.holonplatform.jaxrs.spring.boot.jersey</Automatic-Module-Name>
+							<Automatic-Module-Name>
+								com.holonplatform.jaxrs.spring.boot.jersey</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>

@@ -17,9 +17,9 @@ package com.holonplatform.jaxrs.server.internal.auth;
 
 import java.lang.reflect.AnnotatedElement;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.container.DynamicFeature;
+import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.core.FeatureContext;
 
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.core.internal.Logger;
@@ -36,8 +36,8 @@ public abstract class AbstractAuthenticationDynamicFeature implements DynamicFea
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.container.DynamicFeature#configure(javax.ws.rs.container.ResourceInfo,
-	 * javax.ws.rs.core.FeatureContext)
+	 * @see jakarta.ws.rs.container.DynamicFeature#configure(jakarta.ws.rs.container.ResourceInfo,
+	 * jakarta.ws.rs.core.FeatureContext)
 	 */
 	@Override
 	public void configure(ResourceInfo resourceInfo, FeatureContext context) {

@@ -15,10 +15,10 @@
  */
 package com.holonplatform.jaxrs.server.security;
 
-import javax.ws.rs.Priorities;
-import javax.ws.rs.RuntimeType;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.RuntimeType;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
 
 import com.holonplatform.auth.annotations.Authenticate;
 import com.holonplatform.core.internal.Logger;
@@ -40,7 +40,7 @@ public class SpringSecurityAuthenticationFeature implements Feature {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.ws.rs.core.Feature#configure(javax.ws.rs.core.FeatureContext)
+	 * @see jakarta.ws.rs.core.Feature#configure(jakarta.ws.rs.core.FeatureContext)
 	 */
 	@Override
 	public boolean configure(FeatureContext context) {

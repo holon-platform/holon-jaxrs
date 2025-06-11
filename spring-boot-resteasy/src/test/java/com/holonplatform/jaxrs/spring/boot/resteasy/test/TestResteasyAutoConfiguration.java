@@ -18,17 +18,13 @@ package com.holonplatform.jaxrs.spring.boot.resteasy.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jsonb.JsonbAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +33,10 @@ import com.holonplatform.jaxrs.spring.boot.resteasy.ResteasyConfig;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.beans.TestBeanEndpoint;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.beans.TestService;
 import com.holonplatform.jaxrs.spring.boot.resteasy.test.resources.TestEndpoint;
+
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TestResteasyAutoConfiguration {

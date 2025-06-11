@@ -17,9 +17,9 @@ package com.holonplatform.jaxrs.server.internal;
 
 import java.io.Serializable;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Response.Status;
 
 import com.holonplatform.auth.AuthenticationError;
 import com.holonplatform.http.ErrorResponse;

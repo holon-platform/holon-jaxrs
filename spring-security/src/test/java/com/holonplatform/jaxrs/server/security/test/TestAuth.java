@@ -21,19 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.ext.ContextResolver;
-
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -47,11 +34,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -61,6 +49,19 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.jaxrs.LogConfig;
 import com.holonplatform.test.JerseyTest5;
+
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ext.ContextResolver;
 
 public class TestAuth extends JerseyTest5 {
 
@@ -80,7 +81,7 @@ public class TestAuth extends JerseyTest5 {
 
 	@Configuration
 	@EnableWebSecurity
-	public static class Config extends WebSecurityConfigurerAdapter {
+	public static class Config {
 
 		@Bean
 		public static PasswordEncoder passwordEncoder() {
@@ -96,13 +97,14 @@ public class TestAuth extends JerseyTest5 {
 					.and().withUser("a2").password("p2").authorities("R1", "R3");
 		}
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/public/**").permitAll()
+		@Bean
+		public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+			http.authorizeHttpRequests(auth -> auth.requestMatchers("/public/**").permitAll()
 					// everything else is secured
-					.anyRequest().authenticated()
+					.anyRequest().authenticated())
 					// use basic auth
-					.and().httpBasic();
+					.httpBasic(Customizer.withDefaults());
+			return http.build();
 		}
 
 	}

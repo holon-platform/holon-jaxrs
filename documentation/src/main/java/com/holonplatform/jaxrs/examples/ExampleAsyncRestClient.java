@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import com.holonplatform.async.http.AsyncRestClient;
 import com.holonplatform.core.property.PathProperty;

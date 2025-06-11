@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 /**
  * Utility class to handle requests.

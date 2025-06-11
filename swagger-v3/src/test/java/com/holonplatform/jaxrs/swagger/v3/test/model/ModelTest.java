@@ -38,7 +38,7 @@ import com.holonplatform.core.temporal.TemporalType;
 
 public interface ModelTest {
 
-	public static final StringProperty STR = StringProperty.create("str");
+	public static final StringProperty STR1 = StringProperty.create("str");
 	public static final BooleanProperty BOOL = BooleanProperty.create("bool");
 	public static final NumericProperty<Integer> INT = NumericProperty.integerType("int");
 	public static final NumericProperty<Long> LNG = NumericProperty.longType("lng");
@@ -71,9 +71,9 @@ public interface ModelTest {
 			.converter(PropertyValueConverter.numericBoolean(Integer.class));
 
 	public static final VirtualProperty<String> VRT = VirtualProperty.create(String.class,
-			pb -> "STR:" + pb.getValue(STR));
+			pb -> "STR1:" + pb.getValue(STR1));
 
-	public static final PropertySet<?> SET1 = PropertySet.of(STR, BOOL, INT, LNG, DBL, FLT, BGD, SHR, BYT, ENM, DAT,
+	public static final PropertySet<?> SET1 = PropertySet.of(STR1, BOOL, INT, LNG, DBL, FLT, BGD, SHR, BYT, ENM, DAT,
 			TMS, LDAT, LTMS, LTM, A_STR, A_INT, A_ENM, A_CHR, C_STR, C_INT, C_ENM, C_LNG, NBL, VRT);
 
 	// nested
@@ -86,7 +86,7 @@ public interface ModelTest {
 	public static final StringProperty N3_V1 = StringProperty.create("n2.n3.v1");
 	public static final NumericProperty<Double> N3_V2 = NumericProperty.doubleType("n2.n3.v2");
 
-	public static final PropertySet<?> SET2 = PropertySet.of(STR, ENM, N1_V1, N1_V2, N1_V3, N2_V1, N2_V2, N3_V1, N3_V2);
+	public static final PropertySet<?> SET2 = PropertySet.of(STR1, ENM, N1_V1, N1_V2, N1_V3, N2_V1, N2_V2, N3_V1, N3_V2);
 
 	public static final StringProperty NESTED_V1 = StringProperty.create("v1");
 	public static final StringProperty NESTED_V2 = StringProperty.create("v2");
@@ -95,12 +95,12 @@ public interface ModelTest {
 
 	public static final PropertyBoxProperty NESTED = PropertyBoxProperty.create("n1", NESTED_SET);
 
-	public static final PropertySet<?> SET3 = PropertySet.of(STR, ENM, NESTED);
+	public static final PropertySet<?> SET3 = PropertySet.of(STR1, ENM, NESTED);
 
-	public static final PropertySet<?> SET4 = PropertySet.of(STR, ENM, NESTED, N2_V1, N2_V2, N3_V1, N3_V2);
+	public static final PropertySet<?> SET4 = PropertySet.of(STR1, ENM, NESTED, N2_V1, N2_V2, N3_V1, N3_V2);
 
 	public static final ListPathProperty<PropertyBox> C_PBX = ListPathProperty.propertyBox("cpbx", NESTED_SET);
 
-	public static final PropertySet<?> SET5 = PropertySet.of(STR, C_PBX);
+	public static final PropertySet<?> SET5 = PropertySet.of(STR1, C_PBX);
 
 }

@@ -17,11 +17,6 @@ package com.holonplatform.jaxrs.swagger.v3.test.spring;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
@@ -29,7 +24,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -40,6 +35,10 @@ import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenAPIEndpointUtils;
 import com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 @ActiveProfiles("path1")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)

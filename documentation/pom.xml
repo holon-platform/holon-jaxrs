@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -54,6 +56,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- JDK9 Automatic-Module-Name -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>
+								com.holonplatform.documentation.jaxrs
+							</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -73,11 +90,13 @@
 			<artifactId>holon-jaxrs-server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		
+		<!-- <dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-swagger-v2</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+			<version>5.7.0</version>
+		</dependency>-->
+		
 		<dependency>
 			<groupId>com.holon-platform.jaxrs</groupId>
 			<artifactId>holon-jaxrs-swagger-v3</artifactId>
@@ -98,10 +117,10 @@
 			<artifactId>holon-jaxrs-spring-boot-resteasy</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
 			<version>${jax-rs.api.version}</version>
 			<scope>provided</scope>
 		</dependency>

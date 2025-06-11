@@ -15,6 +15,7 @@
  */
 package com.holonplatform.jaxrs.spring.boot.resteasy;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,12 +23,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Auto configuration class to provide a default {@link ResteasyConfig} bean instance when no other is declared as a
- * Spring bean.
+ * Auto configuration class to provide a default {@link ResteasyConfig} bean instance when no other
+ * is declared as a Spring bean.
  * 
  * @since 5.0.0
  */
-@Configuration
+@AutoConfiguration
 @ConditionalOnClass(ResteasyConfig.class)
 @AutoConfigureBefore(ResteasyAutoConfiguration.class)
 public class ResteasyConfigAutoConfiguration {

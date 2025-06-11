@@ -18,6 +18,7 @@ package com.holonplatform.jaxrs.swagger.v3.internal.context;
 import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.jaxrs.swagger.internal.SwaggerLogger;
@@ -35,8 +36,8 @@ import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * {@link OpenApiContext} adapter to ensure the {@link SwaggerV3#CONTEXT_READER_LISTENER} class inclusion in the classes
- * to read.
+ * {@link OpenApiContext} adapter to ensure the {@link SwaggerV3#CONTEXT_READER_LISTENER} class
+ * inclusion in the classes to read.
  *
  * @since 5.2.0
  */
@@ -152,8 +153,9 @@ public class OpenApiContextAdapter implements OpenApiContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiContext#setOpenApiScanner(io.swagger.v3.oas.integration.api.
-	 * OpenApiScanner)
+	 * @see
+	 * io.swagger.v3.oas.integration.api.OpenApiContext#setOpenApiScanner(io.swagger.v3.oas.integration.
+	 * api. OpenApiScanner)
 	 */
 	@Override
 	public void setOpenApiScanner(OpenApiScanner openApiScanner) {
@@ -162,8 +164,9 @@ public class OpenApiContextAdapter implements OpenApiContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiContext#setOpenApiReader(io.swagger.v3.oas.integration.api.
-	 * OpenApiReader)
+	 * @see
+	 * io.swagger.v3.oas.integration.api.OpenApiContext#setOpenApiReader(io.swagger.v3.oas.integration.
+	 * api. OpenApiReader)
 	 */
 	@Override
 	public void setOpenApiReader(OpenApiReader openApiReader) {
@@ -178,8 +181,8 @@ public class OpenApiContextAdapter implements OpenApiContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see io.swagger.v3.oas.integration.api.OpenApiContext#setObjectMapperProcessor(io.swagger.v3.oas.integration.api.
-	 * ObjectMapperProcessor)
+	 * @see io.swagger.v3.oas.integration.api.OpenApiContext#setObjectMapperProcessor(io.swagger.v3.oas.
+	 * integration.api. ObjectMapperProcessor)
 	 */
 	@Override
 	public void setObjectMapperProcessor(ObjectMapperProcessor objectMapperProcessor) {
@@ -217,6 +220,30 @@ public class OpenApiContextAdapter implements OpenApiContext {
 			return Optional.ofNullable(((GenericOpenApiContext<?>) context).getOpenApiScanner());
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public ObjectMapper getOutputJsonMapper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObjectMapper getOutputYamlMapper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setOutputJsonMapper(ObjectMapper outputJsonMapper) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setOutputYamlMapper(ObjectMapper outputYamlMapper) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

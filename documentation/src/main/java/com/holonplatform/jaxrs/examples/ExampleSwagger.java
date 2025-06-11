@@ -21,15 +21,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collections;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.springframework.stereotype.Component;
 
 import com.holonplatform.core.property.NumericProperty;
@@ -43,14 +34,19 @@ import com.holonplatform.jaxrs.swagger.JaxrsScannerType;
 import com.holonplatform.jaxrs.swagger.annotations.ApiConfiguration;
 import com.holonplatform.jaxrs.swagger.annotations.ApiContextId;
 import com.holonplatform.jaxrs.swagger.annotations.ApiPropertySetModel;
-import com.holonplatform.jaxrs.swagger.v2.SwaggerV2;
 import com.holonplatform.jaxrs.swagger.v3.SwaggerV3;
 
-import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.models.Swagger;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @SuppressWarnings("unused")
 public class ExampleSwagger {
@@ -119,21 +115,6 @@ public class ExampleSwagger {
 	}
 	// end::apimodel2[]
 
-	public void apireaderv2() {
-		// tag::apireaderv2[]
-		BeanConfig configuration = new BeanConfig();
-		configuration.setTitle("The title");
-		configuration.setVersion("1");
-
-		ApiReader<Swagger> reader = SwaggerV2.reader(configuration); // <1>
-
-		Swagger api = reader.read(ApiEndpoint1.class, ApiEndpoint2.class); // <2>
-
-		String json = SwaggerV2.asJson(api); // <3>
-		String yaml = SwaggerV2.asYaml(api); // <4>
-		// end::apireaderv2[]
-	}
-
 	public void apireaderv3() {
 		// tag::apireaderv3[]
 		SwaggerConfiguration configuration = new SwaggerConfiguration();
@@ -148,19 +129,6 @@ public class ExampleSwagger {
 		// end::apireaderv3[]
 	}
 
-	// tag::beanconfig1[]
-	@Component
-	public class ApiConfigV2 extends BeanConfig {
-
-		public ApiConfigV2() {
-			super();
-			setTitle("Test bean config");
-			setVersion("1.0.0");
-		}
-
-	}
-	// end::beanconfig1[]
-
 	// tag::beanconfig2[]
 	@Component
 	public class ApiConfigV3 extends SwaggerConfiguration {
@@ -172,20 +140,6 @@ public class ExampleSwagger {
 
 	}
 	// end::beanconfig2[]
-
-	// tag::beanconfig3[]
-	@ApiConfiguration(contextId = "my_context_id", path = "docs", endpointType = ApiEndpointType.ACCEPT_HEADER, scannerType = JaxrsScannerType.APPLICATION_AND_ANNOTATION)
-	@Component
-	public class ApiConfigV2b extends BeanConfig {
-
-		public ApiConfigV2b() {
-			super();
-			setTitle("Test bean config");
-			setVersion("1.0.0");
-		}
-
-	}
-	// end::beanconfig3[]
 
 	// tag::beanconfig4[]
 	@ApiConfiguration(contextId = "my_context_id", path = "docs", endpointType = ApiEndpointType.ACCEPT_HEADER, scannerType = JaxrsScannerType.APPLICATION_AND_ANNOTATION)
@@ -199,32 +153,6 @@ public class ExampleSwagger {
 
 	}
 	// end::beanconfig4[]
-
-	// tag::multi1[]
-	@ApiConfiguration(path = "docs1") // <1>
-	@Component
-	public class ApiConfigV2Group1 extends BeanConfig {
-
-		public ApiConfigV2Group1() {
-			super();
-			setTitle("API group 1");
-			setResourcePackage("my.resource.package.group1");
-		}
-
-	}
-
-	@ApiConfiguration(path = "docs2") // <2>
-	@Component
-	public class ApiConfigV2Group2 extends BeanConfig {
-
-		public ApiConfigV2Group2() {
-			super();
-			setTitle("API group 2");
-			setResourcePackage("my.resource.package.group2");
-		}
-
-	}
-	// end::multi1[]
 
 	// tag::multi2[]
 	@ApiConfiguration(path = "docs1") // <1>

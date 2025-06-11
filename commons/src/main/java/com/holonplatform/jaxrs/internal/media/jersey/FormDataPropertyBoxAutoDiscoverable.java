@@ -15,8 +15,8 @@
  */
 package com.holonplatform.jaxrs.internal.media.jersey;
 
-import javax.annotation.Priority;
-import javax.ws.rs.core.FeatureContext;
+import jakarta.annotation.Priority;
+import jakarta.ws.rs.core.FeatureContext;
 
 import org.glassfish.jersey.internal.spi.AutoDiscoverable;
 
@@ -32,7 +32,7 @@ public class FormDataPropertyBoxAutoDiscoverable implements AutoDiscoverable {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.glassfish.jersey.internal.spi.AutoDiscoverable#configure(javax.ws.rs.core.FeatureContext)
+	 * @see org.glassfish.jersey.internal.spi.AutoDiscoverable#configure(jakarta.ws.rs.core.FeatureContext)
 	 */
 	@Override
 	public void configure(FeatureContext context) {

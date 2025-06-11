@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.Cookie;
@@ -137,9 +137,9 @@ public class JaxrsContainerHttpRequest extends AbstractHttpRequest {
 	@Override
 	public Optional<Cookie> getRequestCookie(String name) {
 		ObjectUtils.argumentNotNull(name, "Cookie name must be not null");
-		Map<String, javax.ws.rs.core.Cookie> cookies = request.getCookies();
+		Map<String, jakarta.ws.rs.core.Cookie> cookies = request.getCookies();
 		if (cookies != null && cookies.containsKey(name)) {
-			javax.ws.rs.core.Cookie cookie = cookies.get(name);
+			jakarta.ws.rs.core.Cookie cookie = cookies.get(name);
 			if (cookie != null) {
 				return Optional.of(Cookie.builder().name(cookie.getName()).value(cookie.getValue())
 						.version(cookie.getVersion()).path(cookie.getPath()).domain(cookie.getDomain()).build());

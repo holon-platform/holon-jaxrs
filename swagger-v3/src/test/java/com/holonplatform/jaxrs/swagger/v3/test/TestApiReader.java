@@ -19,7 +19,7 @@ import static com.holonplatform.jaxrs.swagger.v3.test.utils.OpenApiValidation.va
 
 import java.util.Collections;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.junit.jupiter.api.Test;
 

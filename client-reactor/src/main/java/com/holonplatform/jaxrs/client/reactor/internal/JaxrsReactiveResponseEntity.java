@@ -18,7 +18,7 @@ package com.holonplatform.jaxrs.client.reactor.internal;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import com.holonplatform.http.rest.ResponseType;
 import com.holonplatform.jaxrs.client.internal.JaxrsResponseEntity;
